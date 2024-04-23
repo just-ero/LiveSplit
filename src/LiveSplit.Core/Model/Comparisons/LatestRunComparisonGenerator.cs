@@ -1,6 +1,7 @@
-﻿using LiveSplit.Options;
-using System;
+﻿using System;
 using System.Linq;
+
+using LiveSplit.Options;
 
 namespace LiveSplit.Model.Comparisons
 {
@@ -25,9 +26,12 @@ namespace LiveSplit.Model.Comparisons
                 for (var attemptIndex = maxIndex; attemptIndex >= 1; attemptIndex--)
                 {
                     if (segment.SegmentHistory.ContainsKey(attemptIndex))
+                    {
                         return attemptIndex;
+                    }
                 }
             }
+
             return 0;
         }
 
@@ -42,9 +46,13 @@ namespace LiveSplit.Model.Comparisons
                 {
                     TimeSpan? segmentTime = null;
                     if (Run[ind].SegmentHistory.ContainsKey(attemptIndex))
+                    {
                         segmentTime = Run[ind].SegmentHistory[attemptIndex][method];
+                    }
                     else
+                    {
                         totalTime = null;
+                    }
 
                     var time = new Time(Run[ind].Comparisons[Name]);
                     if (totalTime != null && segmentTime != null)
@@ -53,7 +61,9 @@ namespace LiveSplit.Model.Comparisons
                         time[method] = totalTime;
                     }
                     else
+                    {
                         time[method] = null;
+                    }
 
                     Run[ind].Comparisons[Name] = time;
                 }

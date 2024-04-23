@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Linq;
 using System.Globalization;
+using System.Linq;
+
 using LiveSplit.TimeFormatters;
-using System.Collections.Generic;
 
 namespace LiveSplit.Model
 {
@@ -18,7 +18,10 @@ namespace LiveSplit.Model
         public static TimeSpan? ParseNullable(string timeString)
         {
             if (string.IsNullOrEmpty(timeString))
+            {
                 return null;
+            }
+
             return Parse(timeString);
         }
 
@@ -31,7 +34,7 @@ namespace LiveSplit.Model
 
             long ticks = 0L;
             string[] sections = timeString.Split(separators, 3);
-            
+
             if (sections.Length > 2)
             {
                 // Parse days and hours in the format [days.]hours
@@ -68,7 +71,9 @@ namespace LiveSplit.Model
         private static long ParseFractionAsTicks(string fractionText)
         {
             if (fractionText.Length > 7)
+            {
                 fractionText = fractionText.Substring(0, 7);
+            }
 
             return long.Parse(fractionText, NumberStyles.Integer, CultureInfo.InvariantCulture) * powersOfTen[7 - fractionText.Length];
         }

@@ -10,14 +10,18 @@ namespace LiveSplit.Options
             try
             {
                 if (!EventLog.SourceExists("LiveSplit"))
+                {
                     EventLog.CreateEventSource("LiveSplit", "Application");
+                }
             }
             catch { }
 
             try
             {
-                var listener = new EventLogTraceListener("LiveSplit");
-                listener.Filter = new EventTypeFilter(SourceLevels.Warning);
+                var listener = new EventLogTraceListener("LiveSplit")
+                {
+                    Filter = new EventTypeFilter(SourceLevels.Warning)
+                };
                 Trace.Listeners.Add(listener);
             }
             catch { }

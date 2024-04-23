@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,7 +12,7 @@ namespace LiveSplit.Model
         public static double PersistentDrift { get; set; }
         public static double NewDrift { get; set; }
 
-        private static Stopwatch qpc;
+        private static readonly Stopwatch qpc;
 
         private static TimeSpan firstQPCTime;
         private static DateTime firstNTPTime;
@@ -54,6 +54,7 @@ namespace LiveSplit.Model
                 {
                     return new AtomicDateTime(lastNTPTime.Add(Now - new TimeStamp(lastQPCTime)), true);
                 }
+
                 return new AtomicDateTime(DateTime.UtcNow, false);
             }
         }
@@ -74,9 +75,13 @@ namespace LiveSplit.Model
                         times.Add(ntpTime.Ticks - qpcTime.Ticks);
                     }
                     catch { }
+
                     if (count < 10)
+                    {
                         Wait(TimeSpan.FromSeconds(5));
+                    }
                 }
+
                 if (times.Count >= 5)
                 {
                     var averageDifference = times.Average();
@@ -106,7 +111,10 @@ namespace LiveSplit.Model
                         Wait(TimeSpan.FromHours(1));
                     }
                 }
-                else Wait(TimeSpan.FromHours(0.5));
+                else
+                {
+                    Wait(TimeSpan.FromHours(0.5));
+                }
             }
         }
 
@@ -123,9 +131,13 @@ namespace LiveSplit.Model
         }
 
         public static TimeSpan operator -(TimeStamp a, TimeStamp b)
-            => a.value - b.value;
+        {
+            return a.value - b.value;
+        }
 
         public static TimeStamp operator -(TimeStamp a, TimeSpan b)
-            => new TimeStamp(a.value - b);
+        {
+            return new TimeStamp(a.value - b);
+        }
     }
 }

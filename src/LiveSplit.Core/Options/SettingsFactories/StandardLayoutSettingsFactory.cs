@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+
 using static System.Drawing.Color;
 
 namespace LiveSplit.Options.SettingsFactories

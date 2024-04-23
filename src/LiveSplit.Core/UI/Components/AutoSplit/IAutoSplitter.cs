@@ -1,5 +1,6 @@
-﻿using LiveSplit.Model;
-using System;
+﻿using System;
+
+using LiveSplit.Model;
 
 namespace LiveSplit.UI.Components.AutoSplit
 {

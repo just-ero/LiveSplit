@@ -1,5 +1,6 @@
-﻿using LiveSplit.Model.Input;
-using System;
+﻿using System;
+
+using LiveSplit.Model.Input;
 
 namespace LiveSplit.Model
 {
@@ -57,10 +58,14 @@ namespace LiveSplit.Model
         protected bool CheckDoubleTap()
         {
             if (!CurrentState.Settings.HotkeyProfiles[CurrentState.CurrentHotkeyProfile].DoubleTapPrevention)
+            {
                 return true;
+            }
 
             if (CurrentState.CurrentPhase == TimerPhase.Ended)
+            {
                 return TimeStamp.Now - LastEvent > LongDelay;
+            }
 
             return TimeStamp.Now - LastEvent > Delay;
         }
@@ -86,16 +91,23 @@ namespace LiveSplit.Model
         public void SkipSplit()
         {
             if (CheckDoubleTap())
+            {
                 InternalModel.SkipSplit();
+            }
         }
 
         public void UndoSplit()
         {
             if (CheckDoubleTap())
+            {
                 InternalModel.UndoSplit();
+            }
         }
 
-        public void Reset() => Reset(true);
+        public void Reset()
+        {
+            Reset(true);
+        }
 
         public void Reset(bool updateSplits = true)
         {
@@ -120,16 +132,34 @@ namespace LiveSplit.Model
             InternalModel.UndoAllPauses();
         }
 
-        public void ScrollUp() => InternalModel.ScrollUp();
+        public void ScrollUp()
+        {
+            InternalModel.ScrollUp();
+        }
 
-        public void ScrollDown() => InternalModel.ScrollDown();
+        public void ScrollDown()
+        {
+            InternalModel.ScrollDown();
+        }
 
-        public void SwitchComparisonPrevious() => InternalModel.SwitchComparisonPrevious();
+        public void SwitchComparisonPrevious()
+        {
+            InternalModel.SwitchComparisonPrevious();
+        }
 
-        public void SwitchComparisonNext() => InternalModel.SwitchComparisonNext();
+        public void SwitchComparisonNext()
+        {
+            InternalModel.SwitchComparisonNext();
+        }
 
-        public void InitializeGameTime() => InternalModel.InitializeGameTime();
+        public void InitializeGameTime()
+        {
+            InternalModel.InitializeGameTime();
+        }
 
-        public void ResetAndSetAttemptAsPB() => InternalModel.ResetAndSetAttemptAsPB();
+        public void ResetAndSetAttemptAsPB()
+        {
+            InternalModel.ResetAndSetAttemptAsPB();
+        }
     }
 }

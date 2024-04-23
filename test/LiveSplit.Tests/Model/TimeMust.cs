@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml;
-using Xunit;
+
 using LiveSplit.Model;
+
+using Xunit;
+
 using static LiveSplit.Tests.Model.Constants;
 
 namespace LiveSplit.Tests.Model

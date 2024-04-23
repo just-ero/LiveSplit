@@ -1,21 +1,20 @@
-﻿using LiveSplit.Model;
-using LiveSplit.Options;
-using LiveSplit.Utils;
-using LiveSplit.Web;
-using LiveSplit.Web.Share;
-using LiveSplit.Web.SRL;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+
+using LiveSplit.Model;
+using LiveSplit.Options;
+using LiveSplit.Utils;
+using LiveSplit.Web;
+using LiveSplit.Web.SRL;
 
 namespace LiveSplit.View
 {
     public partial class SpeedRunsLiveForm : Form
     {
-        SpeedRunsLiveIRC SRLClient { get; set; }
+        private SpeedRunsLiveIRC SRLClient { get; set; }
 
         protected bool FormIsClosing { get; set; }
 
@@ -46,10 +45,12 @@ namespace LiveSplit.View
             FormIsClosing = false;
         }
 
-        void SRLClient_Kicked(object sender, EventArgs e)
+        private void SRLClient_Kicked(object sender, EventArgs e)
         {
             if (IsDisposed)
+            {
                 return;
+            }
 
             this.InvokeIfRequired(() =>
             {
@@ -61,10 +62,12 @@ namespace LiveSplit.View
             });
         }
 
-        void SRLClient_Disconnected(object sender, EventArgs e)
+        private void SRLClient_Disconnected(object sender, EventArgs e)
         {
             if (IsDisposed)
+            {
                 return;
+            }
 
             try
             {
@@ -80,10 +83,12 @@ namespace LiveSplit.View
             catch { }
         }
 
-        void SRLClient_NicknameInUse(object sender, EventArgs e)
+        private void SRLClient_NicknameInUse(object sender, EventArgs e)
         {
             if (IsDisposed)
+            {
                 return;
+            }
 
             FormIsClosing = true;
 
@@ -94,10 +99,12 @@ namespace LiveSplit.View
             });
         }
 
-        void SRLClient_PasswordIncorrect(object sender, EventArgs e)
+        private void SRLClient_PasswordIncorrect(object sender, EventArgs e)
         {
             if (IsDisposed)
+            {
                 return;
+            }
 
             FormIsClosing = true;
 
@@ -112,8 +119,10 @@ namespace LiveSplit.View
         {
             GameId = gameID;
             GameCategory = gameCategory;
-            SRLClient = new SpeedRunsLiveIRC(state, model, new[] { "#speedrunslive" });
-            SRLClient.GameName = gameName;
+            SRLClient = new SpeedRunsLiveIRC(state, model, new[] { "#speedrunslive" })
+            {
+                GameName = gameName
+            };
             SRLClient.ChannelJoined += SRLClient_ChannelJoined;
             SRLClient.RawMessageReceived += SRLClient_RawMessageReceived;
             SRLClient.MessageReceived += SRLClient_MessageReceived;
@@ -130,10 +139,12 @@ namespace LiveSplit.View
             FormIsClosing = false;
         }
 
-        void SRLClient_GoalChanged(object sender, EventArgs e)
+        private void SRLClient_GoalChanged(object sender, EventArgs e)
         {
             if (IsDisposed)
+            {
                 return;
+            }
 
             this.InvokeIfRequired(() =>
             {
@@ -141,18 +152,22 @@ namespace LiveSplit.View
             });
         }
 
-        void SRLClient_UserListRefreshed(object sender, EventArgs e)
+        private void SRLClient_UserListRefreshed(object sender, EventArgs e)
         {
             if (IsDisposed)
+            {
                 return;
+            }
 
             RebuildUserList();
         }
 
-        void SRLClient_StateChanged(object sender, RaceState state)
+        private void SRLClient_StateChanged(object sender, RaceState state)
         {
             if (IsDisposed)
+            {
                 return;
+            }
 
             this.InvokeIfRequired(() =>
             {
@@ -194,10 +209,12 @@ namespace LiveSplit.View
             });
         }
 
-        void ExitMessageReceived(object sender, Tuple<string, SRLIRCUser, string> e)
+        private void ExitMessageReceived(object sender, Tuple<string, SRLIRCUser, string> e)
         {
             if (IsDisposed)
+            {
                 return;
+            }
 
             if (e.Item1 == SRLClient.RaceChannelName
                 && e.Item2.Name == "RaceBot"
@@ -207,16 +224,22 @@ namespace LiveSplit.View
                 SRLClient.RaceState = RaceState.NotInRace;
                 SRLClient.MessageReceived -= ExitMessageReceived;
                 if (InvokeRequired)
+                {
                     Invoke(new Action(Close));
+                }
                 else
+                {
                     Close();
+                }
             }
         }
 
-        void UndoneMessageReceived(object sender, Tuple<string, SRLIRCUser, string> e)
+        private void UndoneMessageReceived(object sender, Tuple<string, SRLIRCUser, string> e)
         {
             if (IsDisposed)
+            {
                 return;
+            }
 
             if (e.Item1 == SRLClient.RaceChannelName
                 && e.Item2.Name == "RaceBot"
@@ -225,16 +248,22 @@ namespace LiveSplit.View
                 SRLClient.RaceState = RaceState.RaceStarted;
                 SRLClient.MessageReceived -= UndoneMessageReceived;
                 if (InvokeRequired)
+                {
                     Invoke(new Action(Close));
+                }
                 else
+                {
                     Close();
+                }
             }
         }
 
-        void SRLClient_MessageReceived(object sender, Tuple<string, SRLIRCUser, string> e)
+        private void SRLClient_MessageReceived(object sender, Tuple<string, SRLIRCUser, string> e)
         {
             if (IsDisposed)
+            {
                 return;
+            }
 
             RebuildUserList();
             if (e.Item1 == SRLClient.RaceChannelName)
@@ -244,37 +273,46 @@ namespace LiveSplit.View
             }
         }
 
-        void SRLClient_RawMessageReceived(object sender, string e)
+        private void SRLClient_RawMessageReceived(object sender, string e)
         {
         }
 
-        void SRLClient_ChannelJoined(object sender, string e)
+        private void SRLClient_ChannelJoined(object sender, string e)
         {
             if (IsDisposed)
+            {
                 return;
+            }
 
             if (e == SRLClient.RaceChannelName)
             {
                 RefreshRaceStateBasedOnAPI();
                 if (GameCategory != null)
                 {
-                    var timer = new System.Timers.Timer(3000);
-                    timer.Enabled = true;
+                    var timer = new System.Timers.Timer(3000)
+                    {
+                        Enabled = true
+                    };
                     timer.Elapsed += timer_Elapsed;
                 }
+
                 EnableJoinButton();
             }
+
             if (e == "#speedrunslive" && RaceId == null)
             {
                 SRLClient.SendMainChannelMessage(".startrace " + GameId);
-                SRLClient.RaceBotResponseTimer = new System.Timers.Timer(10000);
-                SRLClient.RaceBotResponseTimer.Enabled = true;
+                SRLClient.RaceBotResponseTimer = new System.Timers.Timer(10000)
+                {
+                    Enabled = true
+                };
                 SRLClient.RaceBotResponseTimer.Elapsed += RaceBotResponseTimer_Elapsed;
             }
+
             RebuildUserList();
         }
 
-        void RefreshRaceStateBasedOnAPI()
+        private void RefreshRaceStateBasedOnAPI()
         {
             try
             {
@@ -283,20 +321,29 @@ namespace LiveSplit.View
                 if (user != null)
                 {
                     if (user.statetext == "Finished" || user.statetext == "Forfeit")
+                    {
                         SRLClient.RaceState = RaceState.RaceEnded;
+                    }
                     else if (race.statetext == "In Progress")
+                    {
                         SRLClient.RaceState = RaceState.RaceStarted;
+                    }
                     else if (user.statetext == "Ready")
+                    {
                         SRLClient.RaceState = RaceState.EnteredRaceAndReady;
+                    }
                     else
+                    {
                         SRLClient.RaceState = RaceState.EnteredRace;
+                    }
+
                     SRLClient_StateChanged(this, SRLClient.RaceState);
                 }
             }
             catch { }
         }
 
-        void RaceBotResponseTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        private void RaceBotResponseTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             SRLClient.RaceBotResponseTimer.Enabled = false;
             FormIsClosing = true;
@@ -308,7 +355,7 @@ namespace LiveSplit.View
             });
         }
 
-        void timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        private void timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             SRLClient.SendRaceChannelMessage(".setgoal " + GameCategory);
             ((System.Timers.Timer)sender).Enabled = false;
@@ -397,7 +444,10 @@ namespace LiveSplit.View
         {
             FormIsClosing = true;
             if (SRLClient.IsConnected)
+            {
                 SRLClient.Disconnect();
+            }
+
             SRLClient.Dispose();
         }
 
@@ -405,9 +455,14 @@ namespace LiveSplit.View
         {
             string colorCode = "12";
             if (rights == SRLIRCRights.Operator)
+            {
                 colorCode = "4";
+            }
             else if (rights == SRLIRCRights.Voice)
+            {
                 colorCode = "3";
+            }
+
             return colorCode;
         }
 
@@ -471,8 +526,11 @@ namespace LiveSplit.View
                         bool parsed = int.TryParse(split.Substring(0, 1), out code);
                         color = parsed ? GetColorByCode(code) : origColor;
                         if (parsed)
+                        {
                             useSplit = split.Substring(1);
+                        }
                     }
+
                     var replacedText = useSplit.Replace(((char)2).ToString(), "");
                     bool isFirst = true;
                     foreach (var word in replacedText.Split(' '))
@@ -480,11 +538,13 @@ namespace LiveSplit.View
                         chatBox.AppendText((isFirst ? "" : " ") + word);
                         isFirst = false;
                     }
+
                     colorlessMessage += useSplit;
                     chatBox.Select(begin, chatBox.Text.Length);
                     chatBox.SelectionColor = color;
                     colorSplit = true;
                 }
+
                 bool bold = false;
                 int boldBeginPosition = actualBegin;
                 foreach (string boldSplit in colorlessMessage.Split((char)2))
@@ -494,6 +554,7 @@ namespace LiveSplit.View
                         chatBox.Select(boldBeginPosition, boldSplit.Length);
                         chatBox.SelectionFont = new Font(chatBox.SelectionFont, FontStyle.Bold);
                     }
+
                     bold = !bold;
                     boldBeginPosition += boldSplit.Length;
                 }
@@ -569,14 +630,14 @@ namespace LiveSplit.View
 
         private void RebuildUserList()
         {
-            Action action = () =>
+            void action()
+            {
+                lstUsers.Items.Clear();
+                foreach (var user in SRLClient.GetRaceChannelUsers())
                 {
-                    lstUsers.Items.Clear();
-                    foreach (var user in SRLClient.GetRaceChannelUsers())
-                    {
-                        lstUsers.Items.Add(new UserListItem(user.Name, GetColorFromRights(user.Rights)));
-                    }
-                };
+                    lstUsers.Items.Add(new UserListItem(user.Name, GetColorFromRights(user.Rights)));
+                }
+            }
 
             try
             {
@@ -594,7 +655,9 @@ namespace LiveSplit.View
         private void txtMessage_KeyDown(object sender, KeyEventArgs e)
         {
             if (txtMessage.Text.StartsWith("\r\n"))
+            {
                 txtMessage.Clear();
+            }
 
             if (e.KeyCode == Keys.Enter && txtMessage.Text.Length != 0)
             {

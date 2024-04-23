@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+
 using static LiveSplit.Model.Comparisons.CompositeComparisons;
 
 namespace LiveSplit.Model.Comparisons

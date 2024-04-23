@@ -1,13 +1,12 @@
-﻿using LiveSplit.Model;
-using LiveSplit.Options;
-using LiveSplit.TimeFormatters;
-using LiveSplit.Utils;
-using LiveSplit.Web.Share;
-using System;
+﻿using System;
 using System.Drawing;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+
+using LiveSplit.Model;
+using LiveSplit.Options;
+using LiveSplit.TimeFormatters;
+using LiveSplit.Web.Share;
 
 namespace LiveSplit.View
 {
@@ -24,14 +23,19 @@ namespace LiveSplit.View
         {
             State = state;
             if (State.CurrentPhase != TimerPhase.Ended)
+            {
                 Run = state.Run;
+            }
             else
             {
-                var model = new TimerModel();
-                model.CurrentState = State;
+                var model = new TimerModel
+                {
+                    CurrentState = State
+                };
                 model.ResetAndSetAttemptAsPB();
                 Run = State.Run;
             }
+
             ScreenShotFunction = screenShotFunction;
             Settings = settings;
             InitializeComponent();
@@ -50,6 +54,7 @@ namespace LiveSplit.View
                 {
                     cbxPlatform.Items.Add("Speedrun.com");
                 }
+
                 cbxPlatform.Items.Add("Splits.io");
             }
 
@@ -84,13 +89,17 @@ namespace LiveSplit.View
             txtNotes.Enabled = btnInsertCategory.Enabled = btnInsertDeltaTime.Enabled = btnInsertGame.Enabled
                 = btnInsertPB.Enabled = btnInsertSplitName.Enabled = btnInsertSplitTime.Enabled
                 = btnInsertStreamLink.Enabled = btnInsertTitle.Enabled = btnPreview.Enabled =
-                (CurrentPlatform == Twitch.Instance || CurrentPlatform == Imgur.Instance);
+                CurrentPlatform == Twitch.Instance || CurrentPlatform == Imgur.Instance;
 
             if (State.CurrentPhase == TimerPhase.NotRunning || State.CurrentPhase == TimerPhase.Ended)
+            {
                 chkAttachSplits.Enabled = !(CurrentPlatform == Screenshot.Instance || CurrentPlatform == SplitsIO.Instance
                     || CurrentPlatform == Twitch.Instance || CurrentPlatform == Excel.Instance || CurrentPlatform == SpeedrunComRunUploadPlatform.Instance);
+            }
             else
+            {
                 chkAttachSplits.Enabled = false;
+            }
 
             if (State.CurrentPhase == TimerPhase.Ended || State.CurrentPhase == TimerPhase.NotRunning
                 || State.CurrentSplitIndex == 0)
@@ -99,13 +108,24 @@ namespace LiveSplit.View
             }
 
             if (Run.Last().PersonalBestSplitTime[State.CurrentTimingMethod] == null)
+            {
                 btnInsertPB.Enabled = false;
+            }
+
             if (string.IsNullOrEmpty(Run.GameName))
+            {
                 btnInsertGame.Enabled = false;
+            }
+
             if (string.IsNullOrEmpty(Run.CategoryName))
+            {
                 btnInsertCategory.Enabled = false;
+            }
+
             if (string.IsNullOrEmpty(Run.GameName) && string.IsNullOrEmpty(Run.CategoryName))
+            {
                 btnInsertTitle.Enabled = false;
+            }
 
             RefreshDescription();
             RefreshNotes();
@@ -125,7 +145,7 @@ namespace LiveSplit.View
             var splitTime = "-";
             var deltaTime = "-";
 
-            if ((State.CurrentPhase == TimerPhase.Running 
+            if ((State.CurrentPhase == TimerPhase.Running
                 || State.CurrentPhase == TimerPhase.Paused)
                 && State.CurrentSplitIndex > 0)
             {
@@ -174,7 +194,9 @@ namespace LiveSplit.View
                 }
             }
             else
+            {
                 txtNotes.Text = "";
+            }
         }
 
         private void SaveNotesFormat()

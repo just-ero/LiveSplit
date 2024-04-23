@@ -1,9 +1,9 @@
-﻿using System;
+﻿// Note: Please be careful when modifying this because it could break existing components!
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-
-// Note: Please be careful when modifying this because it could break existing components!
 
 namespace LiveSplit.ComponentUtil
 {
@@ -27,7 +27,9 @@ namespace LiveSplit.ComponentUtil
                 {
                     bool changed = watcher.Update(process);
                     if (changed)
+                    {
                         changedList.Add(watcher);
+                    }
                 }
 
                 // only report changes when all of the other watches are updated too
@@ -98,7 +100,7 @@ namespace LiveSplit.ComponentUtil
         /// Updates the watcher and returns true if the value has changed.
         /// </summary>
         public abstract bool Update(Process process);
-            
+
         public abstract void Reset();
 
         protected bool CheckInterval()
@@ -108,10 +110,14 @@ namespace LiveSplit.ComponentUtil
                 if (LastUpdateTime.HasValue)
                 {
                     if (DateTime.Now - LastUpdateTime.Value < UpdateInterval.Value)
+                    {
                         return false;
+                    }
                 }
+
                 LastUpdateTime = DateTime.Now;
             }
+
             return true;
         }
     }
@@ -132,8 +138,8 @@ namespace LiveSplit.ComponentUtil
         public delegate void StringChangedEventHandler(string old, string current);
         public event StringChangedEventHandler OnChanged;
 
-        private ReadStringType _stringType;
-        private int _numBytes;
+        private readonly ReadStringType _stringType;
+        private readonly int _numBytes;
 
         public StringWatcher(DeepPointer pointer, ReadStringType type, int numBytes)
             : base(pointer)
@@ -160,17 +166,25 @@ namespace LiveSplit.ComponentUtil
             Changed = false;
 
             if (!Enabled)
+            {
                 return false;
+            }
 
             if (!CheckInterval())
+            {
                 return false;
+            }
 
             string str;
             bool success;
             if (AddrType == AddressType.DeepPointer)
+            {
                 success = DeepPtr.DerefString(process, _stringType, _numBytes, out str);
+            }
             else
+            {
                 success = process.ReadString(Address, _stringType, _numBytes, out str);
+            }
 
             if (success)
             {
@@ -180,7 +194,9 @@ namespace LiveSplit.ComponentUtil
             else
             {
                 if (FailAction == ReadFailAction.DontUpdate)
+                {
                     return false;
+                }
 
                 base.Old = base.Current;
                 base.Current = str;
@@ -236,19 +252,27 @@ namespace LiveSplit.ComponentUtil
             Changed = false;
 
             if (!Enabled)
+            {
                 return false;
+            }
 
             if (!CheckInterval())
+            {
                 return false;
+            }
 
             base.Old = Current;
 
             T val;
             bool success;
             if (AddrType == AddressType.DeepPointer)
+            {
                 success = DeepPtr.Deref(process, out val);
+            }
             else
+            {
                 success = process.ReadValue(Address, out val);
+            }
 
             if (success)
             {
@@ -258,7 +282,9 @@ namespace LiveSplit.ComponentUtil
             else
             {
                 if (FailAction == ReadFailAction.DontUpdate)
+                {
                     return false;
+                }
 
                 base.Old = base.Current;
                 base.Current = val;

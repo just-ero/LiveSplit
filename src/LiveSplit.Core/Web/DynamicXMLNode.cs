@@ -73,9 +73,13 @@ namespace LiveSplit.Web
             }
 
             if (memberElement.HasChildNodes)
+            {
                 result = new DynamicXMLElement(memberElement);
+            }
             else
+            {
                 result = memberElement.InnerText;
+            }
 
             return true;
         }

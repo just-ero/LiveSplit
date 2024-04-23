@@ -4,13 +4,13 @@ using System.Windows.Forms;
 
 namespace UpdateManager
 {
-    static class Program
+    internal static class Program
     {
         /// <summary>
         /// Der Haupteinstiegspunkt für die Anwendung.
         /// </summary>
         [STAThread]
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             try
             {
@@ -23,8 +23,10 @@ namespace UpdateManager
                 if (args.Length >= 3)
                 {
                     List<IUpdateable> updateables = new List<IUpdateable>();
-                    for (int i=0; i+2 < args.Length; i += 3)
-                        updateables.Add(new Updateable(args[i], args[i+1], Version.Parse(args[i+2])));
+                    for (int i = 0; i + 2 < args.Length; i += 3)
+                    {
+                        updateables.Add(new Updateable(args[i], args[i + 1], Version.Parse(args[i + 2])));
+                    }
 
                     Application.EnableVisualStyles();
                     Application.SetCompatibleTextRenderingDefault(false);

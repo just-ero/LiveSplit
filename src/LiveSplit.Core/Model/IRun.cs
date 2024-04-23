@@ -1,11 +1,12 @@
-﻿using LiveSplit.Model.Comparisons;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
-using System.Xml;
 using System.Text;
+using System.Xml;
+
+using LiveSplit.Model.Comparisons;
 
 namespace LiveSplit.Model
 {
@@ -39,11 +40,14 @@ namespace LiveSplit.Model
             return run.AutoSplitter != null && run.AutoSplitter.IsActivated;
         }
 
-        public static void AddSegment(this IRun run, string name, Time pbSplitTime = default(Time), Time bestSegmentTime = default(Time), Image icon = null, Time splitTime = default(Time), SegmentHistory segmentHistory = null)
+        public static void AddSegment(this IRun run, string name, Time pbSplitTime = default, Time bestSegmentTime = default, Image icon = null, Time splitTime = default, SegmentHistory segmentHistory = null)
         {
             var segment = new Segment(name, pbSplitTime, bestSegmentTime, icon, splitTime);
             if (segmentHistory != null)
+            {
                 segment.SegmentHistory = segmentHistory;
+            }
+
             run.Add(segment);
         }
 
@@ -64,8 +68,9 @@ namespace LiveSplit.Model
             foreach (var segment in run)
             {
                 segment.Comparisons.Clear();
-                segment.BestSegmentTime = default(Time);
+                segment.BestSegmentTime = default;
             }
+
             run.AttemptCount = 0;
             run.Metadata.RunID = null;
         }
@@ -118,12 +123,13 @@ namespace LiveSplit.Model
             {
                 for (var runIndex = minIndex; runIndex <= maxIndex; runIndex++)
                 {
-                    Time historyTime;
-                    if (curSplit.SegmentHistory.TryGetValue(runIndex, out historyTime))
+                    if (curSplit.SegmentHistory.TryGetValue(runIndex, out var historyTime))
                     {
                         //If the Best Segment is gone, clear the history
                         if (historyTime[method] != null)
+                        {
                             curSplit.SegmentHistory.Remove(runIndex);
+                        }
                     }
                 }
             }
@@ -135,8 +141,7 @@ namespace LiveSplit.Model
             {
                 for (var runIndex = minIndex; runIndex <= maxIndex; runIndex++)
                 {
-                    Time historyTime;
-                    if (curSplit.SegmentHistory.TryGetValue(runIndex, out historyTime))
+                    if (curSplit.SegmentHistory.TryGetValue(runIndex, out var historyTime))
                     {
                         //Make sure no times in the history are lower than the Best Segment
                         if (historyTime[method] < curSplit.BestSegmentTime[method])
@@ -217,17 +222,21 @@ namespace LiveSplit.Model
             {
                 for (var index = 0; index < run.Count; index++)
                 {
-                    Time segmentHistoryElement;
-                    if (!run[index].SegmentHistory.TryGetValue(runIndex, out segmentHistoryElement))
+                    if (!run[index].SegmentHistory.TryGetValue(runIndex, out var segmentHistoryElement))
                     {
                         //Remove null times in history that aren't followed by a non-null time
                         RemoveItemsFromCache(run, index, cache);
                     }
                     else if (segmentHistoryElement.RealTime == null && segmentHistoryElement.GameTime == null)
+                    {
                         cache.Add(runIndex);
+                    }
                     else
+                    {
                         cache.Clear();
+                    }
                 }
+
                 RemoveItemsFromCache(run, run.Count, cache);
             }
         }
@@ -244,20 +253,23 @@ namespace LiveSplit.Model
                 foreach (var attempt in run.AttemptHistory)
                 {
                     var ind = attempt.Index;
-                    Time element;
-                    if (segment.SegmentHistory.TryGetValue(ind, out element))
+                    if (segment.SegmentHistory.TryGetValue(ind, out var element))
                     {
                         if (element.RealTime != null)
+                        {
                             rtaSet.Add(element.RealTime.Value);
+                        }
+
                         if (element.GameTime != null)
+                        {
                             igtSet.Add(element.GameTime.Value);
+                        }
                     }
                 }
 
                 for (var runIndex = segment.SegmentHistory.GetMinIndex(); runIndex <= 0; runIndex++)
                 {
-                    Time element;
-                    if (segment.SegmentHistory.TryGetValue(runIndex, out element))
+                    if (segment.SegmentHistory.TryGetValue(runIndex, out var element))
                     {
                         var isNull = true;
                         var isUnique = false;
@@ -266,6 +278,7 @@ namespace LiveSplit.Model
                             isUnique |= rtaSet.Add(element.RealTime.Value);
                             isNull = false;
                         }
+
                         if (element.GameTime != null)
                         {
                             isUnique |= igtSet.Add(element.GameTime.Value);
@@ -273,7 +286,9 @@ namespace LiveSplit.Model
                         }
 
                         if (!isUnique && !isNull)
+                        {
                             segment.SegmentHistory.Remove(runIndex);
+                        }
                     }
                 }
             }
@@ -287,6 +302,7 @@ namespace LiveSplit.Model
                 run[ind].SegmentHistory.Remove(item);
                 ind++;
             }
+
             cache.Clear();
         }
 
@@ -311,10 +327,11 @@ namespace LiveSplit.Model
                 //Import the PB splits into the history
                 segment.SegmentHistory.Add(index, new Time(method, segment.PersonalBestSplitTime[method] - prevTime));
                 if (segment.PersonalBestSplitTime[method].HasValue)
+                {
                     prevTime = segment.PersonalBestSplitTime[method].Value;
+                }
             }
         }
-
 
         public static void ImportBestSegment(this IRun run, int segmentIndex)
         {
@@ -334,7 +351,9 @@ namespace LiveSplit.Model
             foreach (var c in extendedName)
             {
                 if (c != '\\' && c != '/' && c != ':' && c != '*' && c != '?' && c != '"' && c != '<' && c != '>' && c != '|')
+                {
                     stringBuilder.Append(c);
+                }
             }
 
             return stringBuilder.ToString();
@@ -377,7 +396,9 @@ namespace LiveSplit.Model
             var afterParentheses = "";
 
             if (string.IsNullOrEmpty(categoryName))
+            {
                 return string.Empty;
+            }
 
             var indexStart = categoryName.IndexOf('(');
             var indexEnd = categoryName.IndexOf(')', indexStart + 1);
@@ -396,7 +417,10 @@ namespace LiveSplit.Model
                 {
                     string categoryId = null;
                     if ((run.Metadata.CategoryAvailable || waitForOnlineData) && run.Metadata.Category != null)
+                    {
                         categoryId = run.Metadata.Category.ID;
+                    }
+
                     variables = run.Metadata.Game.FullGameVariables.Where(x => x.CategoryID == null || x.CategoryID == categoryId).Select(x => x.Name);
                 }
 
@@ -414,7 +438,7 @@ namespace LiveSplit.Model
                         }
                         else if (valueLower == "no")
                         {
-                            list.Add($"No { name }");
+                            list.Add($"No {name}");
                         }
                         else
                         {
@@ -430,7 +454,9 @@ namespace LiveSplit.Model
                 if (doSimpleRegion)
                 {
                     if (!string.IsNullOrEmpty(run.Metadata.RegionName))
+                    {
                         list.Add(run.Metadata.RegionName);
+                    }
                 }
                 else if (run.Metadata.Region != null && !string.IsNullOrEmpty(run.Metadata.Region.Abbreviation) && run.Metadata.Game != null && run.Metadata.Game.Regions.Count > 1)
                 {
@@ -444,9 +470,13 @@ namespace LiveSplit.Model
                 if (!string.IsNullOrEmpty(run.Metadata.PlatformName) && (doSimplePlatform || (run.Metadata.Game != null && run.Metadata.Game.Platforms.Count > 1)))
                 {
                     if (run.Metadata.UsesEmulator)
-                        list.Add($"{ run.Metadata.PlatformName } Emulator");
+                    {
+                        list.Add($"{run.Metadata.PlatformName} Emulator");
+                    }
                     else
+                    {
                         list.Add(run.Metadata.PlatformName);
+                    }
                 }
                 else if (run.Metadata.UsesEmulator)
                 {
@@ -456,7 +486,7 @@ namespace LiveSplit.Model
 
             if (list.Any())
             {
-                categoryName = $"{ categoryName } ({ string.Join(", ", list) }) { afterParentheses }";
+                categoryName = $"{categoryName} ({string.Join(", ", list)}) {afterParentheses}";
             }
 
             return categoryName.Trim();

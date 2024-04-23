@@ -28,33 +28,41 @@ namespace LiveSplit.Model.Input
             Lock = new int();
         }
 
-        void SafetyHook_KeyPressed(object sender, KeyEventArgs e)
+        private void SafetyHook_KeyPressed(object sender, KeyEventArgs e)
         {
             lock (Lock)
             {
                 if (HookState >= 0)
+                {
                     KeyPressed(this, e);
+                }
 
                 HookState++;
 
                 if (HookState == 1 || HookState < 0)
+                {
                     UnstableStateTime = TimeStamp.Now;
+                }
             }
         }
 
-        void Input_KeyBoardKeyPressed(object sender, KeyEventArgs e)
+        private void Input_KeyBoardKeyPressed(object sender, KeyEventArgs e)
         {
             if (RegisteredKeys.Contains(e.KeyCode | e.Modifiers) && KeyPressed != null)
             {
                 lock (Lock)
                 {
                     if (HookState <= 0)
+                    {
                         KeyPressed(this, e);
+                    }
 
                     HookState--;
 
                     if (HookState == -1 || HookState > 0)
-                        UnstableStateTime = TimeStamp.Now;                   
+                    {
+                        UnstableStateTime = TimeStamp.Now;
+                    }
                 }
             }
         }
@@ -85,7 +93,9 @@ namespace LiveSplit.Model.Input
                     HookState = 0;
                 }
                 else if (HookState < 0 && (TimeStamp.Now - UnstableStateTime).TotalSeconds >= 2)
+                {
                     HookState = 0;
+                }
             }
         }
     }
@@ -113,16 +123,16 @@ namespace LiveSplit.Model.Input
 
         public event KeyEventHandler KeyBoardKeyPressed;
 
-        private WindowsHookHelper.HookDelegate keyBoardDelegate;
+        private readonly WindowsHookHelper.HookDelegate keyBoardDelegate;
         private IntPtr keyBoardHandle;
         private const int WH_KEYBOARD_LL = 13;
         private const int WH_KEYBOARD = 2;
         private bool disposed;
 
         [DllImport("kernel32.dll")]
-        static extern uint GetLastError();
+        private static extern uint GetLastError();
         [DllImport("kernel32.dll")]
-        static extern IntPtr GetModuleHandle(string module);
+        private static extern IntPtr GetModuleHandle(string module);
 
         private Keys modifiers;
         private Control messageLoopControl;
@@ -143,7 +153,8 @@ namespace LiveSplit.Model.Input
                 semaphore.Release();
 
                 Application.Run();
-            }) { Name = "Hotkey Message Loop" }.Start();
+            })
+            { Name = "Hotkey Message Loop" }.Start();
 
             semaphore.WaitOne();
 
@@ -161,9 +172,12 @@ namespace LiveSplit.Model.Input
                     try
                     {
                         if (keyBoardHandle != IntPtr.Zero)
+                        {
                             WindowsHookHelper.UnhookWindowsHookEx(keyBoardHandle);
+                        }
                     }
                     catch { }
+
                     keyBoardHandle = WindowsHookHelper.SetWindowsHookEx(
                         WH_KEYBOARD_LL, keyBoardDelegate, hModule, 0);
                 }));
@@ -189,32 +203,44 @@ namespace LiveSplit.Model.Input
                 {
                     key = Keys.ControlKey;
                     if (modifiers.HasFlag(Keys.Control))
+                    {
                         return WindowsHookHelper.CallNextHookEx(
                     keyBoardHandle, Code, wParam, lParam);
+                    }
                 }
                 else if (key == Keys.LMenu || key == Keys.RMenu)
                 {
                     key = Keys.Menu;
                     if (modifiers.HasFlag(Keys.Alt))
+                    {
                         return WindowsHookHelper.CallNextHookEx(
                     keyBoardHandle, Code, wParam, lParam);
+                    }
                 }
                 else if (key == Keys.LShiftKey || key == Keys.RShiftKey)
                 {
                     key = Keys.ShiftKey;
                     if (modifiers.HasFlag(Keys.Shift))
+                    {
                         return WindowsHookHelper.CallNextHookEx(
                     keyBoardHandle, Code, wParam, lParam);
+                    }
                 }
 
                 KeyBoardKeyPressed?.Invoke(this, new KeyEventArgs(key | modifiers));
 
                 if (key == Keys.ControlKey)
+                {
                     modifiers |= Keys.Control;
+                }
                 else if (key == Keys.Menu)
+                {
                     modifiers |= Keys.Alt;
+                }
                 else if (key == Keys.ShiftKey)
+                {
                     modifiers |= Keys.Shift;
+                }
                 else if (key == Keys.Delete && modifiers.HasFlag(Keys.Control) && modifiers.HasFlag(Keys.Alt))
                 {
                     modifiers &= ~Keys.Control;
@@ -226,11 +252,17 @@ namespace LiveSplit.Model.Input
                 Keys key = (Keys)hookStruct.vkCode;
 
                 if (key == Keys.LControlKey || key == Keys.RControlKey)
+                {
                     modifiers &= ~Keys.Control;
+                }
                 else if (key == Keys.LMenu || key == Keys.RMenu)
+                {
                     modifiers &= ~Keys.Alt;
+                }
                 else if (key == Keys.LShiftKey || key == Keys.RShiftKey)
+                {
                     modifiers &= ~Keys.Shift;
+                }
             }
 
             return WindowsHookHelper.CallNextHookEx(
@@ -274,7 +306,6 @@ namespace LiveSplit.Model.Input
 
         [DllImport("User32.dll")]
         public static extern IntPtr UnhookWindowsHookEx(IntPtr hHook);
-
 
         [DllImport("User32.dll")]
         public static extern IntPtr SetWindowsHookEx(

@@ -1,10 +1,12 @@
-﻿using LiveSplit.Model;
-using LiveSplit.Options;
-using SpeedrunComSharp;
-using System;
+﻿using System;
 using System.Drawing;
 using System.Linq;
 using System.Net;
+
+using LiveSplit.Model;
+using LiveSplit.Options;
+
+using SpeedrunComSharp;
 
 namespace LiveSplit.Web.Share
 {
@@ -22,11 +24,15 @@ namespace LiveSplit.Web.Share
         public static bool MakeSureUserIsAuthenticated()
         {
             if (Client.IsAccessTokenValid)
+            {
                 return true;
+            }
 
             var accessToken = Authenticator?.GetAccessToken();
             if (string.IsNullOrEmpty(accessToken))
+            {
                 return false;
+            }
 
             Client.AccessToken = accessToken;
 
@@ -52,9 +58,13 @@ namespace LiveSplit.Web.Share
             var time = new Time(realTime: times.RealTime);
 
             if (times.GameTime.HasValue)
+            {
                 time.GameTime = times.GameTime.Value;
+            }
             else if (times.RealTimeWithoutLoads.HasValue)
+            {
                 time.GameTime = times.RealTimeWithoutLoads.Value;
+            }
 
             return time;
         }
@@ -116,8 +126,8 @@ namespace LiveSplit.Web.Share
         {
             var runTime = run.Last().PersonalBestSplitTime;
 
-            var attempt = run.AttemptHistory.FirstOrDefault(x => 
-                x.Time.GameTime == runTime.GameTime 
+            var attempt = run.AttemptHistory.FirstOrDefault(x =>
+                x.Time.GameTime == runTime.GameTime
                 && x.Time.RealTime == runTime.RealTime);
 
             return attempt.Ended?.Time;
@@ -210,7 +220,7 @@ namespace LiveSplit.Web.Share
             Client.AccessToken = null;
         }
 
-        public static bool SubmitRun(IRun run, out string reasonForRejection, 
+        public static bool SubmitRun(IRun run, out string reasonForRejection,
             string comment = null, Uri videoUri = null, DateTime? date = null,
             TimeSpan? withoutLoads = null,
             bool submitToSplitsIO = true)

@@ -1,9 +1,11 @@
-﻿using LiveSplit.Options;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+
+using LiveSplit.Options;
+
 using UpdateManager;
 
 namespace LiveSplit.Updates
@@ -32,7 +34,7 @@ namespace LiveSplit.Updates
 
                         Action promptForUpdates = () =>
                         {
-                            DialogResult result = (new ScrollableMessageBox()).Show(dialogText, "New updates are available", MessageBoxButtons.YesNo);
+                            DialogResult result = new ScrollableMessageBox().Show(dialogText, "New updates are available", MessageBoxButtons.YesNo);
                             if (result == DialogResult.Yes)
                             {
                                 try
@@ -48,10 +50,15 @@ namespace LiveSplit.Updates
                         };
 
                         if (form.InvokeRequired)
+                        {
                             form.Invoke(promptForUpdates);
+                        }
                         else
+                        {
                             promptForUpdates();
+                        }
                     }
+
                     AlreadyChecked.AddRange(actualUpdateables.Select(x => x.GetType()));
                 }
                 catch (Exception e)
@@ -65,7 +72,7 @@ namespace LiveSplit.Updates
         {
             try
             {
-                return Version.Parse($"{ Git.LastTag }.{ Git.CommitsSinceLastTag }");
+                return Version.Parse($"{Git.LastTag}.{Git.CommitsSinceLastTag}");
             }
             catch (Exception ex)
             {
@@ -77,7 +84,7 @@ namespace LiveSplit.Updates
         private static string GetUserAgent()
         {
             var versionString = (Version != null) ? Version.ToString() : "Unknown";
-            return $"LiveSplit/{ versionString }";
+            return $"LiveSplit/{versionString}";
         }
     }
 }

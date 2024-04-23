@@ -19,7 +19,9 @@ namespace LiveSplit.Model
         }
 
         private static bool isAllCapsOrDigit(string name)
-            => name.All(c => (char.IsUpper(c) || char.IsDigit(c)));
+        {
+            return name.All(c => char.IsUpper(c) || char.IsDigit(c));
+        }
 
         private static bool tokenize(string name, string splitToken, List<string> list)
         {
@@ -40,6 +42,7 @@ namespace LiveSplit.Model
                 {
                     list.AddRange(seriesTitleAbbreviations);
                 }
+
                 list.AddRange(subTitleAbbreviations);
 
                 var isThereOnlyOneSeriesTitleAbbreviation = seriesTitleAbbreviations.Count == 1;
@@ -48,8 +51,8 @@ namespace LiveSplit.Model
                 {
                     foreach (var seriesTitleAbbreviation in seriesTitleAbbreviations)
                     {
-                        if (isSeriesTitleRepresentative 
-                            || seriesTitleAbbreviation != seriesTitle 
+                        if (isSeriesTitleRepresentative
+                            || seriesTitleAbbreviation != seriesTitle
                             || isThereOnlyOneSeriesTitleAbbreviation)
                         {
                             list.Add(seriesTitleAbbreviation + splitToken + subTitleAbbreviation);
@@ -59,6 +62,7 @@ namespace LiveSplit.Model
 
                 return true;
             }
+
             return false;
         }
 
@@ -82,6 +86,7 @@ namespace LiveSplit.Model
 
                 return true;
             }
+
             return false;
         }
 
@@ -103,12 +108,18 @@ namespace LiveSplit.Model
             {
                 var beforeParentheses = name.Substring(0, indexStart).Trim();
                 var afterParentheses = name.Substring(indexEnd + 1).Trim();
-                name = $"{ beforeParentheses } { afterParentheses }".Trim();
+                name = $"{beforeParentheses} {afterParentheses}".Trim();
                 list.AddRange(name.GetAbbreviations());
             }
-            else if (tokenize(name, ": ", list)) { }
-            else if (tokenize(name, " - ", list)) { }
-            else if (tokenizeAndKeepBoth(name, " | ", list)) { }
+            else if (tokenize(name, ": ", list))
+            {
+            }
+            else if (tokenize(name, " - ", list))
+            {
+            }
+            else if (tokenizeAndKeepBoth(name, " | ", list))
+            {
+            }
             else if (name.ToLowerInvariant().Contains(" and "))
             {
                 var index = name.ToLower().IndexOf(" and ");
@@ -139,11 +150,17 @@ namespace LiveSplit.Model
                         .Select(x =>
                             {
                                 if (char.IsDigit(x[0]))
+                                {
                                     return x
                                         .TakeWhile(c => c != ' ')
                                         .Aggregate("", (a, b) => a + b);
+                                }
+
                                 if (x.Length <= 4 && isAllCapsOrDigit(x))
+                                {
                                     return " " + x;
+                                }
+
                                 return x[0].ToString();
                             })
                         .Aggregate("", (a, b) => a + b)

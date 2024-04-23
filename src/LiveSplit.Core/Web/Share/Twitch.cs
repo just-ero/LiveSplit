@@ -1,15 +1,14 @@
-﻿using LiveSplit.Model;
-using LiveSplit.Options;
-using LiveSplit.TimeFormatters;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Threading;
 using System.Web;
 using System.Windows.Forms;
+
+using LiveSplit.Model;
+using LiveSplit.Options;
 
 namespace LiveSplit.Web.Share
 {
@@ -51,11 +50,11 @@ namespace LiveSplit.Web.Share
         {
             return new Uri(BaseUri, subUri);
         }
-    
+
         public string PlatformName => "Twitch";
 
-        public string Description =>
-@"Sharing to Twitch will automatically update your 
+        public string Description
+=> @"Sharing to Twitch will automatically update your 
 stream title and game playing based on the information 
 in your splits. Twitch must authenticate with LiveSplit 
 the first time that sharing to Twitch is used.";
@@ -72,16 +71,23 @@ the first time that sharing to Twitch is used.";
             AccessToken = WebCredentials.TwitchAccessToken;
 
             if (VerifyAccessToken())
+            {
                 return true;
+            }
+
             if (!promptIfNoToken)
+            {
                 return false;
+            }
 
             AccessToken = TwitchAccessTokenPrompt.GetAccessToken();
 
             var verified = VerifyAccessToken();
 
             if (verified)
+            {
                 WebCredentials.TwitchAccessToken = AccessToken;
+            }
 
             return verified;
         }
@@ -93,7 +99,10 @@ the first time that sharing to Twitch is used.";
             request.Method = method;
             request.Accept = "application/json";
             if (!string.IsNullOrEmpty(AccessToken))
+            {
                 request.Headers.Add($"Authorization: Bearer {AccessToken}");
+            }
+
             if (!string.IsNullOrEmpty(data))
             {
                 request.ContentType = "application/json; charset=utf-8";
@@ -133,7 +142,10 @@ the first time that sharing to Twitch is used.";
         public bool VerifyAccessToken()
         {
             if (string.IsNullOrEmpty(AccessToken))
+            {
                 return false;
+            }
+
             try
             {
                 dynamic verificationInfo = curlAbsolute(new Uri("https://id.twitch.tv/oauth2/validate"));
@@ -166,7 +178,11 @@ the first time that sharing to Twitch is used.";
             var result = SearchGame(name);
             var games = (IEnumerable<dynamic>)result.data;
 
-            Func<dynamic, TwitchGame> func = x => new TwitchGame(x.name, x.id);
+            TwitchGame func(dynamic x)
+            {
+                return new TwitchGame(x.name, x.id);
+            }
+
             return games.Select(func);
         }
 
@@ -180,10 +196,12 @@ the first time that sharing to Twitch is used.";
             if (!IsLoggedIn)
             {
                 if (!VerifyLogin(false))
+                {
                     return null;
+                }
             }
 
-            var url = ((IEnumerable<dynamic>)(SearchGame(gameName).data)).First().box_art_url;
+            var url = ((IEnumerable<dynamic>)SearchGame(gameName).data).First().box_art_url;
             var request = WebRequest.Create(url);
 
             using (var response = request.GetResponse())
@@ -228,6 +246,7 @@ the first time that sharing to Twitch is used.";
                         {
                             game = dialog.Game;
                         }
+
                         resolved = true;
                     }
                     catch (Exception exc)

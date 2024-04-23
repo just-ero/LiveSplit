@@ -1,16 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
+
+using LiveSplit.Model;
 using LiveSplit.Options;
 using LiveSplit.UI;
-using LiveSplit.Model;
-using System.Collections.Generic;
-using SpeedrunComSharp;
-using LiveSplit.Web.Share;
-using System.Diagnostics;
-using System.Text;
 using LiveSplit.Utils;
+using LiveSplit.Web.Share;
+
+using SpeedrunComSharp;
 
 namespace LiveSplit.View
 {
@@ -27,7 +29,9 @@ namespace LiveSplit.View
                 get
                 {
                     if (Metadata.VariableValueNames.ContainsKey(Variable.Name))
+                    {
                         return Metadata.VariableValueNames[Variable.Name];
+                    }
 
                     return string.Empty;
                 }
@@ -38,21 +42,30 @@ namespace LiveSplit.View
                     if (choice == null)
                     {
                         if (Variable.IsUserDefined)
+                        {
                             variableValue = value;
+                        }
                     }
                     else
                     {
                         variableValue = choice.Value;
                     }
+
                     if (Metadata.VariableValueNames.ContainsKey(Variable.Name))
                     {
                         if (variableValue == null)
+                        {
                             Metadata.VariableValueNames.Remove(Variable.Name);
+                        }
                         else
+                        {
                             Metadata.VariableValueNames[Variable.Name] = variableValue;
+                        }
                     }
                     else if (variableValue != null)
+                    {
                         Metadata.VariableValueNames.Add(Variable.Name, variableValue);
+                    }
 
                     VariableChanged?.Invoke(this, new MetadataChangedEventArgs(true));
                 }
@@ -67,8 +80,8 @@ namespace LiveSplit.View
         public RunMetadata Metadata { get; set; }
         public event EventHandler MetadataChanged;
 
-        private List<Control> dynamicControls;
-        private List<VariableBinding> variableBindings;
+        private readonly List<Control> dynamicControls;
+        private readonly List<VariableBinding> variableBindings;
 
         public MetadataControl()
         {
@@ -81,19 +94,23 @@ namespace LiveSplit.View
         {
             RefreshInformation();
             if (Metadata != null)
+            {
                 Metadata.PropertyChanged += Metadata_Changed;
+            }
         }
 
-        void Metadata_Changed(object sender, EventArgs e)
+        private void Metadata_Changed(object sender, EventArgs e)
         {
             var metadataChanged = MetadataChanged;
             if (metadataChanged != null)
+            {
                 metadataChanged(this, e);
+            }
         }
 
         private int getDynamicControlRowIndex(int controlIndex)
         {
-            return controlIndex / VariablesPerRow + VariablesFirstRowIndex;
+            return (controlIndex / VariablesPerRow) + VariablesFirstRowIndex;
         }
 
         private int getDynamicControlColumnIndex(int controlIndex)
@@ -104,7 +121,9 @@ namespace LiveSplit.View
         public void RefreshInformation()
         {
             if (Metadata == null)
+            {
                 return;
+            }
 
             cmbRegion.Items.Clear();
             cmbPlatform.Items.Clear();
@@ -152,7 +171,7 @@ namespace LiveSplit.View
                     emulatedCheckBox.DataBindings.Add("Checked", Metadata, "UsesEmulator", false, DataSourceUpdateMode.OnPropertyChanged);
 
                     dynamicControls.Add(emulatedCheckBox);
-                    
+
                     controlIndex++;
                 }
 
@@ -244,9 +263,13 @@ namespace LiveSplit.View
                     if (additionalRule != firstRule)
                     {
                         if (additionalRule != lastRule)
+                        {
                             stringBuilder.Append(", ");
+                        }
                         else
+                        {
                             stringBuilder.Append(" and ");
+                        }
                     }
 
                     stringBuilder.Append(additionalRule);
@@ -273,7 +296,7 @@ namespace LiveSplit.View
                 Invoke(new Action(RefreshAssociateButton));
                 return;
             }
-            
+
             if (string.IsNullOrEmpty(Metadata.RunID))
             {
                 btnSubmit.Enabled = true;
@@ -346,8 +369,7 @@ namespace LiveSplit.View
 
         private void btnSubmit_Click(object sender, EventArgs e)
         {
-            string reason;
-            var isValid = SpeedrunCom.ValidateRun(Metadata.LiveSplitRun, out reason);
+            var isValid = SpeedrunCom.ValidateRun(Metadata.LiveSplitRun, out string reason);
 
             if (!isValid)
             {

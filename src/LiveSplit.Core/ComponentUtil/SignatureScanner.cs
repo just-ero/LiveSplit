@@ -1,12 +1,12 @@
-﻿using System;
+﻿// Note: Please be careful when modifying this because it could break existing components!
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-
-// Note: Please be careful when modifying this because it could break existing components!
 
 namespace LiveSplit.ComponentUtil
 {
@@ -20,7 +20,8 @@ namespace LiveSplit.ComponentUtil
         public IntPtr Address
         {
             get { return _address; }
-            set {
+            set
+            {
                 _memory = null;
                 _address = value;
             }
@@ -29,7 +30,8 @@ namespace LiveSplit.ComponentUtil
         public int Size
         {
             get { return _size; }
-            set {
+            set
+            {
                 _memory = null;
                 _size = value;
             }
@@ -38,7 +40,8 @@ namespace LiveSplit.ComponentUtil
         public Process Process
         {
             get { return _process; }
-            set {
+            set
+            {
                 _memory = null;
                 _process = value;
             }
@@ -47,7 +50,8 @@ namespace LiveSplit.ComponentUtil
         public byte[] Memory
         {
             get { return _memory; }
-            set {
+            set
+            {
                 _memory = value;
                 _size = value.Length;
             }
@@ -56,11 +60,19 @@ namespace LiveSplit.ComponentUtil
         public SignatureScanner(Process proc, IntPtr addr, int size)
         {
             if (proc == null)
+            {
                 throw new ArgumentNullException(nameof(proc));
+            }
+
             if (addr == IntPtr.Zero)
+            {
                 throw new ArgumentException("addr cannot be IntPtr.Zero.", nameof(addr));
+            }
+
             if (size <= 0)
+            {
                 throw new ArgumentException("size cannot be less than zero.", nameof(size));
+            }
 
             _process = proc;
             _address = addr;
@@ -71,7 +83,9 @@ namespace LiveSplit.ComponentUtil
         public SignatureScanner(byte[] mem)
         {
             if (mem == null)
+            {
                 throw new ArgumentNullException(nameof(mem));
+            }
 
             _memory = mem;
             _size = mem.Length;
@@ -86,7 +100,9 @@ namespace LiveSplit.ComponentUtil
         public IntPtr Scan(SigScanTarget target, int align)
         {
             if ((long)_address % align != 0)
+            {
                 throw new ArgumentOutOfRangeException(nameof(align), "start address must be aligned");
+            }
 
             return ScanAll(target, align).FirstOrDefault();
         }
@@ -94,18 +110,19 @@ namespace LiveSplit.ComponentUtil
         public IEnumerable<IntPtr> ScanAll(SigScanTarget target, int align = 1)
         {
             if ((long)_address % align != 0)
+            {
                 throw new ArgumentOutOfRangeException(nameof(align), "start address must be aligned");
+            }
 
             return ScanInternal(target, align);
         }
 
-        IEnumerable<IntPtr> ScanInternal(SigScanTarget target, int align)
+        private IEnumerable<IntPtr> ScanInternal(SigScanTarget target, int align)
         {
             if (_memory == null || _memory.Length != _size)
             {
-                byte[] bytes;
 
-                if (!_process.ReadBytes(_address, _size, out bytes))
+                if (!_process.ReadBytes(_address, _size, out var bytes))
                 {
                     _memory = null;
                     yield break;
@@ -121,13 +138,16 @@ namespace LiveSplit.ComponentUtil
                 {
                     var ptr = _address + off + sig.Offset;
                     if (target.OnFound != null)
+                    {
                         ptr = target.OnFound(_process, this, ptr);
+                    }
+
                     yield return ptr;
                 }
             }
         }
 
-        class ScanEnumerator : IEnumerator<int>, IEnumerable<int>
+        private class ScanEnumerator : IEnumerator<int>, IEnumerable<int>
         {
             // IEnumerator
             public int Current { get; private set; }
@@ -145,7 +165,9 @@ namespace LiveSplit.ComponentUtil
             public ScanEnumerator(byte[] mem, int align, SigScanTarget.Signature sig)
             {
                 if (mem.Length < sig.Pattern.Length)
+                {
                     throw new ArgumentOutOfRangeException(nameof(mem), "memory buffer length must be >= pattern length");
+                }
 
                 _memory = mem;
                 _align = align;
@@ -178,7 +200,7 @@ namespace LiveSplit.ComponentUtil
                 return this;
             }
 
-            unsafe bool NextPattern()
+            private unsafe bool NextPattern()
             {
                 fixed (bool* mask = _sig.Mask)
                 fixed (byte* mem = _memory, sig = _sig.Pattern)
@@ -194,9 +216,14 @@ namespace LiveSplit.ComponentUtil
                         for (int sigIndex = 0; sigIndex < sigLen; sigIndex++)
                         {
                             if (mask[sigIndex])
+                            {
                                 continue;
+                            }
+
                             if (sig[sigIndex] != mem[index + sigIndex])
+                            {
                                 goto next;
+                            }
                         }
 
                         // fully matched
@@ -212,7 +239,7 @@ namespace LiveSplit.ComponentUtil
                 }
             }
 
-            unsafe bool NextBytes()
+            private unsafe bool NextBytes()
             {
                 // just a straight memory compare
                 fixed (byte* mem = _memory, sig = _sig.Pattern)
@@ -227,7 +254,9 @@ namespace LiveSplit.ComponentUtil
                         for (int sigIndex = 0; sigIndex < sigLen; sigIndex++)
                         {
                             if (sig[sigIndex] != mem[index + sigIndex])
+                            {
                                 goto next;
+                            }
                         }
 
                         // fully matched
@@ -257,7 +286,7 @@ namespace LiveSplit.ComponentUtil
         public delegate IntPtr OnFoundCallback(Process proc, SignatureScanner scanner, IntPtr ptr);
         public OnFoundCallback OnFound { get; set; }
 
-        private List<Signature> _sigs;
+        private readonly List<Signature> _sigs;
         public ReadOnlyCollection<Signature> Signatures
         {
             get { return _sigs.AsReadOnly(); }
@@ -288,7 +317,9 @@ namespace LiveSplit.ComponentUtil
         {
             string sigStr = string.Join(string.Empty, signature).Replace(" ", string.Empty);
             if (sigStr.Length % 2 != 0)
+            {
                 throw new ArgumentException(nameof(signature));
+            }
 
             var sigBytes = new List<byte>();
             var sigMask = new List<bool>();
@@ -296,8 +327,7 @@ namespace LiveSplit.ComponentUtil
 
             for (int i = 0; i < sigStr.Length; i += 2)
             {
-                byte b;
-                if (byte.TryParse(sigStr.Substring(i, 2), NumberStyles.HexNumber, null, out b))
+                if (byte.TryParse(sigStr.Substring(i, 2), NumberStyles.HexNumber, null, out byte b))
                 {
                     sigBytes.Add(b);
                     sigMask.Add(false);
@@ -310,7 +340,8 @@ namespace LiveSplit.ComponentUtil
                 }
             }
 
-            _sigs.Add(new Signature {
+            _sigs.Add(new Signature
+            {
                 Pattern = sigBytes.ToArray(),
                 Mask = hasMask ? sigMask.ToArray() : null,
                 Offset = offset,
@@ -319,7 +350,8 @@ namespace LiveSplit.ComponentUtil
 
         public void AddSignature(int offset, params byte[] binary)
         {
-            _sigs.Add(new Signature {
+            _sigs.Add(new Signature
+            {
                 Pattern = binary,
                 Mask = null,
                 Offset = offset,

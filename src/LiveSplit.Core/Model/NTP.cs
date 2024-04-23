@@ -56,10 +56,10 @@ namespace LiveSplit.Model
                 intPart = SwapEndianness(intPart);
                 fractPart = SwapEndianness(fractPart);
 
-                var milliseconds = (intPart * 1000) + ((fractPart * 1000) / 0x100000000L);
+                var milliseconds = (intPart * 1000) + (fractPart * 1000 / 0x100000000L);
 
                 //**UTC** time
-                var networkDateTime = (new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc)).AddMilliseconds(milliseconds);
+                var networkDateTime = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(milliseconds);
                 var resultingTime = networkDateTime + delta;
 
                 var offsetFromLocal = (DateTime.UtcNow - resultingTime).Duration();
@@ -73,7 +73,7 @@ namespace LiveSplit.Model
         }
 
         // stackoverflow.com/a/3294698
-        static uint SwapEndianness(ulong x)
+        private static uint SwapEndianness(ulong x)
         {
             return (uint)(((x & 0x000000ff) << 24) +
                            ((x & 0x0000ff00) << 8) +

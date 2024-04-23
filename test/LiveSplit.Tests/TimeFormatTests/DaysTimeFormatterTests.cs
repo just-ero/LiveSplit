@@ -1,8 +1,10 @@
 ﻿using System;
+
 using LiveSplit.TimeFormatters;
+
 using Xunit;
 
-namespace LiveSplit.Tests.TimeFormatterTests 
+namespace LiveSplit.Tests.TimeFormatterTests
 {
     public class DaysTimeFormatterTests
     {

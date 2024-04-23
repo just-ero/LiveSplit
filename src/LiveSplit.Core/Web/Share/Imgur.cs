@@ -1,8 +1,4 @@
-﻿using LiveSplit.Model;
-using LiveSplit.Options;
-using LiveSplit.TimeFormatters;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -11,6 +7,10 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Windows;
+
+using LiveSplit.Model;
+using LiveSplit.Options;
+using LiveSplit.TimeFormatters;
 
 namespace LiveSplit.Web.Share
 {
@@ -109,14 +109,22 @@ namespace LiveSplit.Web.Share
 
             titleBuilder.Append(new RegularTimeFormatter(TimeAccuracy.Seconds).Format(run.Last().PersonalBestSplitTime[method]));
             if (titleBuilder.Length > 0 && (!gameNameEmpty || !categoryEmpty))
+            {
                 titleBuilder.Append(" in ");
+            }
+
             titleBuilder.Append(run.GameName);
             if (!gameNameEmpty && !categoryEmpty)
+            {
                 titleBuilder.Append(" - ");
+            }
+
             titleBuilder.Append(run.CategoryName);
 
             if (attachSplits)
+            {
                 comment += " " + SplitsIO.Instance.Share(run, screenShotFunction);
+            }
 
             if (screenShotFunction != null)
             {

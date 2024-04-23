@@ -1,11 +1,11 @@
-﻿using LiveSplit.Options;
-using LiveSplit.Utils;
-using System;
+﻿using System;
 using System.Windows.Forms;
+
+using LiveSplit.Options;
+using LiveSplit.Utils;
 
 namespace LiveSplit.UI
 {
-
     /// <summary>
     /// Turn on item dragging for some ListBox control
     /// </summary>
@@ -14,16 +14,11 @@ namespace LiveSplit.UI
         private ListBox listBox;
         public Form Form { get; set; }
 
-        private int dragItemIndex = -1;
-
         /// <summary>
         /// Gets the index of the dragged item.
         /// </summary>
         /// <value>The index of the dragged item.</value>
-        public int DragItemIndex
-        {
-            get { return dragItemIndex; }
-        }
+        public int DragItemIndex { get; private set; } = -1;
 
         private bool dragging = false;
 
@@ -59,12 +54,7 @@ namespace LiveSplit.UI
             listBox.MouseMove -= new MouseEventHandler(MouseMoveHandler);
         }
 
-        private Cursor dragCursor = Cursors.SizeNS;
-        public Cursor DragCursor
-        {
-            get { return dragCursor; }
-            set { dragCursor = value; }
-        }
+        public Cursor DragCursor { get; set; } = Cursors.SizeNS;
 
         /// <summary>
         /// Raises the <see cref="E:ItemMoved"> event.
@@ -72,7 +62,10 @@ namespace LiveSplit.UI
         /// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
         protected void OnItemMoved(EventArgs e)
         {
-            if (ItemMoved != null) ItemMoved(this, e);
+            if (ItemMoved != null)
+            {
+                ItemMoved(this, e);
+            }
         }
 
         /// <summary>
@@ -82,15 +75,14 @@ namespace LiveSplit.UI
 
         private void MouseDownHandler(object sender, MouseEventArgs e)
         {
-            dragItemIndex = listBox.SelectedIndex;
+            DragItemIndex = listBox.SelectedIndex;
         }
-
 
         private Cursor prevCursor = Cursors.Default;
 
         private void MouseUpHandler(object sender, MouseEventArgs e)
         {
-            dragItemIndex = -1;
+            DragItemIndex = -1;
             if (dragging)
             {
                 listBox.Cursor = prevCursor;
@@ -104,7 +96,7 @@ namespace LiveSplit.UI
             {
                 try
                 {
-                    if (dragItemIndex >= 0 && e.Y > 0)
+                    if (DragItemIndex >= 0 && e.Y > 0)
                     {
                         if (!dragging)
                         {
@@ -112,19 +104,22 @@ namespace LiveSplit.UI
                             prevCursor = listBox.Cursor;
                             listBox.Cursor = DragCursor;
                         }
+
                         int dstIndex = listBox.IndexFromPoint(e.X, e.Y);
 
-                        if (dragItemIndex != dstIndex)
+                        if (DragItemIndex != dstIndex)
                         {
-                            dynamic item = listBox.Items[dragItemIndex];
+                            dynamic item = listBox.Items[DragItemIndex];
                             listBox.BeginUpdate();
                             try
                             {
                                 dynamic bindingList = listBox.DataSource;
 
-                                bindingList.RemoveAt(dragItemIndex);
+                                bindingList.RemoveAt(DragItemIndex);
                                 if (dstIndex != ListBox.NoMatches)
+                                {
                                     bindingList.Insert(dstIndex, item);
+                                }
                                 else
                                 {
                                     bindingList.Add(item);
@@ -137,7 +132,8 @@ namespace LiveSplit.UI
                             {
                                 listBox.EndUpdate();
                             }
-                            dragItemIndex = dstIndex;
+
+                            DragItemIndex = dstIndex;
                             OnItemMoved(EventArgs.Empty);
                         }
                     }

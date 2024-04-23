@@ -1,13 +1,13 @@
 ﻿using System;
-using System.IO;
 using System.Security;
+
 using Microsoft.Win32;
 
 namespace LiveSplit.Register
 {
     // All credit for the following code goes to Richard James Moss at codeproject.com
     // from this article: https://www.codeproject.com/Articles/793687/Configuring-the-Emulation-Mode-of-an-Internet-Expl
-    
+
     // Configuring the emulation mode of an Internet Explorer WebBrowser control
     // http://cyotek.com/blog/configuring-the-emulation-mode-of-an-internet-explorer-webbrowser-control
 
@@ -104,11 +104,13 @@ namespace LiveSplit.Register
                 if (key != null)
                 {
                     object value;
-                    
+
                     value = key.GetValue(programName, null);
 
                     if (value != null)
+                    {
                         result = (BrowserEmulationVersion)Convert.ToInt32(value);
+                    }
                 }
             }
             catch (SecurityException)
@@ -153,7 +155,9 @@ namespace LiveSplit.Register
                         version = value.ToString();
                         separator = version.IndexOf('.');
                         if (separator != -1)
+                        {
                             int.TryParse(version.Substring(0, separator), out result);
+                        }
                     }
                 }
             }
@@ -200,11 +204,15 @@ namespace LiveSplit.Register
                 if (key != null)
                 {
                     if (browserEmulationVersion != BrowserEmulationVersion.Default)
+                    {
                         // if it's a valid value, update or create the value
                         key.SetValue(programName, (int)browserEmulationVersion, RegistryValueKind.DWord);
+                    }
                     else
+                    {
                         // otherwise, remove the existing value
                         key.DeleteValue(programName, false);
+                    }
 
                     result = true;
                 }

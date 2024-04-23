@@ -1,11 +1,11 @@
-﻿using LiveSplit.Model;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Input;
+
+using LiveSplit.Model;
 using LiveSplit.Model.Input;
 using LiveSplit.Web.SRL;
-using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Windows.Input;
-using LiveSplit.UI.Components;
 
 namespace LiveSplit.Options
 {
@@ -26,51 +26,63 @@ namespace LiveSplit.Options
         public IDictionary<string, bool> ComparisonGeneratorStates { get; set; }
 
         // Deprecated properties
-        public KeyOrButton SplitKey {
+        public KeyOrButton SplitKey
+        {
             get { return HotkeyProfiles.First().Value.SplitKey; }
             set { HotkeyProfiles.First().Value.SplitKey = value; }
         }
-        public KeyOrButton ResetKey {
+        public KeyOrButton ResetKey
+        {
             get { return HotkeyProfiles.First().Value.ResetKey; }
             set { HotkeyProfiles.First().Value.ResetKey = value; }
         }
-        public KeyOrButton SkipKey {
+        public KeyOrButton SkipKey
+        {
             get { return HotkeyProfiles.First().Value.SkipKey; }
             set { HotkeyProfiles.First().Value.SkipKey = value; }
         }
-        public KeyOrButton UndoKey {
+        public KeyOrButton UndoKey
+        {
             get { return HotkeyProfiles.First().Value.UndoKey; }
             set { HotkeyProfiles.First().Value.UndoKey = value; }
         }
-        public KeyOrButton PauseKey {
+        public KeyOrButton PauseKey
+        {
             get { return HotkeyProfiles.First().Value.PauseKey; }
             set { HotkeyProfiles.First().Value.PauseKey = value; }
         }
-        public KeyOrButton ToggleGlobalHotkeys {
+        public KeyOrButton ToggleGlobalHotkeys
+        {
             get { return HotkeyProfiles.First().Value.ToggleGlobalHotkeys; }
             set { HotkeyProfiles.First().Value.ToggleGlobalHotkeys = value; }
         }
-        public KeyOrButton SwitchComparisonPrevious {
+        public KeyOrButton SwitchComparisonPrevious
+        {
             get { return HotkeyProfiles.First().Value.SwitchComparisonPrevious; }
             set { HotkeyProfiles.First().Value.SwitchComparisonPrevious = value; }
         }
-        public KeyOrButton SwitchComparisonNext {
+        public KeyOrButton SwitchComparisonNext
+        {
             get { return HotkeyProfiles.First().Value.SwitchComparisonNext; }
             set { HotkeyProfiles.First().Value.SwitchComparisonNext = value; }
         }
-        public float HotkeyDelay {
+        public float HotkeyDelay
+        {
             get { return HotkeyProfiles.First().Value.HotkeyDelay; }
             set { HotkeyProfiles.First().Value.HotkeyDelay = value; }
         }
-        public bool GlobalHotkeysEnabled {
+        public bool GlobalHotkeysEnabled
+        {
             get { return HotkeyProfiles.First().Value.GlobalHotkeysEnabled; }
             set { HotkeyProfiles.First().Value.GlobalHotkeysEnabled = value; }
         }
-        public bool DeactivateHotkeysForOtherPrograms {
+        public bool DeactivateHotkeysForOtherPrograms
+        {
             get { return HotkeyProfiles.First().Value.DeactivateHotkeysForOtherPrograms; }
             set { HotkeyProfiles.First().Value.DeactivateHotkeysForOtherPrograms = value; }
         }
-        public bool DoubleTapPrevention {
+        public bool DoubleTapPrevention
+        {
             get { return HotkeyProfiles.First().Value.DoubleTapPrevention; }
             set { HotkeyProfiles.First().Value.DoubleTapPrevention = value; }
         }
@@ -87,7 +99,7 @@ namespace LiveSplit.Options
         {
             return new Settings()
             {
-                HotkeyProfiles = HotkeyProfiles.ToDictionary(x => x.Key, x => (HotkeyProfile)(x.Value.Clone())),
+                HotkeyProfiles = HotkeyProfiles.ToDictionary(x => x.Key, x => (HotkeyProfile)x.Value.Clone()),
                 WarnOnReset = WarnOnReset,
                 RecentSplits = new List<RecentSplitsFile>(RecentSplits),
                 RecentLayouts = new List<string>(RecentLayouts),
@@ -129,6 +141,7 @@ namespace LiveSplit.Options
                         Log.Error(e);
                     }
                 }
+
                 if (hotkeyProfile.ResetKey != null)
                 {
                     try
@@ -140,6 +153,7 @@ namespace LiveSplit.Options
                         Log.Error(e);
                     }
                 }
+
                 if (hotkeyProfile.SkipKey != null)
                 {
                     try
@@ -151,6 +165,7 @@ namespace LiveSplit.Options
                         Log.Error(e);
                     }
                 }
+
                 if (hotkeyProfile.UndoKey != null)
                 {
                     try
@@ -162,6 +177,7 @@ namespace LiveSplit.Options
                         Log.Error(e);
                     }
                 }
+
                 if (hotkeyProfile.PauseKey != null)
                 {
                     try
@@ -173,6 +189,7 @@ namespace LiveSplit.Options
                         Log.Error(e);
                     }
                 }
+
                 if (hotkeyProfile.ToggleGlobalHotkeys != null)
                 {
                     try
@@ -184,6 +201,7 @@ namespace LiveSplit.Options
                         Log.Error(e);
                     }
                 }
+
                 if (hotkeyProfile.SwitchComparisonPrevious != null)
                 {
                     try
@@ -195,6 +213,7 @@ namespace LiveSplit.Options
                         Log.Error(e);
                     }
                 }
+
                 if (hotkeyProfile.SwitchComparisonNext != null)
                 {
                     try
@@ -215,23 +234,32 @@ namespace LiveSplit.Options
         {
             var foundRecentSplitsFile = RecentSplits.FirstOrDefault(x => x.Path == path);
             if (foundRecentSplitsFile.Path != null)
+            {
                 RecentSplits.Remove(foundRecentSplitsFile);
+            }
 
             var recentSplitsFile = new RecentSplitsFile(path, run, lastTimingMethod, lastHotkeyProfile);
 
             RecentSplits.Add(recentSplitsFile);
 
             while (RecentSplits.Count > 50)
+            {
                 RecentSplits.RemoveAt(0);
+            }
         }
 
         public void AddToRecentLayouts(string path)
         {
             if (RecentLayouts.Contains(path))
+            {
                 RecentLayouts.Remove(path);
+            }
+
             RecentLayouts.Add(path);
             while (RecentLayouts.Count > 10)
+            {
                 RecentLayouts.RemoveAt(0);
+            }
         }
 
         private void RegisterHotkey(CompositeHook hook, KeyOrButton key, bool deactivateForOtherPrograms)

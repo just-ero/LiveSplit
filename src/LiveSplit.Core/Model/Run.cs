@@ -1,10 +1,11 @@
-﻿using LiveSplit.Model.Comparisons;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Xml;
+
+using LiveSplit.Model.Comparisons;
 
 namespace LiveSplit.Model
 {
@@ -40,7 +41,7 @@ namespace LiveSplit.Model
             get { return gameName; }
             set
             {
-                gameName = value; 
+                gameName = value;
                 Metadata.Refresh();
                 TriggerPropertyChanged("GameName");
             }
@@ -115,6 +116,7 @@ namespace LiveSplit.Model
             {
                 InternalList.Add(x.Clone() as ISegment);
             }
+
             AttemptHistory = new List<Attempt>();
             Factory = factory;
             ComparisonGenerators = Factory.Create(this).ToList();
@@ -122,11 +124,20 @@ namespace LiveSplit.Model
             Metadata = metadata.Clone(this);
         }
 
-        public int IndexOf(ISegment item) => InternalList.IndexOf(item);
+        public int IndexOf(ISegment item)
+        {
+            return InternalList.IndexOf(item);
+        }
 
-        public void Insert(int index, ISegment item) => InternalList.Insert(index, item);
+        public void Insert(int index, ISegment item)
+        {
+            InternalList.Insert(index, item);
+        }
 
-        public void RemoveAt(int index) => InternalList.RemoveAt(index);
+        public void RemoveAt(int index)
+        {
+            InternalList.RemoveAt(index);
+        }
 
         public ISegment this[int index]
         {
@@ -140,23 +151,44 @@ namespace LiveSplit.Model
             }
         }
 
-        public void Add(ISegment item) => InternalList.Add(item);
+        public void Add(ISegment item)
+        {
+            InternalList.Add(item);
+        }
 
-        public void Clear() => InternalList.Clear();
+        public void Clear()
+        {
+            InternalList.Clear();
+        }
 
-        public bool Contains(ISegment item) => InternalList.Contains(item);
+        public bool Contains(ISegment item)
+        {
+            return InternalList.Contains(item);
+        }
 
-        public void CopyTo(ISegment[] array, int arrayIndex) => InternalList.CopyTo(array, arrayIndex);
+        public void CopyTo(ISegment[] array, int arrayIndex)
+        {
+            InternalList.CopyTo(array, arrayIndex);
+        }
 
         public int Count => InternalList.Count;
 
         public bool IsReadOnly => InternalList.IsReadOnly;
 
-        public bool Remove(ISegment item) => InternalList.Remove(item);
+        public bool Remove(ISegment item)
+        {
+            return InternalList.Remove(item);
+        }
 
-        public IEnumerator<ISegment> GetEnumerator() => InternalList.GetEnumerator();
+        public IEnumerator<ISegment> GetEnumerator()
+        {
+            return InternalList.GetEnumerator();
+        }
 
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
 
         public Run Clone()
         {
@@ -179,6 +211,9 @@ namespace LiveSplit.Model
             return newRun;
         }
 
-        object ICloneable.Clone() => Clone();
+        object ICloneable.Clone()
+        {
+            return Clone();
+        }
     }
 }

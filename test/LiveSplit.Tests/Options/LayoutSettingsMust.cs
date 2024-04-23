@@ -1,6 +1,8 @@
 ﻿using System.Drawing;
-using Xunit;
+
 using LiveSplit.Options;
+
+using Xunit;
 
 namespace LiveSplit.Tests.Options
 {
@@ -13,8 +15,9 @@ namespace LiveSplit.Tests.Options
             ValidateSubject(sut);
         }
 
-        private static LayoutSettings CreateSubjectUnderTest() =>
-            new LayoutSettings
+        private static LayoutSettings CreateSubjectUnderTest()
+        {
+            return new LayoutSettings
             {
                 TextColor = Color.Yellow,
                 AheadGainingTimeColor = Color.Red,
@@ -45,6 +48,7 @@ namespace LiveSplit.Tests.Options
                 TimerFont = new Font("Arial", 9.0F),
                 TimesFont = new Font("Arial", 10.0F)
             };
+        }
 
         private static void ValidateSubject(LayoutSettings sut)
         {

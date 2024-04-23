@@ -1,6 +1,7 @@
-﻿using LiveSplit.Model;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Text;
+
+using LiveSplit.Model;
 
 namespace LiveSplit.Web.SRL.RaceViewers
 {
@@ -15,6 +16,7 @@ namespace LiveSplit.Web.SRL.RaceViewers
                 builder.Append(stream);
                 builder.Append("/");
             }
+
             builder.Length -= 1;
             Process.Start(builder.ToString());
         }

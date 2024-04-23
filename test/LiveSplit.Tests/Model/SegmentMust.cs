@@ -1,9 +1,12 @@
-﻿using System.Drawing;
-using Xunit;
+﻿using System;
+using System.Drawing;
+
 using LiveSplit.Model;
 using LiveSplit.Model.Comparisons;
+
+using Xunit;
+
 using static LiveSplit.Tests.Model.Constants;
-using System;
 
 namespace LiveSplit.Tests.Model
 {
@@ -34,8 +37,10 @@ namespace LiveSplit.Tests.Model
             VerifySegment(sut);
         }
 
-        private static Segment CreateSubjectUnderTest() =>
-            new Segment("any name", AnyPersonalBestSplitTime, AnyBestSegmentTime, AnyBitmap, AnySplitTime);
+        private static Segment CreateSubjectUnderTest()
+        {
+            return new Segment("any name", AnyPersonalBestSplitTime, AnyBestSegmentTime, AnyBitmap, AnySplitTime);
+        }
 
         private static void VerifySegment(Segment sut)
         {

@@ -1,8 +1,9 @@
-﻿using LiveSplit.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+
+using LiveSplit.Model;
 
 namespace LiveSplit.UI.Components
 {
@@ -131,6 +132,7 @@ namespace LiveSplit.UI.Components
                 LongestString = InformationName;
                 NameMeasureLabel.Text = LongestString;
             }
+
             NameMeasureLabel.Text = LongestString;
             NameMeasureLabel.Font = state.LayoutSettings.TextFont;
             NameMeasureLabel.SetActualWidth(g);

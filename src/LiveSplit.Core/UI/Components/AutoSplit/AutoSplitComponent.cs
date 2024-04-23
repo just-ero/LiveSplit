@@ -1,4 +1,5 @@
 ﻿using LiveSplit.Model;
+
 namespace LiveSplit.UI.Components.AutoSplit
 {
     public abstract class AutoSplitComponent : LogicComponent
@@ -37,7 +38,9 @@ namespace LiveSplit.UI.Components.AutoSplit
 
                 var gameTime = AutoSplitter.GetGameTime(state);
                 if (gameTime != null)
+                {
                     state.SetGameTime(gameTime);
+                }
             }
         }
     }

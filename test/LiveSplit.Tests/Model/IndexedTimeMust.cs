@@ -1,8 +1,11 @@
 ﻿using System;
-using Xunit;
-using LiveSplit.Model;
-using static LiveSplit.Tests.Model.Constants;
 using System.Xml;
+
+using LiveSplit.Model;
+
+using Xunit;
+
+using static LiveSplit.Tests.Model.Constants;
 
 namespace LiveSplit.Tests.Model
 {
@@ -57,8 +60,10 @@ namespace LiveSplit.Tests.Model
         }
 
         [Fact]
-        public void ReturnNull_WhenDeserializingNullOldXml() =>
+        public void ReturnNull_WhenDeserializingNullOldXml()
+        {
             Assert.Throws<NullReferenceException>(() => IndexedTimeHelper.ParseXmlOld(null));
+        }
 
         [Fact]
         public void DeserializeOldXmlCorrectly()

@@ -1,16 +1,14 @@
-﻿using LiveSplit.Model.Input;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
+
+using LiveSplit.Model.Input;
 using LiveSplit.Options;
 using LiveSplit.UI;
-using LiveSplit.UI.Components;
 using LiveSplit.Utils;
 using LiveSplit.Web;
 using LiveSplit.Web.Share;
-using LiveSplit.Web.SRL;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Windows.Forms;
 
 namespace LiveSplit.View
 {
@@ -130,19 +128,19 @@ namespace LiveSplit.View
             btnLogOut.Enabled = WebCredentials.AnyCredentialsExist();
         }
 
-        void chkSimpleSOB_CheckedChanged(object sender, EventArgs e)
+        private void chkSimpleSOB_CheckedChanged(object sender, EventArgs e)
         {
             Settings.SimpleSumOfBest = chkSimpleSOB.Checked;
             SumOfBestModeChanged?.Invoke(this, null);
         }
 
-        void SettingsDialog_Load(object sender, EventArgs e)
+        private void SettingsDialog_Load(object sender, EventArgs e)
         {
             chkSimpleSOB.Checked = Settings.SimpleSumOfBest;
             chkGlobalHotkeys_CheckedChanged(null, null);
         }
 
-        void chkGlobalHotkeys_CheckedChanged(object sender, EventArgs e)
+        private void chkGlobalHotkeys_CheckedChanged(object sender, EventArgs e)
         {
             if (chkGlobalHotkeys.Checked)
             {
@@ -174,6 +172,7 @@ namespace LiveSplit.View
 
                 return keyString;
             }
+
             return "None";
         }
         private void SetHotkeyHandlers(TextBox txtBox, Action<KeyOrButton> keySetCallback)
@@ -185,18 +184,22 @@ namespace LiveSplit.View
             KeyEventHandler handlerUp = null;
             EventHandler leaveHandler = null;
             EventHandlerT<GamepadButton> gamepadButtonPressed = null;
-            Action unregisterEvents = () =>
+            void unregisterEvents()
             {
                 txtBox.KeyDown -= handlerDown;
                 txtBox.KeyUp -= handlerUp;
                 txtBox.Leave -= leaveHandler;
                 Hook.AnyGamepadButtonPressed -= gamepadButtonPressed;
-            };
+            }
+
             handlerDown = (s, x) =>
             {
                 var key = x.KeyCode == Keys.Escape ? null : new KeyOrButton(x.KeyCode | x.Modifiers);
                 if (x.KeyCode == Keys.ControlKey || x.KeyCode == Keys.ShiftKey || x.KeyCode == Keys.Menu)
+                {
                     return;
+                }
+
                 keySetCallback(key);
                 unregisterEvents();
                 txtBox.Select(0, 0);
@@ -309,6 +312,7 @@ namespace LiveSplit.View
                     SetClickEvents(childControl);
                 }
             }
+
             control.Click += ClickControl;
         }
 
@@ -327,9 +331,11 @@ namespace LiveSplit.View
         private void btnChooseComparisons_Click(object sender, EventArgs e)
         {
             var generatorStates = new Dictionary<string, bool>(Settings.ComparisonGeneratorStates);
-            var result = (new ChooseComparisonsDialog() { ComparisonGeneratorStates = generatorStates }).ShowDialog(this);
+            var result = new ChooseComparisonsDialog() { ComparisonGeneratorStates = generatorStates }.ShowDialog(this);
             if (result == DialogResult.OK)
+            {
                 Settings.ComparisonGeneratorStates = generatorStates;
+            }
         }
 
         private void cmbHotkeyProfiles_SelectedIndexChanged(object sender, EventArgs e)
@@ -379,7 +385,9 @@ namespace LiveSplit.View
                 {
                     result = MessageBox.Show(this, "A Hotkey Profile with this name already exists.", "Hotkey Profile Already Exists", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
                     if (result == DialogResult.Retry)
+                    {
                         btnRenameProfile_Click(sender, e);
+                    }
                 }
             }
         }
@@ -402,7 +410,9 @@ namespace LiveSplit.View
                 {
                     result = MessageBox.Show(this, "A Hotkey Profile with this name already exists.", "Hotkey Profile Already Exists", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
                     if (result == DialogResult.Retry)
+                    {
                         btnNewProfile_Click(sender, e);
+                    }
                 }
             }
         }
@@ -420,8 +430,8 @@ namespace LiveSplit.View
             var newSettings = Settings.RaceProvider.Select(x => (RaceProviderSettings)x.Clone()).ToList();
             var dialog = new RaceProviderManagingDialog(newSettings);
             if (dialog.ShowDialog(this) == DialogResult.OK)
-            {               
-                Settings.RaceProvider = newSettings;                
+            {
+                Settings.RaceProvider = newSettings;
             }
         }
     }

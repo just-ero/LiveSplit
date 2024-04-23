@@ -1,9 +1,10 @@
-﻿using LiveSplit.Model;
-using LiveSplit.Options;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+
+using LiveSplit.Model;
+using LiveSplit.Options;
 
 namespace LiveSplit.UI.Components
 {
@@ -16,7 +17,7 @@ namespace LiveSplit.UI.Components
         public float MinimumWidth
             => !VisibleComponents.Any() ? 0 : VisibleComponents.Max(x => x.MinimumWidth);
 
-        public float MinimumHeight 
+        public float MinimumHeight
             => !VisibleComponents.Any() ? 0 : VisibleComponents.Max(x => x.MinimumHeight);
 
         protected bool errorInComponent;
@@ -33,11 +34,14 @@ namespace LiveSplit.UI.Components
 
             if (clipRegion.IsVisible(new RectangleF(
                 g.Transform.OffsetX,
-                -separatorOffset + g.Transform.OffsetY - topPadding * scale,
+                -separatorOffset + g.Transform.OffsetY - (topPadding * scale),
                 width,
-                separatorOffset * 2f + scale * (component.VerticalHeight + bottomPadding))))
+                (separatorOffset * 2f) + (scale * (component.VerticalHeight + bottomPadding)))))
+            {
                 component.DrawVertical(g, state, width, clipRegion);
-            g.TranslateTransform(0.0f, component.VerticalHeight - bottomPadding * 2f);
+            }
+
+            g.TranslateTransform(0.0f, component.VerticalHeight - (bottomPadding * 2f));
         }
 
         private void DrawHorizontalComponent(int index, Graphics g, LiveSplitState state, float width, float height, Region clipRegion)
@@ -51,12 +55,15 @@ namespace LiveSplit.UI.Components
             var separatorOffset = component.VerticalHeight * scale < 3 ? 1 : 0;
 
             if (clipRegion.IsVisible(new RectangleF(
-                -separatorOffset + g.Transform.OffsetX - leftPadding * scale,
+                -separatorOffset + g.Transform.OffsetX - (leftPadding * scale),
                 g.Transform.OffsetY,
-                separatorOffset * 2f + scale * (component.HorizontalWidth + rightPadding),
+                (separatorOffset * 2f) + (scale * (component.HorizontalWidth + rightPadding)),
                 height)))
+            {
                 component.DrawHorizontal(g, state, height, clipRegion);
-            g.TranslateTransform(component.HorizontalWidth - rightPadding * 2f, 0.0f);
+            }
+
+            g.TranslateTransform(component.HorizontalWidth - (rightPadding * 2f), 0.0f);
         }
 
         private float GetPaddingAbove(int index)
@@ -66,8 +73,11 @@ namespace LiveSplit.UI.Components
                 index--;
                 var component = VisibleComponents.ElementAt(index);
                 if (component.VerticalHeight != 0)
+                {
                     return component.PaddingBottom;
+                }
             }
+
             return 0f;
         }
 
@@ -78,8 +88,11 @@ namespace LiveSplit.UI.Components
                 index++;
                 var component = VisibleComponents.ElementAt(index);
                 if (component.VerticalHeight != 0)
+                {
                     return component.PaddingTop;
+                }
             }
+
             return 0f;
         }
 
@@ -90,8 +103,11 @@ namespace LiveSplit.UI.Components
                 index--;
                 var component = VisibleComponents.ElementAt(index);
                 if (component.HorizontalWidth != 0)
+                {
                     return component.PaddingLeft;
+                }
             }
+
             return 0f;
         }
 
@@ -102,8 +118,11 @@ namespace LiveSplit.UI.Components
                 index++;
                 var component = VisibleComponents.ElementAt(index);
                 if (component.HorizontalWidth != 0)
+                {
                     return component.PaddingRight;
+                }
             }
+
             return 0f;
         }
 
@@ -111,14 +130,14 @@ namespace LiveSplit.UI.Components
         {
             var component = VisibleComponents.ElementAt(index);
             var bottomPadding = Math.Min(GetPaddingBelow(index), component.PaddingBottom) / 2f;
-            return component.VerticalHeight - bottomPadding * 2f;
+            return component.VerticalHeight - (bottomPadding * 2f);
         }
 
         protected float GetWidthHorizontal(int index)
         {
             var component = VisibleComponents.ElementAt(index);
             var rightPadding = Math.Min(GetPaddingToRight(index), component.PaddingRight) / 2f;
-            return component.HorizontalWidth - rightPadding * 2f;
+            return component.HorizontalWidth - (rightPadding * 2f);
         }
 
         public void CalculateOverallSize(LayoutMode mode)
@@ -128,9 +147,14 @@ namespace LiveSplit.UI.Components
             foreach (var component in VisibleComponents)
             {
                 if (mode == LayoutMode.Vertical)
+                {
                     totalSize += GetHeightVertical(index);
+                }
                 else
+                {
                     totalSize += GetWidthHorizontal(index);
+                }
+
                 index++;
             }
 
@@ -153,9 +177,13 @@ namespace LiveSplit.UI.Components
                         {
                             g.Clip = clip;
                             if (mode == LayoutMode.Vertical)
+                            {
                                 DrawVerticalComponent(index, g, state, width, height, clipRegion);
+                            }
                             else
+                            {
                                 DrawHorizontalComponent(index, g, state, width, height, clipRegion);
+                            }
                         }
                         catch (Exception e)
                         {
@@ -163,6 +191,7 @@ namespace LiveSplit.UI.Components
                             crashedComponents.Add(component);
                             errorInComponent = true;
                         }
+
                         index++;
                     }
 
@@ -176,6 +205,7 @@ namespace LiveSplit.UI.Components
                         });
                         VisibleComponents = remainingComponents;
                     }
+
                     g.Transform = transform;
                     g.Clip = clip;
                 }
@@ -217,10 +247,15 @@ namespace LiveSplit.UI.Components
             {
                 var component = VisibleComponents.ElementAt(ind);
                 if (mode == LayoutMode.Vertical)
+                {
                     InvalidateVerticalComponent(ind, state, invalidator, width, height, scaleFactor);
+                }
                 else
+                {
                     InvalidateHorizontalComponent(ind, state, invalidator, width, height, scaleFactor);
+                }
             }
+
             invalidator.Transform = oldTransform;
         }
     }

@@ -1,6 +1,7 @@
-﻿using LiveSplit.Model.Comparisons;
-using System;
+﻿using System;
 using System.Drawing;
+
+using LiveSplit.Model.Comparisons;
 
 namespace LiveSplit.Model
 {
@@ -17,12 +18,12 @@ namespace LiveSplit.Model
         public IComparisons Comparisons { get; set; }
         public Time BestSegmentTime { get; set; }
         public Time SplitTime { get; set; }
-        public SegmentHistory SegmentHistory { get; set;}
-        
+        public SegmentHistory SegmentHistory { get; set; }
+
         public Segment(
-            string name, Time pbSplitTime = default(Time), 
-            Time bestSegmentTime = default(Time), Image icon = null,
-            Time splitTime = default(Time))
+            string name, Time pbSplitTime = default,
+            Time bestSegmentTime = default, Image icon = null,
+            Time splitTime = default)
         {
             Comparisons = new CompositeComparisons();
             Name = name;
@@ -47,6 +48,9 @@ namespace LiveSplit.Model
             };
         }
 
-        object ICloneable.Clone() => Clone();
+        object ICloneable.Clone()
+        {
+            return Clone();
+        }
     }
 }

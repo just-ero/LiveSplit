@@ -1,5 +1,4 @@
-﻿using Fetze.WinFormsColor;
-using System;
+﻿using System;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -7,22 +6,26 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Forms;
 using System.Xml;
 
+using Fetze.WinFormsColor;
+
 namespace LiveSplit.UI
 {
     public class SettingsHelper
     {
         public static CustomFontDialog.FontDialog GetFontDialog(Font previousFont, int minSize, int maxSize)
         {
-            var dialog = new CustomFontDialog.FontDialog();
-            dialog.OriginalFont = previousFont;
-            dialog.MinSize = minSize;
-            dialog.MaxSize = maxSize;
+            var dialog = new CustomFontDialog.FontDialog
+            {
+                OriginalFont = previousFont,
+                MinSize = minSize,
+                MaxSize = maxSize
+            };
             return dialog;
         }
 
         public static string FormatFont(Font font)
         {
-            return $"{ font.FontFamily.Name } { font.Style }";
+            return $"{font.FontFamily.Name} {font.Style}";
         }
 
         public static void ColorButtonClick(Button button, Control control)
@@ -34,10 +37,10 @@ namespace LiveSplit.UI
             button.BackColor = picker.SelectedColor;
         }
 
-        public static Color ParseColor(XmlElement colorElement, Color defaultColor = default(Color))
+        public static Color ParseColor(XmlElement colorElement, Color defaultColor = default)
         {
-            return colorElement != null 
-                ? Color.FromArgb(int.Parse(colorElement.InnerText, NumberStyles.HexNumber)) 
+            return colorElement != null
+                ? Color.FromArgb(int.Parse(colorElement.InnerText, NumberStyles.HexNumber))
                 : defaultColor;
         }
 
@@ -52,6 +55,7 @@ namespace LiveSplit.UI
                 var ms = new MemoryStream(data);
                 return (Font)bf.Deserialize(ms);
             }
+
             return null;
         }
 
@@ -73,8 +77,10 @@ namespace LiveSplit.UI
                         element.InnerXml = cdata.OuterXml;
                     }
                 }
+
                 parent.AppendChild(element);
             }
+
             return getFontHashCode(font);
         }
 
@@ -83,11 +89,12 @@ namespace LiveSplit.UI
             int hash = 17;
             unchecked
             {
-                hash = hash * 23 + font.Name.GetHashCode();
-                hash = hash * 23 + font.FontFamily.GetHashCode();
-                hash = hash * 23 + font.Size.GetHashCode();
-                hash = hash * 23 + font.Style.GetHashCode();
+                hash = (hash * 23) + font.Name.GetHashCode();
+                hash = (hash * 23) + font.FontFamily.GetHashCode();
+                hash = (hash * 23) + font.Size.GetHashCode();
+                hash = (hash * 23) + font.Style.GetHashCode();
             }
+
             return hash;
         }
 
@@ -130,6 +137,7 @@ namespace LiveSplit.UI
                     return (Image)bf.Deserialize(ms);
                 }
             }
+
             return null;
         }
 
@@ -208,14 +216,16 @@ namespace LiveSplit.UI
         public static string ParseString(XmlElement stringElement, string defaultString = null)
         {
             if (defaultString == null)
+            {
                 defaultString = string.Empty;
+            }
 
             return stringElement != null
                 ? stringElement.InnerText
                 : defaultString;
         }
 
-        public static TimeSpan ParseTimeSpan(XmlElement timeSpanElement, TimeSpan defaultTimeSpan = default(TimeSpan))
+        public static TimeSpan ParseTimeSpan(XmlElement timeSpanElement, TimeSpan defaultTimeSpan = default)
         {
             return timeSpanElement != null
                 ? TimeSpan.Parse(timeSpanElement.InnerText)
@@ -223,7 +233,7 @@ namespace LiveSplit.UI
         }
 
         public static bool TryParseTimeSpan(XmlElement timeSpanElement, out TimeSpan result,
-            TimeSpan defaultTimeSpan = default(TimeSpan))
+            TimeSpan defaultTimeSpan = default)
         {
             if (timeSpanElement != null && TimeSpan.TryParse(timeSpanElement.InnerText, out result))
             {
@@ -249,6 +259,7 @@ namespace LiveSplit.UI
                 element.InnerText = color.ToArgb().ToString("X8");
                 parent.AppendChild(element);
             }
+
             return color.GetHashCode();
         }
 
@@ -260,6 +271,7 @@ namespace LiveSplit.UI
                 element.InnerText = value?.ToString();
                 parent.AppendChild(element);
             }
+
             return value != null ? value.GetHashCode() : 0;
         }
 
@@ -271,6 +283,7 @@ namespace LiveSplit.UI
                 element.InnerText = value.ToString(CultureInfo.InvariantCulture);
                 parent.AppendChild(element);
             }
+
             return value.GetHashCode();
         }
 
@@ -282,6 +295,7 @@ namespace LiveSplit.UI
                 element.InnerText = value.ToString(CultureInfo.InvariantCulture);
                 parent.AppendChild(element);
             }
+
             return value.GetHashCode();
         }
 
@@ -292,28 +306,28 @@ namespace LiveSplit.UI
             return element;
         }
 
-        public static T ParseEnum<T>(XmlElement element, T defaultEnum = default(T))
+        public static T ParseEnum<T>(XmlElement element, T defaultEnum = default)
         {
-            return element != null 
-                ? (T)Enum.Parse(typeof(T), element.InnerText) 
+            return element != null
+                ? (T)Enum.Parse(typeof(T), element.InnerText)
                 : defaultEnum;
         }
 
-        public static bool TryParseEnum<T>(XmlElement element, out T result, T defaultEnum = default(T)) where T : struct
+        public static bool TryParseEnum<T>(XmlElement element, out T result, T defaultEnum = default) where T : struct
         {
             if (element != null && Enum.TryParse(element.InnerText, out result))
             {
                 return true;
             }
-            
+
             result = defaultEnum;
             return false;
         }
 
         public static Version ParseVersion(XmlElement element)
         {
-            return element != null 
-                ? Version.Parse(element.InnerText) 
+            return element != null
+                ? Version.Parse(element.InnerText)
                 : new Version(1, 0, 0, 0);
         }
 

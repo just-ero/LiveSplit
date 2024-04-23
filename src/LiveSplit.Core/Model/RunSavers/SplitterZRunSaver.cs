@@ -1,5 +1,6 @@
-﻿using LiveSplit.TimeFormatters;
-using System.IO;
+﻿using System.IO;
+
+using LiveSplit.TimeFormatters;
 
 namespace LiveSplit.Model.RunSavers
 {
@@ -22,7 +23,9 @@ namespace LiveSplit.Model.RunSavers
                 writer.Write(Escape(run.GameName));
 
                 if (!string.IsNullOrEmpty(run.CategoryName))
+                {
                     writer.Write(" - ");
+                }
             }
 
             writer.Write(Escape(run.CategoryName));

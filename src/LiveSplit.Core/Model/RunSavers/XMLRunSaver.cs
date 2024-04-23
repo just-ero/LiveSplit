@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml;
+
 using static LiveSplit.UI.SettingsHelper;
 
 namespace LiveSplit.Model.RunSavers
@@ -42,6 +43,7 @@ namespace LiveSplit.Model.RunSavers
                 variableElement.Attributes.Append(ToAttribute(document, "name", variable.Key));
                 variables.AppendChild(variableElement);
             }
+
             metadata.AppendChild(variables);
             parent.AppendChild(metadata);
 
@@ -53,6 +55,7 @@ namespace LiveSplit.Model.RunSavers
             {
                 runHistory.AppendChild(attempt.ToXml(document));
             }
+
             parent.AppendChild(runHistory);
 
             var segmentElement = document.CreateElement("Segments");
@@ -75,6 +78,7 @@ namespace LiveSplit.Model.RunSavers
                     splitTime.Attributes.Append(ToAttribute(document, "name", comparison));
                     splitTimes.AppendChild(splitTime);
                 }
+
                 splitElement.AppendChild(splitTimes);
 
                 splitElement.AppendChild(segment.BestSegmentTime.ToXml(document, "BestSegmentTime"));
@@ -85,12 +89,16 @@ namespace LiveSplit.Model.RunSavers
                     var indexedTime = new IndexedTime(historySegment.Value, historySegment.Key);
                     history.AppendChild(indexedTime.ToXml(document));
                 }
+
                 splitElement.AppendChild(history);
             }
 
             var autoSplitterSettings = document.CreateElement("AutoSplitterSettings");
             if (run.IsAutoSplitterActive())
+            {
                 autoSplitterSettings.InnerXml = run.AutoSplitter.Component.GetSettings(document).InnerXml;
+            }
+
             parent.AppendChild(autoSplitterSettings);
 
             document.Save(stream);

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace LiveSplit.TimeFormatters
+﻿namespace LiveSplit.TimeFormatters
 {
     public class RegularTimeFormatter : GeneralTimeFormatter
     {

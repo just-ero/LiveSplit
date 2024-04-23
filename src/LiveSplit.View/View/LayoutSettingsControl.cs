@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using LiveSplit.UI;
+
 using LiveSplit.Options;
+using LiveSplit.UI;
 
 namespace LiveSplit.View
 {
@@ -61,7 +62,7 @@ namespace LiveSplit.View
 
             cmbBackgroundType.SelectedItem = GetBackgroundTypeString(Settings.BackgroundType);
             originalBackgroundImage = Settings.BackgroundImage;
-        }        
+        }
 
         private string GetBackgroundTypeString(BackgroundType type)
         {
@@ -78,7 +79,7 @@ namespace LiveSplit.View
             }
         }
 
-        void cmbGradientType_SelectedIndexChanged(object sender, EventArgs e)
+        private void cmbGradientType_SelectedIndexChanged(object sender, EventArgs e)
         {
             var selectedItem = cmbBackgroundType.SelectedItem.ToString();
             btnBackground.Visible = selectedItem != "Solid Color" && selectedItem != "Image";
@@ -96,6 +97,7 @@ namespace LiveSplit.View
                 btnBackground2.DataBindings.Add("BackColor", Settings, btnBackground.Visible ? "BackgroundColor2" : "BackgroundColor", false, DataSourceUpdateMode.OnPropertyChanged);
                 lblBackground.Text = "Color:";
             }
+
             Settings.BackgroundType = (BackgroundType)Enum.Parse(typeof(BackgroundType), selectedItem.Replace(" ", ""));
         }
 
@@ -108,9 +110,11 @@ namespace LiveSplit.View
         {
             if (cmbBackgroundType.SelectedItem.ToString() == "Image")
             {
-                var dialog = new OpenFileDialog();
-                dialog.Filter = "Image Files|*.BMP;*.JPG;*.GIF;*.JPEG;*.PNG|All files (*.*)|*.*";
-                dialog.Title = "Set Background Image...";
+                var dialog = new OpenFileDialog
+                {
+                    Filter = "Image Files|*.BMP;*.JPG;*.GIF;*.JPEG;*.PNG|All files (*.*)|*.*",
+                    Title = "Set Background Image..."
+                };
                 var result = dialog.ShowDialog();
                 if (result == DialogResult.OK)
                 {
@@ -118,7 +122,9 @@ namespace LiveSplit.View
                     {
                         var image = Image.FromFile(dialog.FileName);
                         if (Settings.BackgroundImage != null && Settings.BackgroundImage != originalBackgroundImage)
+                        {
                             Settings.BackgroundImage.Dispose();
+                        }
 
                         Settings.BackgroundImage = ((Button)sender).BackgroundImage = image;
                     }
@@ -138,7 +144,7 @@ namespace LiveSplit.View
         private void btnTimer_Click(object sender, EventArgs e)
         {
             // Scale down font in dialog so that size is closer to other font settings, and to allow more granular control over size
-            var timerFont = new Font(Settings.TimerFont.FontFamily.Name, (Settings.TimerFont.Size / 50f) * 18f, Settings.TimerFont.Style, GraphicsUnit.Pixel);
+            var timerFont = new Font(Settings.TimerFont.FontFamily.Name, Settings.TimerFont.Size / 50f * 18f, Settings.TimerFont.Style, GraphicsUnit.Pixel);
             var dialog = SettingsHelper.GetFontDialog(timerFont, 7, 20);
             dialog.FontChanged += (s, ev) => updateTimerFont(((CustomFontDialog.FontChangedEventArgs)ev).NewFont);
             dialog.ShowDialog(this);
@@ -148,7 +154,7 @@ namespace LiveSplit.View
         private void updateTimerFont(Font timerFont)
         {
             // Scale font back up to the size the Timer component expects
-            Settings.TimerFont = new Font(timerFont.FontFamily.Name, (timerFont.Size / 18f) * 50f, timerFont.Style, GraphicsUnit.Pixel);
+            Settings.TimerFont = new Font(timerFont.FontFamily.Name, timerFont.Size / 18f * 50f, timerFont.Style, GraphicsUnit.Pixel);
         }
 
         private void btnTimes_Click(object sender, EventArgs e)

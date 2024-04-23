@@ -1,7 +1,7 @@
 using System;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.IO;
 
 namespace LiveSplitCore
 {
@@ -67,11 +67,13 @@ namespace LiveSplitCore
             {
                 throw new ObjectDisposedException("run");
             }
+
             var result = new TimeSpan(LiveSplitCoreNative.Analysis_calculate_sum_of_best(run.ptr, simpleCalculation, useCurrentRun, method));
             if (result.ptr == IntPtr.Zero)
             {
                 return null;
             }
+
             return result;
         }
         /// <summary>
@@ -83,6 +85,7 @@ namespace LiveSplitCore
             {
                 throw new ObjectDisposedException("run");
             }
+
             var result = new TimeSpan(LiveSplitCoreNative.Analysis_calculate_total_playtime_for_run(run.ptr));
             return result;
         }
@@ -95,6 +98,7 @@ namespace LiveSplitCore
             {
                 throw new ObjectDisposedException("timer");
             }
+
             var result = new TimeSpan(LiveSplitCoreNative.Analysis_calculate_total_playtime_for_timer(timer.ptr));
             return result;
         }
@@ -115,11 +119,12 @@ namespace LiveSplitCore
         /// </summary>
         public bool IsSynchronized()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.AtomicDateTime_is_synchronized(this.ptr) != 0;
+
+            var result = LiveSplitCoreNative.AtomicDateTime_is_synchronized(ptr) != 0;
             return result;
         }
         /// <summary>
@@ -127,11 +132,12 @@ namespace LiveSplitCore
         /// </summary>
         public string ToRfc3339()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.AtomicDateTime_to_rfc3339(this.ptr);
+
+            var result = LiveSplitCoreNative.AtomicDateTime_to_rfc3339(ptr);
             return result;
         }
         internal AtomicDateTimeRef(IntPtr ptr)
@@ -159,7 +165,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.AtomicDateTime_drop(this.ptr);
+                LiveSplitCoreNative.AtomicDateTime_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -189,11 +195,12 @@ namespace LiveSplitCore
         /// </summary>
         public int Index()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.Attempt_index(this.ptr);
+
+            var result = LiveSplitCoreNative.Attempt_index(ptr);
             return result;
         }
         /// <summary>
@@ -202,11 +209,12 @@ namespace LiveSplitCore
         /// </summary>
         public TimeRef Time()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new TimeRef(LiveSplitCoreNative.Attempt_time(this.ptr));
+
+            var result = new TimeRef(LiveSplitCoreNative.Attempt_time(ptr));
             return result;
         }
         /// <summary>
@@ -217,15 +225,17 @@ namespace LiveSplitCore
         /// </summary>
         public TimeSpanRef PauseTime()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new TimeSpanRef(LiveSplitCoreNative.Attempt_pause_time(this.ptr));
+
+            var result = new TimeSpanRef(LiveSplitCoreNative.Attempt_pause_time(ptr));
             if (result.ptr == IntPtr.Zero)
             {
                 return null;
             }
+
             return result;
         }
         /// <summary>
@@ -234,15 +244,17 @@ namespace LiveSplitCore
         /// </summary>
         public AtomicDateTime Started()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new AtomicDateTime(LiveSplitCoreNative.Attempt_started(this.ptr));
+
+            var result = new AtomicDateTime(LiveSplitCoreNative.Attempt_started(ptr));
             if (result.ptr == IntPtr.Zero)
             {
                 return null;
             }
+
             return result;
         }
         /// <summary>
@@ -251,15 +263,17 @@ namespace LiveSplitCore
         /// </summary>
         public AtomicDateTime Ended()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new AtomicDateTime(LiveSplitCoreNative.Attempt_ended(this.ptr));
+
+            var result = new AtomicDateTime(LiveSplitCoreNative.Attempt_ended(ptr));
             if (result.ptr == IntPtr.Zero)
             {
                 return null;
             }
+
             return result;
         }
         internal AttemptRef(IntPtr ptr)
@@ -316,11 +330,12 @@ namespace LiveSplitCore
         /// </summary>
         public bool LoadScript(string path)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.AutoSplittingRuntime_load_script(this.ptr, path) != 0;
+
+            var result = LiveSplitCoreNative.AutoSplittingRuntime_load_script(ptr, path) != 0;
             return result;
         }
         /// <summary>
@@ -328,11 +343,12 @@ namespace LiveSplitCore
         /// </summary>
         public bool UnloadScript()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.AutoSplittingRuntime_unload_script(this.ptr) != 0;
+
+            var result = LiveSplitCoreNative.AutoSplittingRuntime_unload_script(ptr) != 0;
             return result;
         }
         internal AutoSplittingRuntimeRef(IntPtr ptr)
@@ -360,7 +376,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.AutoSplittingRuntime_drop(this.ptr);
+                LiveSplitCoreNative.AutoSplittingRuntime_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -382,7 +398,8 @@ namespace LiveSplitCore
             {
                 throw new ObjectDisposedException("sharedTimer");
             }
-            this.ptr = LiveSplitCoreNative.AutoSplittingRuntime_new(sharedTimer.ptr);
+
+            ptr = LiveSplitCoreNative.AutoSplittingRuntime_new(sharedTimer.ptr);
             sharedTimer.ptr = IntPtr.Zero;
         }
         internal AutoSplittingRuntime(IntPtr ptr) : base(ptr) { }
@@ -414,11 +431,12 @@ namespace LiveSplitCore
         /// </summary>
         public string StateAsJson()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.BlankSpaceComponent_state_as_json(this.ptr);
+
+            var result = LiveSplitCoreNative.BlankSpaceComponent_state_as_json(ptr);
             return result;
         }
         /// <summary>
@@ -426,11 +444,12 @@ namespace LiveSplitCore
         /// </summary>
         public BlankSpaceComponentState State()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new BlankSpaceComponentState(LiveSplitCoreNative.BlankSpaceComponent_state(this.ptr));
+
+            var result = new BlankSpaceComponentState(LiveSplitCoreNative.BlankSpaceComponent_state(ptr));
             return result;
         }
         internal BlankSpaceComponentRefMut(IntPtr ptr) : base(ptr) { }
@@ -447,7 +466,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.BlankSpaceComponent_drop(this.ptr);
+                LiveSplitCoreNative.BlankSpaceComponent_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -465,7 +484,7 @@ namespace LiveSplitCore
         /// </summary>
         public BlankSpaceComponent() : base(IntPtr.Zero)
         {
-            this.ptr = LiveSplitCoreNative.BlankSpaceComponent_new();
+            ptr = LiveSplitCoreNative.BlankSpaceComponent_new();
         }
         /// <summary>
         /// Converts the component into a generic component suitable for using with a
@@ -473,12 +492,13 @@ namespace LiveSplitCore
         /// </summary>
         public Component IntoGeneric()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new Component(LiveSplitCoreNative.BlankSpaceComponent_into_generic(this.ptr));
-            this.ptr = IntPtr.Zero;
+
+            var result = new Component(LiveSplitCoreNative.BlankSpaceComponent_into_generic(ptr));
+            ptr = IntPtr.Zero;
             return result;
         }
         internal BlankSpaceComponent(IntPtr ptr) : base(ptr) { }
@@ -495,11 +515,12 @@ namespace LiveSplitCore
         /// </summary>
         public uint Size()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.BlankSpaceComponentState_size(this.ptr);
+
+            var result = LiveSplitCoreNative.BlankSpaceComponentState_size(ptr);
             return result;
         }
         internal BlankSpaceComponentStateRef(IntPtr ptr)
@@ -525,7 +546,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.BlankSpaceComponentState_drop(this.ptr);
+                LiveSplitCoreNative.BlankSpaceComponentState_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -573,7 +594,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.Component_drop(this.ptr);
+                LiveSplitCoreNative.Component_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -613,15 +634,17 @@ namespace LiveSplitCore
         /// </summary>
         public string StateAsJson(TimerRef timer)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (timer.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("timer");
             }
-            var result = LiveSplitCoreNative.CurrentComparisonComponent_state_as_json(this.ptr, timer.ptr);
+
+            var result = LiveSplitCoreNative.CurrentComparisonComponent_state_as_json(ptr, timer.ptr);
             return result;
         }
         /// <summary>
@@ -629,15 +652,17 @@ namespace LiveSplitCore
         /// </summary>
         public KeyValueComponentState State(TimerRef timer)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (timer.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("timer");
             }
-            var result = new KeyValueComponentState(LiveSplitCoreNative.CurrentComparisonComponent_state(this.ptr, timer.ptr));
+
+            var result = new KeyValueComponentState(LiveSplitCoreNative.CurrentComparisonComponent_state(ptr, timer.ptr));
             return result;
         }
         internal CurrentComparisonComponentRefMut(IntPtr ptr) : base(ptr) { }
@@ -653,7 +678,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.CurrentComparisonComponent_drop(this.ptr);
+                LiveSplitCoreNative.CurrentComparisonComponent_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -671,7 +696,7 @@ namespace LiveSplitCore
         /// </summary>
         public CurrentComparisonComponent() : base(IntPtr.Zero)
         {
-            this.ptr = LiveSplitCoreNative.CurrentComparisonComponent_new();
+            ptr = LiveSplitCoreNative.CurrentComparisonComponent_new();
         }
         /// <summary>
         /// Converts the component into a generic component suitable for using with a
@@ -679,12 +704,13 @@ namespace LiveSplitCore
         /// </summary>
         public Component IntoGeneric()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new Component(LiveSplitCoreNative.CurrentComparisonComponent_into_generic(this.ptr));
-            this.ptr = IntPtr.Zero;
+
+            var result = new Component(LiveSplitCoreNative.CurrentComparisonComponent_into_generic(ptr));
+            ptr = IntPtr.Zero;
             return result;
         }
         internal CurrentComparisonComponent(IntPtr ptr) : base(ptr) { }
@@ -716,15 +742,17 @@ namespace LiveSplitCore
         /// </summary>
         public string StateAsJson(TimerRef timer)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (timer.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("timer");
             }
-            var result = LiveSplitCoreNative.CurrentPaceComponent_state_as_json(this.ptr, timer.ptr);
+
+            var result = LiveSplitCoreNative.CurrentPaceComponent_state_as_json(ptr, timer.ptr);
             return result;
         }
         /// <summary>
@@ -732,15 +760,17 @@ namespace LiveSplitCore
         /// </summary>
         public KeyValueComponentState State(TimerRef timer)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (timer.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("timer");
             }
-            var result = new KeyValueComponentState(LiveSplitCoreNative.CurrentPaceComponent_state(this.ptr, timer.ptr));
+
+            var result = new KeyValueComponentState(LiveSplitCoreNative.CurrentPaceComponent_state(ptr, timer.ptr));
             return result;
         }
         internal CurrentPaceComponentRefMut(IntPtr ptr) : base(ptr) { }
@@ -757,7 +787,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.CurrentPaceComponent_drop(this.ptr);
+                LiveSplitCoreNative.CurrentPaceComponent_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -775,7 +805,7 @@ namespace LiveSplitCore
         /// </summary>
         public CurrentPaceComponent() : base(IntPtr.Zero)
         {
-            this.ptr = LiveSplitCoreNative.CurrentPaceComponent_new();
+            ptr = LiveSplitCoreNative.CurrentPaceComponent_new();
         }
         /// <summary>
         /// Converts the component into a generic component suitable for using with a
@@ -783,12 +813,13 @@ namespace LiveSplitCore
         /// </summary>
         public Component IntoGeneric()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new Component(LiveSplitCoreNative.CurrentPaceComponent_into_generic(this.ptr));
-            this.ptr = IntPtr.Zero;
+
+            var result = new Component(LiveSplitCoreNative.CurrentPaceComponent_into_generic(ptr));
+            ptr = IntPtr.Zero;
             return result;
         }
         internal CurrentPaceComponent(IntPtr ptr) : base(ptr) { }
@@ -818,19 +849,22 @@ namespace LiveSplitCore
         /// </summary>
         public string StateAsJson(TimerRef timer, GeneralLayoutSettingsRef layoutSettings)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (timer.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("timer");
             }
+
             if (layoutSettings.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("layoutSettings");
             }
-            var result = LiveSplitCoreNative.DeltaComponent_state_as_json(this.ptr, timer.ptr, layoutSettings.ptr);
+
+            var result = LiveSplitCoreNative.DeltaComponent_state_as_json(ptr, timer.ptr, layoutSettings.ptr);
             return result;
         }
         /// <summary>
@@ -839,19 +873,22 @@ namespace LiveSplitCore
         /// </summary>
         public KeyValueComponentState State(TimerRef timer, GeneralLayoutSettingsRef layoutSettings)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (timer.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("timer");
             }
+
             if (layoutSettings.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("layoutSettings");
             }
-            var result = new KeyValueComponentState(LiveSplitCoreNative.DeltaComponent_state(this.ptr, timer.ptr, layoutSettings.ptr));
+
+            var result = new KeyValueComponentState(LiveSplitCoreNative.DeltaComponent_state(ptr, timer.ptr, layoutSettings.ptr));
             return result;
         }
         internal DeltaComponentRefMut(IntPtr ptr) : base(ptr) { }
@@ -867,7 +904,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.DeltaComponent_drop(this.ptr);
+                LiveSplitCoreNative.DeltaComponent_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -885,7 +922,7 @@ namespace LiveSplitCore
         /// </summary>
         public DeltaComponent() : base(IntPtr.Zero)
         {
-            this.ptr = LiveSplitCoreNative.DeltaComponent_new();
+            ptr = LiveSplitCoreNative.DeltaComponent_new();
         }
         /// <summary>
         /// Converts the component into a generic component suitable for using with a
@@ -893,12 +930,13 @@ namespace LiveSplitCore
         /// </summary>
         public Component IntoGeneric()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new Component(LiveSplitCoreNative.DeltaComponent_into_generic(this.ptr));
-            this.ptr = IntPtr.Zero;
+
+            var result = new Component(LiveSplitCoreNative.DeltaComponent_into_generic(ptr));
+            ptr = IntPtr.Zero;
             return result;
         }
         internal DeltaComponent(IntPtr ptr) : base(ptr) { }
@@ -932,19 +970,22 @@ namespace LiveSplitCore
         /// </summary>
         public string StateAsJson(TimerRef timer, GeneralLayoutSettingsRef layoutSettings)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (timer.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("timer");
             }
+
             if (layoutSettings.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("layoutSettings");
             }
-            var result = LiveSplitCoreNative.DetailedTimerComponent_state_as_json(this.ptr, timer.ptr, layoutSettings.ptr);
+
+            var result = LiveSplitCoreNative.DetailedTimerComponent_state_as_json(ptr, timer.ptr, layoutSettings.ptr);
             return result;
         }
         /// <summary>
@@ -953,19 +994,22 @@ namespace LiveSplitCore
         /// </summary>
         public DetailedTimerComponentState State(TimerRef timer, GeneralLayoutSettingsRef layoutSettings)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (timer.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("timer");
             }
+
             if (layoutSettings.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("layoutSettings");
             }
-            var result = new DetailedTimerComponentState(LiveSplitCoreNative.DetailedTimerComponent_state(this.ptr, timer.ptr, layoutSettings.ptr));
+
+            var result = new DetailedTimerComponentState(LiveSplitCoreNative.DetailedTimerComponent_state(ptr, timer.ptr, layoutSettings.ptr));
             return result;
         }
         internal DetailedTimerComponentRefMut(IntPtr ptr) : base(ptr) { }
@@ -983,7 +1027,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.DetailedTimerComponent_drop(this.ptr);
+                LiveSplitCoreNative.DetailedTimerComponent_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -1001,7 +1045,7 @@ namespace LiveSplitCore
         /// </summary>
         public DetailedTimerComponent() : base(IntPtr.Zero)
         {
-            this.ptr = LiveSplitCoreNative.DetailedTimerComponent_new();
+            ptr = LiveSplitCoreNative.DetailedTimerComponent_new();
         }
         /// <summary>
         /// Converts the component into a generic component suitable for using with a
@@ -1009,12 +1053,13 @@ namespace LiveSplitCore
         /// </summary>
         public Component IntoGeneric()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new Component(LiveSplitCoreNative.DetailedTimerComponent_into_generic(this.ptr));
-            this.ptr = IntPtr.Zero;
+
+            var result = new Component(LiveSplitCoreNative.DetailedTimerComponent_into_generic(ptr));
+            ptr = IntPtr.Zero;
             return result;
         }
         internal DetailedTimerComponent(IntPtr ptr) : base(ptr) { }
@@ -1031,11 +1076,12 @@ namespace LiveSplitCore
         /// </summary>
         public string TimerTime()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.DetailedTimerComponentState_timer_time(this.ptr);
+
+            var result = LiveSplitCoreNative.DetailedTimerComponentState_timer_time(ptr);
             return result;
         }
         /// <summary>
@@ -1043,11 +1089,12 @@ namespace LiveSplitCore
         /// </summary>
         public string TimerFraction()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.DetailedTimerComponentState_timer_fraction(this.ptr);
+
+            var result = LiveSplitCoreNative.DetailedTimerComponentState_timer_fraction(ptr);
             return result;
         }
         /// <summary>
@@ -1055,11 +1102,12 @@ namespace LiveSplitCore
         /// </summary>
         public string TimerSemanticColor()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.DetailedTimerComponentState_timer_semantic_color(this.ptr);
+
+            var result = LiveSplitCoreNative.DetailedTimerComponentState_timer_semantic_color(ptr);
             return result;
         }
         /// <summary>
@@ -1067,11 +1115,12 @@ namespace LiveSplitCore
         /// </summary>
         public string SegmentTimerTime()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.DetailedTimerComponentState_segment_timer_time(this.ptr);
+
+            var result = LiveSplitCoreNative.DetailedTimerComponentState_segment_timer_time(ptr);
             return result;
         }
         /// <summary>
@@ -1080,11 +1129,12 @@ namespace LiveSplitCore
         /// </summary>
         public string SegmentTimerFraction()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.DetailedTimerComponentState_segment_timer_fraction(this.ptr);
+
+            var result = LiveSplitCoreNative.DetailedTimerComponentState_segment_timer_fraction(ptr);
             return result;
         }
         /// <summary>
@@ -1092,11 +1142,12 @@ namespace LiveSplitCore
         /// </summary>
         public bool Comparison1Visible()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.DetailedTimerComponentState_comparison1_visible(this.ptr) != 0;
+
+            var result = LiveSplitCoreNative.DetailedTimerComponentState_comparison1_visible(ptr) != 0;
             return result;
         }
         /// <summary>
@@ -1105,11 +1156,12 @@ namespace LiveSplitCore
         /// </summary>
         public string Comparison1Name()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.DetailedTimerComponentState_comparison1_name(this.ptr);
+
+            var result = LiveSplitCoreNative.DetailedTimerComponentState_comparison1_name(ptr);
             return result;
         }
         /// <summary>
@@ -1118,11 +1170,12 @@ namespace LiveSplitCore
         /// </summary>
         public string Comparison1Time()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.DetailedTimerComponentState_comparison1_time(this.ptr);
+
+            var result = LiveSplitCoreNative.DetailedTimerComponentState_comparison1_time(ptr);
             return result;
         }
         /// <summary>
@@ -1130,11 +1183,12 @@ namespace LiveSplitCore
         /// </summary>
         public bool Comparison2Visible()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.DetailedTimerComponentState_comparison2_visible(this.ptr) != 0;
+
+            var result = LiveSplitCoreNative.DetailedTimerComponentState_comparison2_visible(ptr) != 0;
             return result;
         }
         /// <summary>
@@ -1143,11 +1197,12 @@ namespace LiveSplitCore
         /// </summary>
         public string Comparison2Name()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.DetailedTimerComponentState_comparison2_name(this.ptr);
+
+            var result = LiveSplitCoreNative.DetailedTimerComponentState_comparison2_name(ptr);
             return result;
         }
         /// <summary>
@@ -1156,11 +1211,12 @@ namespace LiveSplitCore
         /// </summary>
         public string Comparison2Time()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.DetailedTimerComponentState_comparison2_time(this.ptr);
+
+            var result = LiveSplitCoreNative.DetailedTimerComponentState_comparison2_time(ptr);
             return result;
         }
         /// <summary>
@@ -1171,11 +1227,12 @@ namespace LiveSplitCore
         /// </summary>
         public IntPtr IconChangePtr()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.DetailedTimerComponentState_icon_change_ptr(this.ptr);
+
+            var result = LiveSplitCoreNative.DetailedTimerComponentState_icon_change_ptr(ptr);
             return result;
         }
         /// <summary>
@@ -1183,11 +1240,12 @@ namespace LiveSplitCore
         /// </summary>
         public ulong IconChangeLen()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = (ulong)LiveSplitCoreNative.DetailedTimerComponentState_icon_change_len(this.ptr);
+
+            var result = (ulong)LiveSplitCoreNative.DetailedTimerComponentState_icon_change_len(ptr);
             return result;
         }
         /// <summary>
@@ -1196,11 +1254,12 @@ namespace LiveSplitCore
         /// </summary>
         public string SegmentName()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.DetailedTimerComponentState_segment_name(this.ptr);
+
+            var result = LiveSplitCoreNative.DetailedTimerComponentState_segment_name(ptr);
             return result;
         }
         internal DetailedTimerComponentStateRef(IntPtr ptr)
@@ -1226,7 +1285,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.DetailedTimerComponentState_drop(this.ptr);
+                LiveSplitCoreNative.DetailedTimerComponentState_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -1258,11 +1317,12 @@ namespace LiveSplitCore
         /// </summary>
         public string Search(string pattern, ulong max)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.FuzzyList_search(this.ptr, pattern, (UIntPtr)max);
+
+            var result = LiveSplitCoreNative.FuzzyList_search(ptr, pattern, (UIntPtr)max);
             return result;
         }
         internal FuzzyListRef(IntPtr ptr)
@@ -1284,11 +1344,12 @@ namespace LiveSplitCore
         /// </summary>
         public void Push(string text)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.FuzzyList_push(this.ptr, text);
+
+            LiveSplitCoreNative.FuzzyList_push(ptr, text);
         }
         internal FuzzyListRefMut(IntPtr ptr) : base(ptr) { }
     }
@@ -1305,7 +1366,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.FuzzyList_drop(this.ptr);
+                LiveSplitCoreNative.FuzzyList_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -1323,7 +1384,7 @@ namespace LiveSplitCore
         /// </summary>
         public FuzzyList() : base(IntPtr.Zero)
         {
-            this.ptr = LiveSplitCoreNative.FuzzyList_new();
+            ptr = LiveSplitCoreNative.FuzzyList_new();
         }
         internal FuzzyList(IntPtr ptr) : base(ptr) { }
     }
@@ -1357,7 +1418,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.GeneralLayoutSettings_drop(this.ptr);
+                LiveSplitCoreNative.GeneralLayoutSettings_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -1394,19 +1455,22 @@ namespace LiveSplitCore
         /// </summary>
         public string StateAsJson(TimerRef timer, GeneralLayoutSettingsRef layoutSettings)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (timer.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("timer");
             }
+
             if (layoutSettings.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("layoutSettings");
             }
-            var result = LiveSplitCoreNative.GraphComponent_state_as_json(this.ptr, timer.ptr, layoutSettings.ptr);
+
+            var result = LiveSplitCoreNative.GraphComponent_state_as_json(ptr, timer.ptr, layoutSettings.ptr);
             return result;
         }
         /// <summary>
@@ -1415,19 +1479,22 @@ namespace LiveSplitCore
         /// </summary>
         public GraphComponentState State(TimerRef timer, GeneralLayoutSettingsRef layoutSettings)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (timer.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("timer");
             }
+
             if (layoutSettings.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("layoutSettings");
             }
-            var result = new GraphComponentState(LiveSplitCoreNative.GraphComponent_state(this.ptr, timer.ptr, layoutSettings.ptr));
+
+            var result = new GraphComponentState(LiveSplitCoreNative.GraphComponent_state(ptr, timer.ptr, layoutSettings.ptr));
             return result;
         }
         internal GraphComponentRef(IntPtr ptr)
@@ -1457,7 +1524,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.GraphComponent_drop(this.ptr);
+                LiveSplitCoreNative.GraphComponent_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -1475,7 +1542,7 @@ namespace LiveSplitCore
         /// </summary>
         public GraphComponent() : base(IntPtr.Zero)
         {
-            this.ptr = LiveSplitCoreNative.GraphComponent_new();
+            ptr = LiveSplitCoreNative.GraphComponent_new();
         }
         /// <summary>
         /// Converts the component into a generic component suitable for using with a
@@ -1483,12 +1550,13 @@ namespace LiveSplitCore
         /// </summary>
         public Component IntoGeneric()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new Component(LiveSplitCoreNative.GraphComponent_into_generic(this.ptr));
-            this.ptr = IntPtr.Zero;
+
+            var result = new Component(LiveSplitCoreNative.GraphComponent_into_generic(ptr));
+            ptr = IntPtr.Zero;
             return result;
         }
         internal GraphComponent(IntPtr ptr) : base(ptr) { }
@@ -1509,11 +1577,12 @@ namespace LiveSplitCore
         /// </summary>
         public ulong PointsLen()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = (ulong)LiveSplitCoreNative.GraphComponentState_points_len(this.ptr);
+
+            var result = (ulong)LiveSplitCoreNative.GraphComponentState_points_len(ptr);
             return result;
         }
         /// <summary>
@@ -1522,11 +1591,12 @@ namespace LiveSplitCore
         /// </summary>
         public float PointX(ulong index)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.GraphComponentState_point_x(this.ptr, (UIntPtr)index);
+
+            var result = LiveSplitCoreNative.GraphComponentState_point_x(ptr, (UIntPtr)index);
             return result;
         }
         /// <summary>
@@ -1535,11 +1605,12 @@ namespace LiveSplitCore
         /// </summary>
         public float PointY(ulong index)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.GraphComponentState_point_y(this.ptr, (UIntPtr)index);
+
+            var result = LiveSplitCoreNative.GraphComponentState_point_y(ptr, (UIntPtr)index);
             return result;
         }
         /// <summary>
@@ -1549,11 +1620,12 @@ namespace LiveSplitCore
         /// </summary>
         public bool PointIsBestSegment(ulong index)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.GraphComponentState_point_is_best_segment(this.ptr, (UIntPtr)index) != 0;
+
+            var result = LiveSplitCoreNative.GraphComponentState_point_is_best_segment(ptr, (UIntPtr)index) != 0;
             return result;
         }
         /// <summary>
@@ -1561,11 +1633,12 @@ namespace LiveSplitCore
         /// </summary>
         public ulong HorizontalGridLinesLen()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = (ulong)LiveSplitCoreNative.GraphComponentState_horizontal_grid_lines_len(this.ptr);
+
+            var result = (ulong)LiveSplitCoreNative.GraphComponentState_horizontal_grid_lines_len(ptr);
             return result;
         }
         /// <summary>
@@ -1574,11 +1647,12 @@ namespace LiveSplitCore
         /// </summary>
         public float HorizontalGridLine(ulong index)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.GraphComponentState_horizontal_grid_line(this.ptr, (UIntPtr)index);
+
+            var result = LiveSplitCoreNative.GraphComponentState_horizontal_grid_line(ptr, (UIntPtr)index);
             return result;
         }
         /// <summary>
@@ -1586,11 +1660,12 @@ namespace LiveSplitCore
         /// </summary>
         public ulong VerticalGridLinesLen()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = (ulong)LiveSplitCoreNative.GraphComponentState_vertical_grid_lines_len(this.ptr);
+
+            var result = (ulong)LiveSplitCoreNative.GraphComponentState_vertical_grid_lines_len(ptr);
             return result;
         }
         /// <summary>
@@ -1599,11 +1674,12 @@ namespace LiveSplitCore
         /// </summary>
         public float VerticalGridLine(ulong index)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.GraphComponentState_vertical_grid_line(this.ptr, (UIntPtr)index);
+
+            var result = LiveSplitCoreNative.GraphComponentState_vertical_grid_line(ptr, (UIntPtr)index);
             return result;
         }
         /// <summary>
@@ -1612,11 +1688,12 @@ namespace LiveSplitCore
         /// </summary>
         public float Middle()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.GraphComponentState_middle(this.ptr);
+
+            var result = LiveSplitCoreNative.GraphComponentState_middle(ptr);
             return result;
         }
         /// <summary>
@@ -1626,11 +1703,12 @@ namespace LiveSplitCore
         /// </summary>
         public bool IsLiveDeltaActive()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.GraphComponentState_is_live_delta_active(this.ptr) != 0;
+
+            var result = LiveSplitCoreNative.GraphComponentState_is_live_delta_active(ptr) != 0;
             return result;
         }
         /// <summary>
@@ -1640,11 +1718,12 @@ namespace LiveSplitCore
         /// </summary>
         public bool IsFlipped()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.GraphComponentState_is_flipped(this.ptr) != 0;
+
+            var result = LiveSplitCoreNative.GraphComponentState_is_flipped(ptr) != 0;
             return result;
         }
         internal GraphComponentStateRef(IntPtr ptr)
@@ -1672,7 +1751,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.GraphComponentState_drop(this.ptr);
+                LiveSplitCoreNative.GraphComponentState_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -1701,11 +1780,12 @@ namespace LiveSplitCore
         /// </summary>
         public string SettingsDescriptionAsJson()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.HotkeyConfig_settings_description_as_json(this.ptr);
+
+            var result = LiveSplitCoreNative.HotkeyConfig_settings_description_as_json(ptr);
             return result;
         }
         /// <summary>
@@ -1713,11 +1793,12 @@ namespace LiveSplitCore
         /// </summary>
         public string AsJson()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.HotkeyConfig_as_json(this.ptr);
+
+            var result = LiveSplitCoreNative.HotkeyConfig_as_json(ptr);
             return result;
         }
         internal HotkeyConfigRef(IntPtr ptr)
@@ -1743,15 +1824,17 @@ namespace LiveSplitCore
         /// </summary>
         public bool SetValue(ulong index, SettingValue value)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (value.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("value");
             }
-            var result = LiveSplitCoreNative.HotkeyConfig_set_value(this.ptr, (UIntPtr)index, value.ptr) != 0;
+
+            var result = LiveSplitCoreNative.HotkeyConfig_set_value(ptr, (UIntPtr)index, value.ptr) != 0;
             value.ptr = IntPtr.Zero;
             return result;
         }
@@ -1768,7 +1851,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.HotkeyConfig_drop(this.ptr);
+                LiveSplitCoreNative.HotkeyConfig_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -1786,7 +1869,7 @@ namespace LiveSplitCore
         /// </summary>
         public HotkeyConfig() : base(IntPtr.Zero)
         {
-            this.ptr = LiveSplitCoreNative.HotkeyConfig_new();
+            ptr = LiveSplitCoreNative.HotkeyConfig_new();
         }
         /// <summary>
         /// Parses a hotkey configuration from the given JSON description. null is
@@ -1799,6 +1882,7 @@ namespace LiveSplitCore
             {
                 return null;
             }
+
             return result;
         }
         /// <summary>
@@ -1813,6 +1897,7 @@ namespace LiveSplitCore
             {
                 return null;
             }
+
             return result;
         }
         internal HotkeyConfig(IntPtr ptr) : base(ptr) { }
@@ -1833,11 +1918,12 @@ namespace LiveSplitCore
         /// </summary>
         public HotkeyConfig Config()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new HotkeyConfig(LiveSplitCoreNative.HotkeySystem_config(this.ptr));
+
+            var result = new HotkeyConfig(LiveSplitCoreNative.HotkeySystem_config(ptr));
             return result;
         }
         /// <summary>
@@ -1845,11 +1931,12 @@ namespace LiveSplitCore
         /// </summary>
         public string Resolve(string keyCode)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.HotkeySystem_resolve(this.ptr, keyCode);
+
+            var result = LiveSplitCoreNative.HotkeySystem_resolve(ptr, keyCode);
             return result;
         }
         internal HotkeySystemRef(IntPtr ptr)
@@ -1873,11 +1960,12 @@ namespace LiveSplitCore
         /// </summary>
         public bool Deactivate()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.HotkeySystem_deactivate(this.ptr) != 0;
+
+            var result = LiveSplitCoreNative.HotkeySystem_deactivate(ptr) != 0;
             return result;
         }
         /// <summary>
@@ -1886,11 +1974,12 @@ namespace LiveSplitCore
         /// </summary>
         public bool Activate()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.HotkeySystem_activate(this.ptr) != 0;
+
+            var result = LiveSplitCoreNative.HotkeySystem_activate(ptr) != 0;
             return result;
         }
         /// <summary>
@@ -1901,15 +1990,17 @@ namespace LiveSplitCore
         /// </summary>
         public bool SetConfig(HotkeyConfig config)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (config.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("config");
             }
-            var result = LiveSplitCoreNative.HotkeySystem_set_config(this.ptr, config.ptr) != 0;
+
+            var result = LiveSplitCoreNative.HotkeySystem_set_config(ptr, config.ptr) != 0;
             config.ptr = IntPtr.Zero;
             return result;
         }
@@ -1929,7 +2020,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.HotkeySystem_drop(this.ptr);
+                LiveSplitCoreNative.HotkeySystem_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -1951,12 +2042,14 @@ namespace LiveSplitCore
             {
                 throw new ObjectDisposedException("sharedTimer");
             }
+
             var result = new HotkeySystem(LiveSplitCoreNative.HotkeySystem_new(sharedTimer.ptr));
             sharedTimer.ptr = IntPtr.Zero;
             if (result.ptr == IntPtr.Zero)
             {
                 return null;
             }
+
             return result;
         }
         /// <summary>
@@ -1969,10 +2062,12 @@ namespace LiveSplitCore
             {
                 throw new ObjectDisposedException("sharedTimer");
             }
+
             if (config.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("config");
             }
+
             var result = new HotkeySystem(LiveSplitCoreNative.HotkeySystem_with_config(sharedTimer.ptr, config.ptr));
             sharedTimer.ptr = IntPtr.Zero;
             config.ptr = IntPtr.Zero;
@@ -1980,6 +2075,7 @@ namespace LiveSplitCore
             {
                 return null;
             }
+
             return result;
         }
         internal HotkeySystem(IntPtr ptr) : base(ptr) { }
@@ -1996,11 +2092,12 @@ namespace LiveSplitCore
         /// </summary>
         public string Key()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.KeyValueComponentState_key(this.ptr);
+
+            var result = LiveSplitCoreNative.KeyValueComponentState_key(ptr);
             return result;
         }
         /// <summary>
@@ -2008,11 +2105,12 @@ namespace LiveSplitCore
         /// </summary>
         public string Value()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.KeyValueComponentState_value(this.ptr);
+
+            var result = LiveSplitCoreNative.KeyValueComponentState_value(ptr);
             return result;
         }
         /// <summary>
@@ -2020,11 +2118,12 @@ namespace LiveSplitCore
         /// </summary>
         public string SemanticColor()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.KeyValueComponentState_semantic_color(this.ptr);
+
+            var result = LiveSplitCoreNative.KeyValueComponentState_semantic_color(ptr);
             return result;
         }
         internal KeyValueComponentStateRef(IntPtr ptr)
@@ -2050,7 +2149,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.KeyValueComponentState_drop(this.ptr);
+                LiveSplitCoreNative.KeyValueComponentState_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -2078,11 +2177,12 @@ namespace LiveSplitCore
         /// </summary>
         public Layout Clone()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new Layout(LiveSplitCoreNative.Layout_clone(this.ptr));
+
+            var result = new Layout(LiveSplitCoreNative.Layout_clone(ptr));
             return result;
         }
         /// <summary>
@@ -2090,11 +2190,12 @@ namespace LiveSplitCore
         /// </summary>
         public string SettingsAsJson()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.Layout_settings_as_json(this.ptr);
+
+            var result = LiveSplitCoreNative.Layout_settings_as_json(ptr);
             return result;
         }
         internal LayoutRef(IntPtr ptr)
@@ -2114,15 +2215,17 @@ namespace LiveSplitCore
         /// </summary>
         public LayoutState State(TimerRef timer)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (timer.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("timer");
             }
-            var result = new LayoutState(LiveSplitCoreNative.Layout_state(this.ptr, timer.ptr));
+
+            var result = new LayoutState(LiveSplitCoreNative.Layout_state(ptr, timer.ptr));
             return result;
         }
         /// <summary>
@@ -2130,19 +2233,22 @@ namespace LiveSplitCore
         /// </summary>
         public void UpdateState(LayoutStateRefMut state, TimerRef timer)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (state.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("state");
             }
+
             if (timer.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("timer");
             }
-            LiveSplitCoreNative.Layout_update_state(this.ptr, state.ptr, timer.ptr);
+
+            LiveSplitCoreNative.Layout_update_state(ptr, state.ptr, timer.ptr);
         }
         /// <summary>
         /// Updates the layout's state based on the timer provided and encodes it as
@@ -2150,19 +2256,22 @@ namespace LiveSplitCore
         /// </summary>
         public string UpdateStateAsJson(LayoutStateRefMut state, TimerRef timer)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (state.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("state");
             }
+
             if (timer.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("timer");
             }
-            var result = LiveSplitCoreNative.Layout_update_state_as_json(this.ptr, state.ptr, timer.ptr);
+
+            var result = LiveSplitCoreNative.Layout_update_state_as_json(ptr, state.ptr, timer.ptr);
             return result;
         }
         /// <summary>
@@ -2171,15 +2280,17 @@ namespace LiveSplitCore
         /// </summary>
         public string StateAsJson(TimerRef timer)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (timer.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("timer");
             }
-            var result = LiveSplitCoreNative.Layout_state_as_json(this.ptr, timer.ptr);
+
+            var result = LiveSplitCoreNative.Layout_state_as_json(ptr, timer.ptr);
             return result;
         }
         /// <summary>
@@ -2187,15 +2298,17 @@ namespace LiveSplitCore
         /// </summary>
         public void Push(Component component)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (component.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("component");
             }
-            LiveSplitCoreNative.Layout_push(this.ptr, component.ptr);
+
+            LiveSplitCoreNative.Layout_push(ptr, component.ptr);
             component.ptr = IntPtr.Zero;
         }
         /// <summary>
@@ -2203,22 +2316,24 @@ namespace LiveSplitCore
         /// </summary>
         public void ScrollUp()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.Layout_scroll_up(this.ptr);
+
+            LiveSplitCoreNative.Layout_scroll_up(ptr);
         }
         /// <summary>
         /// Scrolls down all the components in the layout that can be scrolled down.
         /// </summary>
         public void ScrollDown()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.Layout_scroll_down(this.ptr);
+
+            LiveSplitCoreNative.Layout_scroll_down(ptr);
         }
         /// <summary>
         /// Remounts all the components as if they were freshly initialized. Some
@@ -2228,11 +2343,12 @@ namespace LiveSplitCore
         /// </summary>
         public void Remount()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.Layout_remount(this.ptr);
+
+            LiveSplitCoreNative.Layout_remount(ptr);
         }
         internal LayoutRefMut(IntPtr ptr) : base(ptr) { }
     }
@@ -2247,7 +2363,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.Layout_drop(this.ptr);
+                LiveSplitCoreNative.Layout_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -2265,7 +2381,7 @@ namespace LiveSplitCore
         /// </summary>
         public Layout() : base(IntPtr.Zero)
         {
-            this.ptr = LiveSplitCoreNative.Layout_new();
+            ptr = LiveSplitCoreNative.Layout_new();
         }
         /// <summary>
         /// Creates a new default layout that contains a default set of components
@@ -2289,6 +2405,7 @@ namespace LiveSplitCore
             {
                 return null;
             }
+
             return result;
         }
         /// <summary>
@@ -2302,6 +2419,7 @@ namespace LiveSplitCore
             {
                 return null;
             }
+
             return result;
         }
         /// <summary>
@@ -2316,6 +2434,7 @@ namespace LiveSplitCore
             {
                 return null;
             }
+
             return result;
         }
         internal Layout(IntPtr ptr) : base(ptr) { }
@@ -2335,11 +2454,12 @@ namespace LiveSplitCore
         /// </summary>
         public string StateAsJson()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.LayoutEditor_state_as_json(this.ptr);
+
+            var result = LiveSplitCoreNative.LayoutEditor_state_as_json(ptr);
             return result;
         }
         /// <summary>
@@ -2347,11 +2467,12 @@ namespace LiveSplitCore
         /// </summary>
         public LayoutEditorState State()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new LayoutEditorState(LiveSplitCoreNative.LayoutEditor_state(this.ptr));
+
+            var result = new LayoutEditorState(LiveSplitCoreNative.LayoutEditor_state(ptr));
             return result;
         }
         internal LayoutEditorRef(IntPtr ptr)
@@ -2375,15 +2496,17 @@ namespace LiveSplitCore
         /// </summary>
         public string LayoutStateAsJson(TimerRef timer)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (timer.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("timer");
             }
-            var result = LiveSplitCoreNative.LayoutEditor_layout_state_as_json(this.ptr, timer.ptr);
+
+            var result = LiveSplitCoreNative.LayoutEditor_layout_state_as_json(ptr, timer.ptr);
             return result;
         }
         /// <summary>
@@ -2391,19 +2514,22 @@ namespace LiveSplitCore
         /// </summary>
         public void UpdateLayoutState(LayoutStateRefMut state, TimerRef timer)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (state.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("state");
             }
+
             if (timer.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("timer");
             }
-            LiveSplitCoreNative.LayoutEditor_update_layout_state(this.ptr, state.ptr, timer.ptr);
+
+            LiveSplitCoreNative.LayoutEditor_update_layout_state(ptr, state.ptr, timer.ptr);
         }
         /// <summary>
         /// Updates the layout's state based on the timer provided and encodes it as
@@ -2411,19 +2537,22 @@ namespace LiveSplitCore
         /// </summary>
         public string UpdateLayoutStateAsJson(LayoutStateRefMut state, TimerRef timer)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (state.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("state");
             }
+
             if (timer.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("timer");
             }
-            var result = LiveSplitCoreNative.LayoutEditor_update_layout_state_as_json(this.ptr, state.ptr, timer.ptr);
+
+            var result = LiveSplitCoreNative.LayoutEditor_update_layout_state_as_json(ptr, state.ptr, timer.ptr);
             return result;
         }
         /// <summary>
@@ -2433,11 +2562,12 @@ namespace LiveSplitCore
         /// </summary>
         public void Select(ulong index)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.LayoutEditor_select(this.ptr, (UIntPtr)index);
+
+            LiveSplitCoreNative.LayoutEditor_select(ptr, (UIntPtr)index);
         }
         /// <summary>
         /// Adds the component provided to the end of the layout. The newly added
@@ -2445,15 +2575,17 @@ namespace LiveSplitCore
         /// </summary>
         public void AddComponent(Component component)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (component.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("component");
             }
-            LiveSplitCoreNative.LayoutEditor_add_component(this.ptr, component.ptr);
+
+            LiveSplitCoreNative.LayoutEditor_add_component(ptr, component.ptr);
             component.ptr = IntPtr.Zero;
         }
         /// <summary>
@@ -2464,22 +2596,24 @@ namespace LiveSplitCore
         /// </summary>
         public void RemoveComponent()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.LayoutEditor_remove_component(this.ptr);
+
+            LiveSplitCoreNative.LayoutEditor_remove_component(ptr);
         }
         /// <summary>
         /// Moves the selected component up, unless the first component is selected.
         /// </summary>
         public void MoveComponentUp()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.LayoutEditor_move_component_up(this.ptr);
+
+            LiveSplitCoreNative.LayoutEditor_move_component_up(ptr);
         }
         /// <summary>
         /// Moves the selected component down, unless the last component is
@@ -2487,11 +2621,12 @@ namespace LiveSplitCore
         /// </summary>
         public void MoveComponentDown()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.LayoutEditor_move_component_down(this.ptr);
+
+            LiveSplitCoreNative.LayoutEditor_move_component_down(ptr);
         }
         /// <summary>
         /// Moves the selected component to the index provided. You may not provide
@@ -2499,11 +2634,12 @@ namespace LiveSplitCore
         /// </summary>
         public void MoveComponent(ulong dstIndex)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.LayoutEditor_move_component(this.ptr, (UIntPtr)dstIndex);
+
+            LiveSplitCoreNative.LayoutEditor_move_component(ptr, (UIntPtr)dstIndex);
         }
         /// <summary>
         /// Duplicates the currently selected component. The copy gets placed right
@@ -2511,11 +2647,12 @@ namespace LiveSplitCore
         /// </summary>
         public void DuplicateComponent()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.LayoutEditor_duplicate_component(this.ptr);
+
+            LiveSplitCoreNative.LayoutEditor_duplicate_component(ptr);
         }
         /// <summary>
         /// Sets a setting's value of the selected component by its setting index
@@ -2527,15 +2664,17 @@ namespace LiveSplitCore
         /// </summary>
         public void SetComponentSettingsValue(ulong index, SettingValue value)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (value.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("value");
             }
-            LiveSplitCoreNative.LayoutEditor_set_component_settings_value(this.ptr, (UIntPtr)index, value.ptr);
+
+            LiveSplitCoreNative.LayoutEditor_set_component_settings_value(ptr, (UIntPtr)index, value.ptr);
             value.ptr = IntPtr.Zero;
         }
         /// <summary>
@@ -2548,15 +2687,17 @@ namespace LiveSplitCore
         /// </summary>
         public void SetGeneralSettingsValue(ulong index, SettingValue value)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (value.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("value");
             }
-            LiveSplitCoreNative.LayoutEditor_set_general_settings_value(this.ptr, (UIntPtr)index, value.ptr);
+
+            LiveSplitCoreNative.LayoutEditor_set_general_settings_value(ptr, (UIntPtr)index, value.ptr);
             value.ptr = IntPtr.Zero;
         }
         internal LayoutEditorRefMut(IntPtr ptr) : base(ptr) { }
@@ -2597,12 +2738,14 @@ namespace LiveSplitCore
             {
                 throw new ObjectDisposedException("layout");
             }
+
             var result = new LayoutEditor(LiveSplitCoreNative.LayoutEditor_new(layout.ptr));
             layout.ptr = IntPtr.Zero;
             if (result.ptr == IntPtr.Zero)
             {
                 return null;
             }
+
             return result;
         }
         /// <summary>
@@ -2612,12 +2755,13 @@ namespace LiveSplitCore
         /// </summary>
         public Layout Close()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new Layout(LiveSplitCoreNative.LayoutEditor_close(this.ptr));
-            this.ptr = IntPtr.Zero;
+
+            var result = new Layout(LiveSplitCoreNative.LayoutEditor_close(ptr));
+            ptr = IntPtr.Zero;
             return result;
         }
         internal LayoutEditor(IntPtr ptr) : base(ptr) { }
@@ -2634,11 +2778,12 @@ namespace LiveSplitCore
         /// </summary>
         public ulong ComponentLen()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = (ulong)LiveSplitCoreNative.LayoutEditorState_component_len(this.ptr);
+
+            var result = (ulong)LiveSplitCoreNative.LayoutEditorState_component_len(ptr);
             return result;
         }
         /// <summary>
@@ -2646,11 +2791,12 @@ namespace LiveSplitCore
         /// </summary>
         public string ComponentText(ulong index)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.LayoutEditorState_component_text(this.ptr, (UIntPtr)index);
+
+            var result = LiveSplitCoreNative.LayoutEditorState_component_text(ptr, (UIntPtr)index);
             return result;
         }
         /// <summary>
@@ -2664,11 +2810,12 @@ namespace LiveSplitCore
         /// </summary>
         public byte Buttons()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.LayoutEditorState_buttons(this.ptr);
+
+            var result = LiveSplitCoreNative.LayoutEditorState_buttons(ptr);
             return result;
         }
         /// <summary>
@@ -2676,11 +2823,12 @@ namespace LiveSplitCore
         /// </summary>
         public uint SelectedComponent()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.LayoutEditorState_selected_component(this.ptr);
+
+            var result = LiveSplitCoreNative.LayoutEditorState_selected_component(ptr);
             return result;
         }
         /// <summary>
@@ -2690,11 +2838,12 @@ namespace LiveSplitCore
         /// </summary>
         public ulong FieldLen(bool componentSettings)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = (ulong)LiveSplitCoreNative.LayoutEditorState_field_len(this.ptr, componentSettings);
+
+            var result = (ulong)LiveSplitCoreNative.LayoutEditorState_field_len(ptr, componentSettings);
             return result;
         }
         /// <summary>
@@ -2704,11 +2853,12 @@ namespace LiveSplitCore
         /// </summary>
         public string FieldText(bool componentSettings, ulong index)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.LayoutEditorState_field_text(this.ptr, componentSettings, (UIntPtr)index);
+
+            var result = LiveSplitCoreNative.LayoutEditorState_field_text(ptr, componentSettings, (UIntPtr)index);
             return result;
         }
         /// <summary>
@@ -2718,11 +2868,12 @@ namespace LiveSplitCore
         /// </summary>
         public SettingValueRef FieldValue(bool componentSettings, ulong index)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new SettingValueRef(LiveSplitCoreNative.LayoutEditorState_field_value(this.ptr, componentSettings, (UIntPtr)index));
+
+            var result = new SettingValueRef(LiveSplitCoreNative.LayoutEditorState_field_value(ptr, componentSettings, (UIntPtr)index));
             return result;
         }
         internal LayoutEditorStateRef(IntPtr ptr)
@@ -2748,7 +2899,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.LayoutEditorState_drop(this.ptr);
+                LiveSplitCoreNative.LayoutEditorState_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -2782,11 +2933,12 @@ namespace LiveSplitCore
         /// </summary>
         public string AsJson()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.LayoutState_as_json(this.ptr);
+
+            var result = LiveSplitCoreNative.LayoutState_as_json(ptr);
             return result;
         }
         /// <summary>
@@ -2794,11 +2946,12 @@ namespace LiveSplitCore
         /// </summary>
         public ulong Len()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = (ulong)LiveSplitCoreNative.LayoutState_len(this.ptr);
+
+            var result = (ulong)LiveSplitCoreNative.LayoutState_len(ptr);
             return result;
         }
         /// <summary>
@@ -2807,11 +2960,12 @@ namespace LiveSplitCore
         /// </summary>
         public string ComponentType(ulong index)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.LayoutState_component_type(this.ptr, (UIntPtr)index);
+
+            var result = LiveSplitCoreNative.LayoutState_component_type(ptr, (UIntPtr)index);
             return result;
         }
         /// <summary>
@@ -2819,11 +2973,12 @@ namespace LiveSplitCore
         /// </summary>
         public BlankSpaceComponentStateRef ComponentAsBlankSpace(ulong index)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new BlankSpaceComponentStateRef(LiveSplitCoreNative.LayoutState_component_as_blank_space(this.ptr, (UIntPtr)index));
+
+            var result = new BlankSpaceComponentStateRef(LiveSplitCoreNative.LayoutState_component_as_blank_space(ptr, (UIntPtr)index));
             return result;
         }
         /// <summary>
@@ -2831,11 +2986,12 @@ namespace LiveSplitCore
         /// </summary>
         public DetailedTimerComponentStateRef ComponentAsDetailedTimer(ulong index)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new DetailedTimerComponentStateRef(LiveSplitCoreNative.LayoutState_component_as_detailed_timer(this.ptr, (UIntPtr)index));
+
+            var result = new DetailedTimerComponentStateRef(LiveSplitCoreNative.LayoutState_component_as_detailed_timer(ptr, (UIntPtr)index));
             return result;
         }
         /// <summary>
@@ -2843,11 +2999,12 @@ namespace LiveSplitCore
         /// </summary>
         public GraphComponentStateRef ComponentAsGraph(ulong index)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new GraphComponentStateRef(LiveSplitCoreNative.LayoutState_component_as_graph(this.ptr, (UIntPtr)index));
+
+            var result = new GraphComponentStateRef(LiveSplitCoreNative.LayoutState_component_as_graph(ptr, (UIntPtr)index));
             return result;
         }
         /// <summary>
@@ -2855,11 +3012,12 @@ namespace LiveSplitCore
         /// </summary>
         public KeyValueComponentStateRef ComponentAsKeyValue(ulong index)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new KeyValueComponentStateRef(LiveSplitCoreNative.LayoutState_component_as_key_value(this.ptr, (UIntPtr)index));
+
+            var result = new KeyValueComponentStateRef(LiveSplitCoreNative.LayoutState_component_as_key_value(ptr, (UIntPtr)index));
             return result;
         }
         /// <summary>
@@ -2867,11 +3025,12 @@ namespace LiveSplitCore
         /// </summary>
         public SeparatorComponentStateRef ComponentAsSeparator(ulong index)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new SeparatorComponentStateRef(LiveSplitCoreNative.LayoutState_component_as_separator(this.ptr, (UIntPtr)index));
+
+            var result = new SeparatorComponentStateRef(LiveSplitCoreNative.LayoutState_component_as_separator(ptr, (UIntPtr)index));
             return result;
         }
         /// <summary>
@@ -2879,11 +3038,12 @@ namespace LiveSplitCore
         /// </summary>
         public SplitsComponentStateRef ComponentAsSplits(ulong index)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new SplitsComponentStateRef(LiveSplitCoreNative.LayoutState_component_as_splits(this.ptr, (UIntPtr)index));
+
+            var result = new SplitsComponentStateRef(LiveSplitCoreNative.LayoutState_component_as_splits(ptr, (UIntPtr)index));
             return result;
         }
         /// <summary>
@@ -2891,11 +3051,12 @@ namespace LiveSplitCore
         /// </summary>
         public TextComponentStateRef ComponentAsText(ulong index)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new TextComponentStateRef(LiveSplitCoreNative.LayoutState_component_as_text(this.ptr, (UIntPtr)index));
+
+            var result = new TextComponentStateRef(LiveSplitCoreNative.LayoutState_component_as_text(ptr, (UIntPtr)index));
             return result;
         }
         /// <summary>
@@ -2903,11 +3064,12 @@ namespace LiveSplitCore
         /// </summary>
         public TimerComponentStateRef ComponentAsTimer(ulong index)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new TimerComponentStateRef(LiveSplitCoreNative.LayoutState_component_as_timer(this.ptr, (UIntPtr)index));
+
+            var result = new TimerComponentStateRef(LiveSplitCoreNative.LayoutState_component_as_timer(ptr, (UIntPtr)index));
             return result;
         }
         /// <summary>
@@ -2915,11 +3077,12 @@ namespace LiveSplitCore
         /// </summary>
         public TitleComponentStateRef ComponentAsTitle(ulong index)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new TitleComponentStateRef(LiveSplitCoreNative.LayoutState_component_as_title(this.ptr, (UIntPtr)index));
+
+            var result = new TitleComponentStateRef(LiveSplitCoreNative.LayoutState_component_as_title(ptr, (UIntPtr)index));
             return result;
         }
         internal LayoutStateRef(IntPtr ptr)
@@ -2957,7 +3120,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.LayoutState_drop(this.ptr);
+                LiveSplitCoreNative.LayoutState_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -2976,7 +3139,7 @@ namespace LiveSplitCore
         /// </summary>
         public LayoutState() : base(IntPtr.Zero)
         {
-            this.ptr = LiveSplitCoreNative.LayoutState_new();
+            ptr = LiveSplitCoreNative.LayoutState_new();
         }
         internal LayoutState(IntPtr ptr) : base(ptr) { }
     }
@@ -2994,11 +3157,12 @@ namespace LiveSplitCore
         /// </summary>
         public bool IsDefault()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.LinkedLayout_is_default(this.ptr) != 0;
+
+            var result = LiveSplitCoreNative.LinkedLayout_is_default(ptr) != 0;
             return result;
         }
         /// <summary>
@@ -3006,11 +3170,12 @@ namespace LiveSplitCore
         /// </summary>
         public string Path()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.LinkedLayout_path(this.ptr);
+
+            var result = LiveSplitCoreNative.LinkedLayout_path(ptr);
             return result;
         }
         internal LinkedLayoutRef(IntPtr ptr)
@@ -3040,7 +3205,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.LinkedLayout_drop(this.ptr);
+                LiveSplitCoreNative.LinkedLayout_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -3059,7 +3224,7 @@ namespace LiveSplitCore
         /// </summary>
         public LinkedLayout(string path) : base(IntPtr.Zero)
         {
-            this.ptr = LiveSplitCoreNative.LinkedLayout_new(path);
+            ptr = LiveSplitCoreNative.LinkedLayout_new(path);
         }
         internal LinkedLayout(IntPtr ptr) : base(ptr) { }
     }
@@ -3076,11 +3241,12 @@ namespace LiveSplitCore
         /// </summary>
         public bool ParsedSuccessfully()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.ParseRunResult_parsed_successfully(this.ptr) != 0;
+
+            var result = LiveSplitCoreNative.ParseRunResult_parsed_successfully(ptr) != 0;
             return result;
         }
         /// <summary>
@@ -3089,11 +3255,12 @@ namespace LiveSplitCore
         /// </summary>
         public string TimerKind()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.ParseRunResult_timer_kind(this.ptr);
+
+            var result = LiveSplitCoreNative.ParseRunResult_timer_kind(ptr);
             return result;
         }
         /// <summary>
@@ -3104,11 +3271,12 @@ namespace LiveSplitCore
         /// </summary>
         public bool IsGenericTimer()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.ParseRunResult_is_generic_timer(this.ptr) != 0;
+
+            var result = LiveSplitCoreNative.ParseRunResult_is_generic_timer(ptr) != 0;
             return result;
         }
         internal ParseRunResultRef(IntPtr ptr)
@@ -3136,7 +3304,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.ParseRunResult_drop(this.ptr);
+                LiveSplitCoreNative.ParseRunResult_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -3155,12 +3323,13 @@ namespace LiveSplitCore
         /// </summary>
         public Run Unwrap()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new Run(LiveSplitCoreNative.ParseRunResult_unwrap(this.ptr));
-            this.ptr = IntPtr.Zero;
+
+            var result = new Run(LiveSplitCoreNative.ParseRunResult_unwrap(ptr));
+            ptr = IntPtr.Zero;
             return result;
         }
         internal ParseRunResult(IntPtr ptr) : base(ptr) { }
@@ -3180,15 +3349,17 @@ namespace LiveSplitCore
         /// </summary>
         public string StateAsJson(TimerRef timer)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (timer.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("timer");
             }
-            var result = LiveSplitCoreNative.PbChanceComponent_state_as_json(this.ptr, timer.ptr);
+
+            var result = LiveSplitCoreNative.PbChanceComponent_state_as_json(ptr, timer.ptr);
             return result;
         }
         /// <summary>
@@ -3196,15 +3367,17 @@ namespace LiveSplitCore
         /// </summary>
         public KeyValueComponentState State(TimerRef timer)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (timer.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("timer");
             }
-            var result = new KeyValueComponentState(LiveSplitCoreNative.PbChanceComponent_state(this.ptr, timer.ptr));
+
+            var result = new KeyValueComponentState(LiveSplitCoreNative.PbChanceComponent_state(ptr, timer.ptr));
             return result;
         }
         internal PbChanceComponentRef(IntPtr ptr)
@@ -3236,7 +3409,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.PbChanceComponent_drop(this.ptr);
+                LiveSplitCoreNative.PbChanceComponent_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -3254,7 +3427,7 @@ namespace LiveSplitCore
         /// </summary>
         public PbChanceComponent() : base(IntPtr.Zero)
         {
-            this.ptr = LiveSplitCoreNative.PbChanceComponent_new();
+            ptr = LiveSplitCoreNative.PbChanceComponent_new();
         }
         /// <summary>
         /// Converts the component into a generic component suitable for using with a
@@ -3262,12 +3435,13 @@ namespace LiveSplitCore
         /// </summary>
         public Component IntoGeneric()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new Component(LiveSplitCoreNative.PbChanceComponent_into_generic(this.ptr));
-            this.ptr = IntPtr.Zero;
+
+            var result = new Component(LiveSplitCoreNative.PbChanceComponent_into_generic(ptr));
+            ptr = IntPtr.Zero;
             return result;
         }
         internal PbChanceComponent(IntPtr ptr) : base(ptr) { }
@@ -3287,15 +3461,17 @@ namespace LiveSplitCore
         /// </summary>
         public string StateAsJson(TimerRef timer)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (timer.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("timer");
             }
-            var result = LiveSplitCoreNative.PossibleTimeSaveComponent_state_as_json(this.ptr, timer.ptr);
+
+            var result = LiveSplitCoreNative.PossibleTimeSaveComponent_state_as_json(ptr, timer.ptr);
             return result;
         }
         /// <summary>
@@ -3303,15 +3479,17 @@ namespace LiveSplitCore
         /// </summary>
         public KeyValueComponentState State(TimerRef timer)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (timer.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("timer");
             }
-            var result = new KeyValueComponentState(LiveSplitCoreNative.PossibleTimeSaveComponent_state(this.ptr, timer.ptr));
+
+            var result = new KeyValueComponentState(LiveSplitCoreNative.PossibleTimeSaveComponent_state(ptr, timer.ptr));
             return result;
         }
         internal PossibleTimeSaveComponentRef(IntPtr ptr)
@@ -3343,7 +3521,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.PossibleTimeSaveComponent_drop(this.ptr);
+                LiveSplitCoreNative.PossibleTimeSaveComponent_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -3361,7 +3539,7 @@ namespace LiveSplitCore
         /// </summary>
         public PossibleTimeSaveComponent() : base(IntPtr.Zero)
         {
-            this.ptr = LiveSplitCoreNative.PossibleTimeSaveComponent_new();
+            ptr = LiveSplitCoreNative.PossibleTimeSaveComponent_new();
         }
         /// <summary>
         /// Converts the component into a generic component suitable for using with a
@@ -3369,12 +3547,13 @@ namespace LiveSplitCore
         /// </summary>
         public Component IntoGeneric()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new Component(LiveSplitCoreNative.PossibleTimeSaveComponent_into_generic(this.ptr));
-            this.ptr = IntPtr.Zero;
+
+            var result = new Component(LiveSplitCoreNative.PossibleTimeSaveComponent_into_generic(ptr));
+            ptr = IntPtr.Zero;
             return result;
         }
         internal PossibleTimeSaveComponent(IntPtr ptr) : base(ptr) { }
@@ -3395,11 +3574,12 @@ namespace LiveSplitCore
         /// </summary>
         public string Message()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.PotentialCleanUp_message(this.ptr);
+
+            var result = LiveSplitCoreNative.PotentialCleanUp_message(ptr);
             return result;
         }
         internal PotentialCleanUpRef(IntPtr ptr)
@@ -3431,7 +3611,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.PotentialCleanUp_drop(this.ptr);
+                LiveSplitCoreNative.PotentialCleanUp_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -3462,19 +3642,22 @@ namespace LiveSplitCore
         /// </summary>
         public string StateAsJson(TimerRef timer, GeneralLayoutSettingsRef layoutSettings)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (timer.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("timer");
             }
+
             if (layoutSettings.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("layoutSettings");
             }
-            var result = LiveSplitCoreNative.PreviousSegmentComponent_state_as_json(this.ptr, timer.ptr, layoutSettings.ptr);
+
+            var result = LiveSplitCoreNative.PreviousSegmentComponent_state_as_json(ptr, timer.ptr, layoutSettings.ptr);
             return result;
         }
         /// <summary>
@@ -3483,19 +3666,22 @@ namespace LiveSplitCore
         /// </summary>
         public KeyValueComponentState State(TimerRef timer, GeneralLayoutSettingsRef layoutSettings)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (timer.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("timer");
             }
+
             if (layoutSettings.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("layoutSettings");
             }
-            var result = new KeyValueComponentState(LiveSplitCoreNative.PreviousSegmentComponent_state(this.ptr, timer.ptr, layoutSettings.ptr));
+
+            var result = new KeyValueComponentState(LiveSplitCoreNative.PreviousSegmentComponent_state(ptr, timer.ptr, layoutSettings.ptr));
             return result;
         }
         internal PreviousSegmentComponentRef(IntPtr ptr)
@@ -3529,7 +3715,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.PreviousSegmentComponent_drop(this.ptr);
+                LiveSplitCoreNative.PreviousSegmentComponent_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -3547,7 +3733,7 @@ namespace LiveSplitCore
         /// </summary>
         public PreviousSegmentComponent() : base(IntPtr.Zero)
         {
-            this.ptr = LiveSplitCoreNative.PreviousSegmentComponent_new();
+            ptr = LiveSplitCoreNative.PreviousSegmentComponent_new();
         }
         /// <summary>
         /// Converts the component into a generic component suitable for using with a
@@ -3555,12 +3741,13 @@ namespace LiveSplitCore
         /// </summary>
         public Component IntoGeneric()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new Component(LiveSplitCoreNative.PreviousSegmentComponent_into_generic(this.ptr));
-            this.ptr = IntPtr.Zero;
+
+            var result = new Component(LiveSplitCoreNative.PreviousSegmentComponent_into_generic(ptr));
+            ptr = IntPtr.Zero;
             return result;
         }
         internal PreviousSegmentComponent(IntPtr ptr) : base(ptr) { }
@@ -3577,11 +3764,12 @@ namespace LiveSplitCore
         /// </summary>
         public Run Clone()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new Run(LiveSplitCoreNative.Run_clone(this.ptr));
+
+            var result = new Run(LiveSplitCoreNative.Run_clone(ptr));
             return result;
         }
         /// <summary>
@@ -3589,11 +3777,12 @@ namespace LiveSplitCore
         /// </summary>
         public string GameName()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.Run_game_name(this.ptr);
+
+            var result = LiveSplitCoreNative.Run_game_name(ptr);
             return result;
         }
         /// <summary>
@@ -3602,11 +3791,12 @@ namespace LiveSplitCore
         /// </summary>
         public IntPtr GameIconPtr()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.Run_game_icon_ptr(this.ptr);
+
+            var result = LiveSplitCoreNative.Run_game_icon_ptr(ptr);
             return result;
         }
         /// <summary>
@@ -3614,11 +3804,12 @@ namespace LiveSplitCore
         /// </summary>
         public ulong GameIconLen()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = (ulong)LiveSplitCoreNative.Run_game_icon_len(this.ptr);
+
+            var result = (ulong)LiveSplitCoreNative.Run_game_icon_len(ptr);
             return result;
         }
         /// <summary>
@@ -3626,11 +3817,12 @@ namespace LiveSplitCore
         /// </summary>
         public string CategoryName()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.Run_category_name(this.ptr);
+
+            var result = LiveSplitCoreNative.Run_category_name(ptr);
             return result;
         }
         /// <summary>
@@ -3645,11 +3837,12 @@ namespace LiveSplitCore
         /// </summary>
         public string ExtendedFileName(bool useExtendedCategoryName)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.Run_extended_file_name(this.ptr, useExtendedCategoryName);
+
+            var result = LiveSplitCoreNative.Run_extended_file_name(ptr, useExtendedCategoryName);
             return result;
         }
         /// <summary>
@@ -3662,11 +3855,12 @@ namespace LiveSplitCore
         /// </summary>
         public string ExtendedName(bool useExtendedCategoryName)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.Run_extended_name(this.ptr, useExtendedCategoryName);
+
+            var result = LiveSplitCoreNative.Run_extended_name(ptr, useExtendedCategoryName);
             return result;
         }
         /// <summary>
@@ -3678,11 +3872,12 @@ namespace LiveSplitCore
         /// </summary>
         public string ExtendedCategoryName(bool showRegion, bool showPlatform, bool showVariables)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.Run_extended_category_name(this.ptr, showRegion, showPlatform, showVariables);
+
+            var result = LiveSplitCoreNative.Run_extended_category_name(ptr, showRegion, showPlatform, showVariables);
             return result;
         }
         /// <summary>
@@ -3690,11 +3885,12 @@ namespace LiveSplitCore
         /// </summary>
         public uint AttemptCount()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.Run_attempt_count(this.ptr);
+
+            var result = LiveSplitCoreNative.Run_attempt_count(ptr);
             return result;
         }
         /// <summary>
@@ -3703,11 +3899,12 @@ namespace LiveSplitCore
         /// </summary>
         public RunMetadataRef Metadata()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new RunMetadataRef(LiveSplitCoreNative.Run_metadata(this.ptr));
+
+            var result = new RunMetadataRef(LiveSplitCoreNative.Run_metadata(ptr));
             return result;
         }
         /// <summary>
@@ -3715,11 +3912,12 @@ namespace LiveSplitCore
         /// </summary>
         public TimeSpanRef Offset()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new TimeSpanRef(LiveSplitCoreNative.Run_offset(this.ptr));
+
+            var result = new TimeSpanRef(LiveSplitCoreNative.Run_offset(ptr));
             return result;
         }
         /// <summary>
@@ -3727,11 +3925,12 @@ namespace LiveSplitCore
         /// </summary>
         public ulong Len()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = (ulong)LiveSplitCoreNative.Run_len(this.ptr);
+
+            var result = (ulong)LiveSplitCoreNative.Run_len(ptr);
             return result;
         }
         /// <summary>
@@ -3740,11 +3939,12 @@ namespace LiveSplitCore
         /// </summary>
         public bool HasBeenModified()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.Run_has_been_modified(this.ptr) != 0;
+
+            var result = LiveSplitCoreNative.Run_has_been_modified(ptr) != 0;
             return result;
         }
         /// <summary>
@@ -3753,11 +3953,12 @@ namespace LiveSplitCore
         /// </summary>
         public SegmentRef Segment(ulong index)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new SegmentRef(LiveSplitCoreNative.Run_segment(this.ptr, (UIntPtr)index));
+
+            var result = new SegmentRef(LiveSplitCoreNative.Run_segment(ptr, (UIntPtr)index));
             return result;
         }
         /// <summary>
@@ -3765,11 +3966,12 @@ namespace LiveSplitCore
         /// </summary>
         public ulong AttemptHistoryLen()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = (ulong)LiveSplitCoreNative.Run_attempt_history_len(this.ptr);
+
+            var result = (ulong)LiveSplitCoreNative.Run_attempt_history_len(ptr);
             return result;
         }
         /// <summary>
@@ -3780,11 +3982,12 @@ namespace LiveSplitCore
         /// </summary>
         public AttemptRef AttemptHistoryIndex(ulong index)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new AttemptRef(LiveSplitCoreNative.Run_attempt_history_index(this.ptr, (UIntPtr)index));
+
+            var result = new AttemptRef(LiveSplitCoreNative.Run_attempt_history_index(ptr, (UIntPtr)index));
             return result;
         }
         /// <summary>
@@ -3794,11 +3997,12 @@ namespace LiveSplitCore
         /// </summary>
         public string SaveAsLss()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.Run_save_as_lss(this.ptr);
+
+            var result = LiveSplitCoreNative.Run_save_as_lss(ptr);
             return result;
         }
         /// <summary>
@@ -3806,11 +4010,12 @@ namespace LiveSplitCore
         /// </summary>
         public ulong CustomComparisonsLen()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = (ulong)LiveSplitCoreNative.Run_custom_comparisons_len(this.ptr);
+
+            var result = (ulong)LiveSplitCoreNative.Run_custom_comparisons_len(ptr);
             return result;
         }
         /// <summary>
@@ -3820,11 +4025,12 @@ namespace LiveSplitCore
         /// </summary>
         public string CustomComparison(ulong index)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.Run_custom_comparison(this.ptr, (UIntPtr)index);
+
+            var result = LiveSplitCoreNative.Run_custom_comparison(ptr, (UIntPtr)index);
             return result;
         }
         /// <summary>
@@ -3832,11 +4038,12 @@ namespace LiveSplitCore
         /// </summary>
         public string AutoSplitterSettings()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.Run_auto_splitter_settings(this.ptr);
+
+            var result = LiveSplitCoreNative.Run_auto_splitter_settings(ptr);
             return result;
         }
         /// <summary>
@@ -3845,15 +4052,17 @@ namespace LiveSplitCore
         /// </summary>
         public LinkedLayout LinkedLayout()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new LinkedLayout(LiveSplitCoreNative.Run_linked_layout(this.ptr));
+
+            var result = new LinkedLayout(LiveSplitCoreNative.Run_linked_layout(ptr));
             if (result.ptr == IntPtr.Zero)
             {
                 return null;
             }
+
             return result;
         }
         internal RunRef(IntPtr ptr)
@@ -3872,15 +4081,17 @@ namespace LiveSplitCore
         /// </summary>
         public void PushSegment(Segment segment)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (segment.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("segment");
             }
-            LiveSplitCoreNative.Run_push_segment(this.ptr, segment.ptr);
+
+            LiveSplitCoreNative.Run_push_segment(ptr, segment.ptr);
             segment.ptr = IntPtr.Zero;
         }
         /// <summary>
@@ -3888,22 +4099,24 @@ namespace LiveSplitCore
         /// </summary>
         public void SetGameName(string game)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.Run_set_game_name(this.ptr, game);
+
+            LiveSplitCoreNative.Run_set_game_name(ptr, game);
         }
         /// <summary>
         /// Sets the name of the category this Run is for.
         /// </summary>
         public void SetCategoryName(string category)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.Run_set_category_name(this.ptr, category);
+
+            LiveSplitCoreNative.Run_set_category_name(ptr, category);
         }
         /// <summary>
         /// Marks the Run as modified, so that it is known that there are changes
@@ -3911,11 +4124,12 @@ namespace LiveSplitCore
         /// </summary>
         public void MarkAsModified()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.Run_mark_as_modified(this.ptr);
+
+            LiveSplitCoreNative.Run_mark_as_modified(ptr);
         }
         internal RunRefMut(IntPtr ptr) : base(ptr) { }
     }
@@ -3929,7 +4143,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.Run_drop(this.ptr);
+                LiveSplitCoreNative.Run_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -3947,7 +4161,7 @@ namespace LiveSplitCore
         /// </summary>
         public Run() : base(IntPtr.Zero)
         {
-            this.ptr = LiveSplitCoreNative.Run_new();
+            ptr = LiveSplitCoreNative.Run_new();
         }
         /// <summary>
         /// Attempts to parse a splits file from an array by invoking the corresponding
@@ -4026,11 +4240,12 @@ namespace LiveSplitCore
         /// </summary>
         public string StateAsJson()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.RunEditor_state_as_json(this.ptr);
+
+            var result = LiveSplitCoreNative.RunEditor_state_as_json(ptr);
             return result;
         }
         /// <summary>
@@ -4038,11 +4253,12 @@ namespace LiveSplitCore
         /// </summary>
         public void SelectTimingMethod(byte method)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.RunEditor_select_timing_method(this.ptr, method);
+
+            LiveSplitCoreNative.RunEditor_select_timing_method(ptr, method);
         }
         /// <summary>
         /// Unselects the segment with the given index. If it's not selected or the
@@ -4053,11 +4269,12 @@ namespace LiveSplitCore
         /// </summary>
         public void Unselect(ulong index)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.RunEditor_unselect(this.ptr, (UIntPtr)index);
+
+            LiveSplitCoreNative.RunEditor_unselect(ptr, (UIntPtr)index);
         }
         /// <summary>
         /// In addition to the segments that are already selected, the segment with
@@ -4068,11 +4285,12 @@ namespace LiveSplitCore
         /// </summary>
         public void SelectAdditionally(ulong index)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.RunEditor_select_additionally(this.ptr, (UIntPtr)index);
+
+            LiveSplitCoreNative.RunEditor_select_additionally(ptr, (UIntPtr)index);
         }
         /// <summary>
         /// Selects the segment with the given index. All other segments are
@@ -4082,33 +4300,36 @@ namespace LiveSplitCore
         /// </summary>
         public void SelectOnly(ulong index)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.RunEditor_select_only(this.ptr, (UIntPtr)index);
+
+            LiveSplitCoreNative.RunEditor_select_only(ptr, (UIntPtr)index);
         }
         /// <summary>
         /// Sets the name of the game.
         /// </summary>
         public void SetGameName(string game)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.RunEditor_set_game_name(this.ptr, game);
+
+            LiveSplitCoreNative.RunEditor_set_game_name(ptr, game);
         }
         /// <summary>
         /// Sets the name of the category.
         /// </summary>
         public void SetCategoryName(string category)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.RunEditor_set_category_name(this.ptr, category);
+
+            LiveSplitCoreNative.RunEditor_set_category_name(ptr, category);
         }
         /// <summary>
         /// Parses and sets the timer offset from the string provided. The timer
@@ -4117,11 +4338,12 @@ namespace LiveSplitCore
         /// </summary>
         public bool ParseAndSetOffset(string offset)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.RunEditor_parse_and_set_offset(this.ptr, offset) != 0;
+
+            var result = LiveSplitCoreNative.RunEditor_parse_and_set_offset(ptr, offset) != 0;
             return result;
         }
         /// <summary>
@@ -4131,11 +4353,12 @@ namespace LiveSplitCore
         /// </summary>
         public bool ParseAndSetAttemptCount(string attempts)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.RunEditor_parse_and_set_attempt_count(this.ptr, attempts) != 0;
+
+            var result = LiveSplitCoreNative.RunEditor_parse_and_set_attempt_count(ptr, attempts) != 0;
             return result;
         }
         /// <summary>
@@ -4143,22 +4366,24 @@ namespace LiveSplitCore
         /// </summary>
         public void SetGameIcon(IntPtr data, ulong length)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.RunEditor_set_game_icon(this.ptr, (IntPtr)data, (UIntPtr)length);
+
+            LiveSplitCoreNative.RunEditor_set_game_icon(ptr, (IntPtr)data, (UIntPtr)length);
         }
         /// <summary>
         /// Removes the game's icon.
         /// </summary>
         public void RemoveGameIcon()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.RunEditor_remove_game_icon(this.ptr);
+
+            LiveSplitCoreNative.RunEditor_remove_game_icon(ptr);
         }
         /// <summary>
         /// Sets the Linked Layout of the Run. If a Layout is linked, it is supposed to
@@ -4166,15 +4391,17 @@ namespace LiveSplitCore
         /// </summary>
         public void SetLinkedLayout(LinkedLayout linkedLayout)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (linkedLayout.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("linkedLayout");
             }
-            LiveSplitCoreNative.RunEditor_set_linked_layout(this.ptr, linkedLayout.ptr);
+
+            LiveSplitCoreNative.RunEditor_set_linked_layout(ptr, linkedLayout.ptr);
             linkedLayout.ptr = IntPtr.Zero;
         }
         /// <summary>
@@ -4183,11 +4410,12 @@ namespace LiveSplitCore
         /// </summary>
         public void RemoveLinkedLayout()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.RunEditor_remove_linked_layout(this.ptr);
+
+            LiveSplitCoreNative.RunEditor_remove_linked_layout(ptr);
         }
         /// <summary>
         /// Sets the speedrun.com Run ID of the run. You need to ensure that the
@@ -4196,11 +4424,12 @@ namespace LiveSplitCore
         /// </summary>
         public void SetRunId(string name)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.RunEditor_set_run_id(this.ptr, name);
+
+            LiveSplitCoreNative.RunEditor_set_run_id(ptr, name);
         }
         /// <summary>
         /// Sets the name of the region this game is from. This may be empty if it's
@@ -4208,11 +4437,12 @@ namespace LiveSplitCore
         /// </summary>
         public void SetRegionName(string name)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.RunEditor_set_region_name(this.ptr, name);
+
+            LiveSplitCoreNative.RunEditor_set_region_name(ptr, name);
         }
         /// <summary>
         /// Sets the name of the platform this game is run on. This may be empty if
@@ -4220,11 +4450,12 @@ namespace LiveSplitCore
         /// </summary>
         public void SetPlatformName(string name)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.RunEditor_set_platform_name(this.ptr, name);
+
+            LiveSplitCoreNative.RunEditor_set_platform_name(ptr, name);
         }
         /// <summary>
         /// Specifies whether this speedrun is done on an emulator. Keep in mind
@@ -4232,11 +4463,12 @@ namespace LiveSplitCore
         /// </summary>
         public void SetEmulatorUsage(bool usesEmulator)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.RunEditor_set_emulator_usage(this.ptr, usesEmulator);
+
+            LiveSplitCoreNative.RunEditor_set_emulator_usage(ptr, usesEmulator);
         }
         /// <summary>
         /// Sets the speedrun.com variable with the name specified to the value specified. A
@@ -4247,22 +4479,24 @@ namespace LiveSplitCore
         /// </summary>
         public void SetSpeedrunComVariable(string name, string value)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.RunEditor_set_speedrun_com_variable(this.ptr, name, value);
+
+            LiveSplitCoreNative.RunEditor_set_speedrun_com_variable(ptr, name, value);
         }
         /// <summary>
         /// Removes the speedrun.com variable with the name specified.
         /// </summary>
         public void RemoveSpeedrunComVariable(string name)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.RunEditor_remove_speedrun_com_variable(this.ptr, name);
+
+            LiveSplitCoreNative.RunEditor_remove_speedrun_com_variable(ptr, name);
         }
         /// <summary>
         /// Adds a new permanent custom variable. If there's a temporary variable with
@@ -4271,11 +4505,12 @@ namespace LiveSplitCore
         /// </summary>
         public void AddCustomVariable(string name)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.RunEditor_add_custom_variable(this.ptr, name);
+
+            LiveSplitCoreNative.RunEditor_add_custom_variable(ptr, name);
         }
         /// <summary>
         /// Sets the value of a custom variable with the name specified. If the custom
@@ -4283,11 +4518,12 @@ namespace LiveSplitCore
         /// </summary>
         public void SetCustomVariable(string name, string value)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.RunEditor_set_custom_variable(this.ptr, name, value);
+
+            LiveSplitCoreNative.RunEditor_set_custom_variable(ptr, name, value);
         }
         /// <summary>
         /// Removes the custom variable with the name specified. If the custom variable
@@ -4295,22 +4531,24 @@ namespace LiveSplitCore
         /// </summary>
         public void RemoveCustomVariable(string name)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.RunEditor_remove_custom_variable(this.ptr, name);
+
+            LiveSplitCoreNative.RunEditor_remove_custom_variable(ptr, name);
         }
         /// <summary>
         /// Resets all the Metadata Information.
         /// </summary>
         public void ClearMetadata()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.RunEditor_clear_metadata(this.ptr);
+
+            LiveSplitCoreNative.RunEditor_clear_metadata(ptr);
         }
         /// <summary>
         /// Inserts a new empty segment above the active segment and adjusts the
@@ -4319,11 +4557,12 @@ namespace LiveSplitCore
         /// </summary>
         public void InsertSegmentAbove()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.RunEditor_insert_segment_above(this.ptr);
+
+            LiveSplitCoreNative.RunEditor_insert_segment_above(ptr);
         }
         /// <summary>
         /// Inserts a new empty segment below the active segment and adjusts the
@@ -4332,11 +4571,12 @@ namespace LiveSplitCore
         /// </summary>
         public void InsertSegmentBelow()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.RunEditor_insert_segment_below(this.ptr);
+
+            LiveSplitCoreNative.RunEditor_insert_segment_below(ptr);
         }
         /// <summary>
         /// Removes all the selected segments, unless all of them are selected. The
@@ -4347,11 +4587,12 @@ namespace LiveSplitCore
         /// </summary>
         public void RemoveSegments()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.RunEditor_remove_segments(this.ptr);
+
+            LiveSplitCoreNative.RunEditor_remove_segments(ptr);
         }
         /// <summary>
         /// Moves all the selected segments up, unless the first segment is
@@ -4360,11 +4601,12 @@ namespace LiveSplitCore
         /// </summary>
         public void MoveSegmentsUp()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.RunEditor_move_segments_up(this.ptr);
+
+            LiveSplitCoreNative.RunEditor_move_segments_up(ptr);
         }
         /// <summary>
         /// Moves all the selected segments down, unless the last segment is
@@ -4373,44 +4615,48 @@ namespace LiveSplitCore
         /// </summary>
         public void MoveSegmentsDown()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.RunEditor_move_segments_down(this.ptr);
+
+            LiveSplitCoreNative.RunEditor_move_segments_down(ptr);
         }
         /// <summary>
         /// Sets the icon of the active segment.
         /// </summary>
         public void ActiveSetIcon(IntPtr data, ulong length)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.RunEditor_active_set_icon(this.ptr, (IntPtr)data, (UIntPtr)length);
+
+            LiveSplitCoreNative.RunEditor_active_set_icon(ptr, (IntPtr)data, (UIntPtr)length);
         }
         /// <summary>
         /// Removes the icon of the active segment.
         /// </summary>
         public void ActiveRemoveIcon()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.RunEditor_active_remove_icon(this.ptr);
+
+            LiveSplitCoreNative.RunEditor_active_remove_icon(ptr);
         }
         /// <summary>
         /// Sets the name of the active segment.
         /// </summary>
         public void ActiveSetName(string name)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.RunEditor_active_set_name(this.ptr, name);
+
+            LiveSplitCoreNative.RunEditor_active_set_name(ptr, name);
         }
         /// <summary>
         /// Parses a split time from a string and sets it for the active segment with
@@ -4418,11 +4664,12 @@ namespace LiveSplitCore
         /// </summary>
         public bool ActiveParseAndSetSplitTime(string time)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.RunEditor_active_parse_and_set_split_time(this.ptr, time) != 0;
+
+            var result = LiveSplitCoreNative.RunEditor_active_parse_and_set_split_time(ptr, time) != 0;
             return result;
         }
         /// <summary>
@@ -4431,11 +4678,12 @@ namespace LiveSplitCore
         /// </summary>
         public bool ActiveParseAndSetSegmentTime(string time)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.RunEditor_active_parse_and_set_segment_time(this.ptr, time) != 0;
+
+            var result = LiveSplitCoreNative.RunEditor_active_parse_and_set_segment_time(ptr, time) != 0;
             return result;
         }
         /// <summary>
@@ -4444,11 +4692,12 @@ namespace LiveSplitCore
         /// </summary>
         public bool ActiveParseAndSetBestSegmentTime(string time)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.RunEditor_active_parse_and_set_best_segment_time(this.ptr, time) != 0;
+
+            var result = LiveSplitCoreNative.RunEditor_active_parse_and_set_best_segment_time(ptr, time) != 0;
             return result;
         }
         /// <summary>
@@ -4457,11 +4706,12 @@ namespace LiveSplitCore
         /// </summary>
         public bool ActiveParseAndSetComparisonTime(string comparison, string time)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.RunEditor_active_parse_and_set_comparison_time(this.ptr, comparison, time) != 0;
+
+            var result = LiveSplitCoreNative.RunEditor_active_parse_and_set_comparison_time(ptr, comparison, time) != 0;
             return result;
         }
         /// <summary>
@@ -4470,11 +4720,12 @@ namespace LiveSplitCore
         /// </summary>
         public bool AddComparison(string comparison)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.RunEditor_add_comparison(this.ptr, comparison) != 0;
+
+            var result = LiveSplitCoreNative.RunEditor_add_comparison(ptr, comparison) != 0;
             return result;
         }
         /// <summary>
@@ -4484,15 +4735,17 @@ namespace LiveSplitCore
         /// </summary>
         public bool ImportComparison(RunRef run, string comparison)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (run.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("run");
             }
-            var result = LiveSplitCoreNative.RunEditor_import_comparison(this.ptr, run.ptr, comparison) != 0;
+
+            var result = LiveSplitCoreNative.RunEditor_import_comparison(ptr, run.ptr, comparison) != 0;
             return result;
         }
         /// <summary>
@@ -4501,11 +4754,12 @@ namespace LiveSplitCore
         /// </summary>
         public void RemoveComparison(string comparison)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.RunEditor_remove_comparison(this.ptr, comparison);
+
+            LiveSplitCoreNative.RunEditor_remove_comparison(ptr, comparison);
         }
         /// <summary>
         /// Renames a comparison. The comparison can't be renamed if the new name of
@@ -4513,11 +4767,12 @@ namespace LiveSplitCore
         /// </summary>
         public bool RenameComparison(string oldName, string newName)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.RunEditor_rename_comparison(this.ptr, oldName, newName) != 0;
+
+            var result = LiveSplitCoreNative.RunEditor_rename_comparison(ptr, oldName, newName) != 0;
             return result;
         }
         /// <summary>
@@ -4528,11 +4783,12 @@ namespace LiveSplitCore
         /// </summary>
         public bool MoveComparison(ulong srcIndex, ulong dstIndex)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.RunEditor_move_comparison(this.ptr, (UIntPtr)srcIndex, (UIntPtr)dstIndex) != 0;
+
+            var result = LiveSplitCoreNative.RunEditor_move_comparison(ptr, (UIntPtr)srcIndex, (UIntPtr)dstIndex) != 0;
             return result;
         }
         /// <summary>
@@ -4549,11 +4805,12 @@ namespace LiveSplitCore
         /// </summary>
         public bool ParseAndGenerateGoalComparison(string time)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.RunEditor_parse_and_generate_goal_comparison(this.ptr, time) != 0;
+
+            var result = LiveSplitCoreNative.RunEditor_parse_and_generate_goal_comparison(ptr, time) != 0;
             return result;
         }
         /// <summary>
@@ -4562,11 +4819,12 @@ namespace LiveSplitCore
         /// </summary>
         public void ClearHistory()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.RunEditor_clear_history(this.ptr);
+
+            LiveSplitCoreNative.RunEditor_clear_history(ptr);
         }
         /// <summary>
         /// Clears out the Attempt History, the Segment Histories, all the times,
@@ -4576,11 +4834,12 @@ namespace LiveSplitCore
         /// </summary>
         public void ClearTimes()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.RunEditor_clear_times(this.ptr);
+
+            LiveSplitCoreNative.RunEditor_clear_times(ptr);
         }
         /// <summary>
         /// Creates a Sum of Best Cleaner which allows you to interactively remove
@@ -4592,11 +4851,12 @@ namespace LiveSplitCore
         /// </summary>
         public SumOfBestCleaner CleanSumOfBest()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new SumOfBestCleaner(LiveSplitCoreNative.RunEditor_clean_sum_of_best(this.ptr));
+
+            var result = new SumOfBestCleaner(LiveSplitCoreNative.RunEditor_clean_sum_of_best(ptr));
             return result;
         }
         internal RunEditorRefMut(IntPtr ptr) : base(ptr) { }
@@ -4638,12 +4898,14 @@ namespace LiveSplitCore
             {
                 throw new ObjectDisposedException("run");
             }
+
             var result = new RunEditor(LiveSplitCoreNative.RunEditor_new(run.ptr));
             run.ptr = IntPtr.Zero;
             if (result.ptr == IntPtr.Zero)
             {
                 return null;
             }
+
             return result;
         }
         /// <summary>
@@ -4653,12 +4915,13 @@ namespace LiveSplitCore
         /// </summary>
         public Run Close()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new Run(LiveSplitCoreNative.RunEditor_close(this.ptr));
-            this.ptr = IntPtr.Zero;
+
+            var result = new Run(LiveSplitCoreNative.RunEditor_close(ptr));
+            ptr = IntPtr.Zero;
             return result;
         }
         internal RunEditor(IntPtr ptr) : base(ptr) { }
@@ -4679,11 +4942,12 @@ namespace LiveSplitCore
         /// </summary>
         public string RunId()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.RunMetadata_run_id(this.ptr);
+
+            var result = LiveSplitCoreNative.RunMetadata_run_id(ptr);
             return result;
         }
         /// <summary>
@@ -4692,11 +4956,12 @@ namespace LiveSplitCore
         /// </summary>
         public string PlatformName()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.RunMetadata_platform_name(this.ptr);
+
+            var result = LiveSplitCoreNative.RunMetadata_platform_name(ptr);
             return result;
         }
         /// <summary>
@@ -4705,11 +4970,12 @@ namespace LiveSplitCore
         /// </summary>
         public bool UsesEmulator()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.RunMetadata_uses_emulator(this.ptr) != 0;
+
+            var result = LiveSplitCoreNative.RunMetadata_uses_emulator(ptr) != 0;
             return result;
         }
         /// <summary>
@@ -4718,11 +4984,12 @@ namespace LiveSplitCore
         /// </summary>
         public string RegionName()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.RunMetadata_region_name(this.ptr);
+
+            var result = LiveSplitCoreNative.RunMetadata_region_name(ptr);
             return result;
         }
         /// <summary>
@@ -4731,11 +4998,12 @@ namespace LiveSplitCore
         /// </summary>
         public RunMetadataSpeedrunComVariablesIter SpeedrunComVariables()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new RunMetadataSpeedrunComVariablesIter(LiveSplitCoreNative.RunMetadata_speedrun_com_variables(this.ptr));
+
+            var result = new RunMetadataSpeedrunComVariablesIter(LiveSplitCoreNative.RunMetadata_speedrun_com_variables(ptr));
             return result;
         }
         /// <summary>
@@ -4744,11 +5012,12 @@ namespace LiveSplitCore
         /// </summary>
         public RunMetadataCustomVariablesIter CustomVariables()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new RunMetadataCustomVariablesIter(LiveSplitCoreNative.RunMetadata_custom_variables(this.ptr));
+
+            var result = new RunMetadataCustomVariablesIter(LiveSplitCoreNative.RunMetadata_custom_variables(ptr));
             return result;
         }
         internal RunMetadataRef(IntPtr ptr)
@@ -4807,11 +5076,12 @@ namespace LiveSplitCore
         /// </summary>
         public string Name()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.RunMetadataCustomVariable_name(this.ptr);
+
+            var result = LiveSplitCoreNative.RunMetadataCustomVariable_name(ptr);
             return result;
         }
         /// <summary>
@@ -4819,11 +5089,12 @@ namespace LiveSplitCore
         /// </summary>
         public string Value()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.RunMetadataCustomVariable_value(this.ptr);
+
+            var result = LiveSplitCoreNative.RunMetadataCustomVariable_value(ptr);
             return result;
         }
         /// <summary>
@@ -4833,11 +5104,12 @@ namespace LiveSplitCore
         /// </summary>
         public bool IsPermanent()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.RunMetadataCustomVariable_is_permanent(this.ptr) != 0;
+
+            var result = LiveSplitCoreNative.RunMetadataCustomVariable_is_permanent(ptr) != 0;
             return result;
         }
         internal RunMetadataCustomVariableRef(IntPtr ptr)
@@ -4873,7 +5145,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.RunMetadataCustomVariable_drop(this.ptr);
+                LiveSplitCoreNative.RunMetadataCustomVariable_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -4914,15 +5186,17 @@ namespace LiveSplitCore
         /// </summary>
         public RunMetadataCustomVariableRef Next()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new RunMetadataCustomVariableRef(LiveSplitCoreNative.RunMetadataCustomVariablesIter_next(this.ptr));
+
+            var result = new RunMetadataCustomVariableRef(LiveSplitCoreNative.RunMetadataCustomVariablesIter_next(ptr));
             if (result.ptr == IntPtr.Zero)
             {
                 return null;
             }
+
             return result;
         }
         internal RunMetadataCustomVariablesIterRefMut(IntPtr ptr) : base(ptr) { }
@@ -4938,7 +5212,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.RunMetadataCustomVariablesIter_drop(this.ptr);
+                LiveSplitCoreNative.RunMetadataCustomVariablesIter_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -4967,11 +5241,12 @@ namespace LiveSplitCore
         /// </summary>
         public string Name()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.RunMetadataSpeedrunComVariable_name(this.ptr);
+
+            var result = LiveSplitCoreNative.RunMetadataSpeedrunComVariable_name(ptr);
             return result;
         }
         /// <summary>
@@ -4979,11 +5254,12 @@ namespace LiveSplitCore
         /// </summary>
         public string Value()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.RunMetadataSpeedrunComVariable_value(this.ptr);
+
+            var result = LiveSplitCoreNative.RunMetadataSpeedrunComVariable_value(ptr);
             return result;
         }
         internal RunMetadataSpeedrunComVariableRef(IntPtr ptr)
@@ -5013,7 +5289,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.RunMetadataSpeedrunComVariable_drop(this.ptr);
+                LiveSplitCoreNative.RunMetadataSpeedrunComVariable_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -5054,15 +5330,17 @@ namespace LiveSplitCore
         /// </summary>
         public RunMetadataSpeedrunComVariableRef Next()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new RunMetadataSpeedrunComVariableRef(LiveSplitCoreNative.RunMetadataSpeedrunComVariablesIter_next(this.ptr));
+
+            var result = new RunMetadataSpeedrunComVariableRef(LiveSplitCoreNative.RunMetadataSpeedrunComVariablesIter_next(ptr));
             if (result.ptr == IntPtr.Zero)
             {
                 return null;
             }
+
             return result;
         }
         internal RunMetadataSpeedrunComVariablesIterRefMut(IntPtr ptr) : base(ptr) { }
@@ -5078,7 +5356,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.RunMetadataSpeedrunComVariablesIter_drop(this.ptr);
+                LiveSplitCoreNative.RunMetadataSpeedrunComVariablesIter_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -5107,11 +5385,12 @@ namespace LiveSplitCore
         /// </summary>
         public string Name()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.Segment_name(this.ptr);
+
+            var result = LiveSplitCoreNative.Segment_name(ptr);
             return result;
         }
         /// <summary>
@@ -5120,11 +5399,12 @@ namespace LiveSplitCore
         /// </summary>
         public IntPtr IconPtr()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.Segment_icon_ptr(this.ptr);
+
+            var result = LiveSplitCoreNative.Segment_icon_ptr(ptr);
             return result;
         }
         /// <summary>
@@ -5132,11 +5412,12 @@ namespace LiveSplitCore
         /// </summary>
         public ulong IconLen()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = (ulong)LiveSplitCoreNative.Segment_icon_len(this.ptr);
+
+            var result = (ulong)LiveSplitCoreNative.Segment_icon_len(ptr);
             return result;
         }
         /// <summary>
@@ -5146,11 +5427,12 @@ namespace LiveSplitCore
         /// </summary>
         public TimeRef Comparison(string comparison)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new TimeRef(LiveSplitCoreNative.Segment_comparison(this.ptr, comparison));
+
+            var result = new TimeRef(LiveSplitCoreNative.Segment_comparison(ptr, comparison));
             return result;
         }
         /// <summary>
@@ -5159,11 +5441,12 @@ namespace LiveSplitCore
         /// </summary>
         public TimeRef PersonalBestSplitTime()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new TimeRef(LiveSplitCoreNative.Segment_personal_best_split_time(this.ptr));
+
+            var result = new TimeRef(LiveSplitCoreNative.Segment_personal_best_split_time(ptr));
             return result;
         }
         /// <summary>
@@ -5171,11 +5454,12 @@ namespace LiveSplitCore
         /// </summary>
         public TimeRef BestSegmentTime()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new TimeRef(LiveSplitCoreNative.Segment_best_segment_time(this.ptr));
+
+            var result = new TimeRef(LiveSplitCoreNative.Segment_best_segment_time(ptr));
             return result;
         }
         /// <summary>
@@ -5183,11 +5467,12 @@ namespace LiveSplitCore
         /// </summary>
         public SegmentHistoryRef SegmentHistory()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new SegmentHistoryRef(LiveSplitCoreNative.Segment_segment_history(this.ptr));
+
+            var result = new SegmentHistoryRef(LiveSplitCoreNative.Segment_segment_history(ptr));
             return result;
         }
         internal SegmentRef(IntPtr ptr)
@@ -5217,7 +5502,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.Segment_drop(this.ptr);
+                LiveSplitCoreNative.Segment_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -5235,7 +5520,7 @@ namespace LiveSplitCore
         /// </summary>
         public Segment(string name) : base(IntPtr.Zero)
         {
-            this.ptr = LiveSplitCoreNative.Segment_new(name);
+            ptr = LiveSplitCoreNative.Segment_new(name);
         }
         internal Segment(IntPtr ptr) : base(ptr) { }
     }
@@ -5254,11 +5539,12 @@ namespace LiveSplitCore
         /// </summary>
         public SegmentHistoryIter Iter()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new SegmentHistoryIter(LiveSplitCoreNative.SegmentHistory_iter(this.ptr));
+
+            var result = new SegmentHistoryIter(LiveSplitCoreNative.SegmentHistory_iter(ptr));
             return result;
         }
         internal SegmentHistoryRef(IntPtr ptr)
@@ -5319,11 +5605,12 @@ namespace LiveSplitCore
         /// </summary>
         public int Index()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.SegmentHistoryElement_index(this.ptr);
+
+            var result = LiveSplitCoreNative.SegmentHistoryElement_index(ptr);
             return result;
         }
         /// <summary>
@@ -5331,11 +5618,12 @@ namespace LiveSplitCore
         /// </summary>
         public TimeRef Time()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new TimeRef(LiveSplitCoreNative.SegmentHistoryElement_time(this.ptr));
+
+            var result = new TimeRef(LiveSplitCoreNative.SegmentHistoryElement_time(ptr));
             return result;
         }
         internal SegmentHistoryElementRef(IntPtr ptr)
@@ -5405,15 +5693,17 @@ namespace LiveSplitCore
         /// </summary>
         public SegmentHistoryElementRef Next()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new SegmentHistoryElementRef(LiveSplitCoreNative.SegmentHistoryIter_next(this.ptr));
+
+            var result = new SegmentHistoryElementRef(LiveSplitCoreNative.SegmentHistoryIter_next(ptr));
             if (result.ptr == IntPtr.Zero)
             {
                 return null;
             }
+
             return result;
         }
         internal SegmentHistoryIterRefMut(IntPtr ptr) : base(ptr) { }
@@ -5428,7 +5718,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.SegmentHistoryIter_drop(this.ptr);
+                LiveSplitCoreNative.SegmentHistoryIter_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -5457,15 +5747,17 @@ namespace LiveSplitCore
         /// </summary>
         public string StateAsJson(TimerRef timer)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (timer.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("timer");
             }
-            var result = LiveSplitCoreNative.SegmentTimeComponent_state_as_json(this.ptr, timer.ptr);
+
+            var result = LiveSplitCoreNative.SegmentTimeComponent_state_as_json(ptr, timer.ptr);
             return result;
         }
         /// <summary>
@@ -5473,15 +5765,17 @@ namespace LiveSplitCore
         /// </summary>
         public KeyValueComponentState State(TimerRef timer)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (timer.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("timer");
             }
-            var result = new KeyValueComponentState(LiveSplitCoreNative.SegmentTimeComponent_state(this.ptr, timer.ptr));
+
+            var result = new KeyValueComponentState(LiveSplitCoreNative.SegmentTimeComponent_state(ptr, timer.ptr));
             return result;
         }
         internal SegmentTimeComponentRef(IntPtr ptr)
@@ -5511,7 +5805,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.SegmentTimeComponent_drop(this.ptr);
+                LiveSplitCoreNative.SegmentTimeComponent_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -5529,7 +5823,7 @@ namespace LiveSplitCore
         /// </summary>
         public SegmentTimeComponent() : base(IntPtr.Zero)
         {
-            this.ptr = LiveSplitCoreNative.SegmentTimeComponent_new();
+            ptr = LiveSplitCoreNative.SegmentTimeComponent_new();
         }
         /// <summary>
         /// Converts the component into a generic component suitable for using with a
@@ -5537,12 +5831,13 @@ namespace LiveSplitCore
         /// </summary>
         public Component IntoGeneric()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new Component(LiveSplitCoreNative.SegmentTimeComponent_into_generic(this.ptr));
-            this.ptr = IntPtr.Zero;
+
+            var result = new Component(LiveSplitCoreNative.SegmentTimeComponent_into_generic(ptr));
+            ptr = IntPtr.Zero;
             return result;
         }
         internal SegmentTimeComponent(IntPtr ptr) : base(ptr) { }
@@ -5572,11 +5867,12 @@ namespace LiveSplitCore
         /// </summary>
         public SeparatorComponentState State()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new SeparatorComponentState(LiveSplitCoreNative.SeparatorComponent_state(this.ptr));
+
+            var result = new SeparatorComponentState(LiveSplitCoreNative.SeparatorComponent_state(ptr));
             return result;
         }
         internal SeparatorComponentRefMut(IntPtr ptr) : base(ptr) { }
@@ -5592,7 +5888,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.SeparatorComponent_drop(this.ptr);
+                LiveSplitCoreNative.SeparatorComponent_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -5610,7 +5906,7 @@ namespace LiveSplitCore
         /// </summary>
         public SeparatorComponent() : base(IntPtr.Zero)
         {
-            this.ptr = LiveSplitCoreNative.SeparatorComponent_new();
+            ptr = LiveSplitCoreNative.SeparatorComponent_new();
         }
         /// <summary>
         /// Converts the component into a generic component suitable for using with a
@@ -5618,12 +5914,13 @@ namespace LiveSplitCore
         /// </summary>
         public Component IntoGeneric()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new Component(LiveSplitCoreNative.SeparatorComponent_into_generic(this.ptr));
-            this.ptr = IntPtr.Zero;
+
+            var result = new Component(LiveSplitCoreNative.SeparatorComponent_into_generic(ptr));
+            ptr = IntPtr.Zero;
             return result;
         }
         internal SeparatorComponent(IntPtr ptr) : base(ptr) { }
@@ -5658,7 +5955,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.SeparatorComponentState_drop(this.ptr);
+                LiveSplitCoreNative.SeparatorComponentState_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -5686,11 +5983,12 @@ namespace LiveSplitCore
         /// </summary>
         public string AsJson()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.SettingValue_as_json(this.ptr);
+
+            var result = LiveSplitCoreNative.SettingValue_as_json(ptr);
             return result;
         }
         internal SettingValueRef(IntPtr ptr)
@@ -5718,7 +6016,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.SettingValue_drop(this.ptr);
+                LiveSplitCoreNative.SettingValue_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -5790,6 +6088,7 @@ namespace LiveSplitCore
             {
                 return null;
             }
+
             return result;
         }
         /// <summary>
@@ -5803,6 +6102,7 @@ namespace LiveSplitCore
             {
                 return null;
             }
+
             return result;
         }
         /// <summary>
@@ -5817,6 +6117,7 @@ namespace LiveSplitCore
             {
                 return null;
             }
+
             return result;
         }
         /// <summary>
@@ -5895,6 +6196,7 @@ namespace LiveSplitCore
             {
                 return null;
             }
+
             return result;
         }
         /// <summary>
@@ -5908,6 +6210,7 @@ namespace LiveSplitCore
             {
                 return null;
             }
+
             return result;
         }
         /// <summary>
@@ -5921,6 +6224,7 @@ namespace LiveSplitCore
             {
                 return null;
             }
+
             return result;
         }
         /// <summary>
@@ -5934,6 +6238,7 @@ namespace LiveSplitCore
             {
                 return null;
             }
+
             return result;
         }
         /// <summary>
@@ -5947,6 +6252,7 @@ namespace LiveSplitCore
             {
                 return null;
             }
+
             return result;
         }
         /// <summary>
@@ -5960,6 +6266,7 @@ namespace LiveSplitCore
             {
                 return null;
             }
+
             return result;
         }
         /// <summary>
@@ -5972,6 +6279,7 @@ namespace LiveSplitCore
             {
                 return null;
             }
+
             return result;
         }
         /// <summary>
@@ -5993,6 +6301,7 @@ namespace LiveSplitCore
             {
                 return null;
             }
+
             return result;
         }
         internal SettingValue(IntPtr ptr) : base(ptr) { }
@@ -6011,11 +6320,12 @@ namespace LiveSplitCore
         /// </summary>
         public SharedTimer Share()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new SharedTimer(LiveSplitCoreNative.SharedTimer_share(this.ptr));
+
+            var result = new SharedTimer(LiveSplitCoreNative.SharedTimer_share(ptr));
             return result;
         }
         /// <summary>
@@ -6025,11 +6335,12 @@ namespace LiveSplitCore
         /// </summary>
         public TimerReadLock Read()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new TimerReadLock(LiveSplitCoreNative.SharedTimer_read(this.ptr));
+
+            var result = new TimerReadLock(LiveSplitCoreNative.SharedTimer_read(ptr));
             return result;
         }
         /// <summary>
@@ -6039,11 +6350,12 @@ namespace LiveSplitCore
         /// </summary>
         public TimerWriteLock Write()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new TimerWriteLock(LiveSplitCoreNative.SharedTimer_write(this.ptr));
+
+            var result = new TimerWriteLock(LiveSplitCoreNative.SharedTimer_write(ptr));
             return result;
         }
         /// <summary>
@@ -6054,15 +6366,17 @@ namespace LiveSplitCore
         /// </summary>
         public void ReplaceInner(Timer timer)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (timer.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("timer");
             }
-            LiveSplitCoreNative.SharedTimer_replace_inner(this.ptr, timer.ptr);
+
+            LiveSplitCoreNative.SharedTimer_replace_inner(ptr, timer.ptr);
             timer.ptr = IntPtr.Zero;
         }
         public void ReadWith(Action<TimerRef> action)
@@ -6104,7 +6418,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.SharedTimer_drop(this.ptr);
+                LiveSplitCoreNative.SharedTimer_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -6152,15 +6466,17 @@ namespace LiveSplitCore
         /// </summary>
         public void Render(LayoutStateRef layoutState, IntPtr data, uint width, uint height, uint stride, bool forceRedraw)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (layoutState.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("layoutState");
             }
-            LiveSplitCoreNative.SoftwareRenderer_render(this.ptr, layoutState.ptr, (IntPtr)data, width, height, stride, forceRedraw);
+
+            LiveSplitCoreNative.SoftwareRenderer_render(ptr, layoutState.ptr, (IntPtr)data, width, height, stride, forceRedraw);
         }
         internal SoftwareRendererRefMut(IntPtr ptr) : base(ptr) { }
     }
@@ -6175,7 +6491,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.SoftwareRenderer_drop(this.ptr);
+                LiveSplitCoreNative.SoftwareRenderer_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -6193,7 +6509,7 @@ namespace LiveSplitCore
         /// </summary>
         public SoftwareRenderer() : base(IntPtr.Zero)
         {
-            this.ptr = LiveSplitCoreNative.SoftwareRenderer_new();
+            ptr = LiveSplitCoreNative.SoftwareRenderer_new();
         }
         internal SoftwareRenderer(IntPtr ptr) : base(ptr) { }
     }
@@ -6228,19 +6544,22 @@ namespace LiveSplitCore
         /// </summary>
         public string StateAsJson(TimerRef timer, GeneralLayoutSettingsRef layoutSettings)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (timer.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("timer");
             }
+
             if (layoutSettings.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("layoutSettings");
             }
-            var result = LiveSplitCoreNative.SplitsComponent_state_as_json(this.ptr, timer.ptr, layoutSettings.ptr);
+
+            var result = LiveSplitCoreNative.SplitsComponent_state_as_json(ptr, timer.ptr, layoutSettings.ptr);
             return result;
         }
         /// <summary>
@@ -6249,19 +6568,22 @@ namespace LiveSplitCore
         /// </summary>
         public SplitsComponentState State(TimerRef timer, GeneralLayoutSettingsRef layoutSettings)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (timer.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("timer");
             }
+
             if (layoutSettings.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("layoutSettings");
             }
-            var result = new SplitsComponentState(LiveSplitCoreNative.SplitsComponent_state(this.ptr, timer.ptr, layoutSettings.ptr));
+
+            var result = new SplitsComponentState(LiveSplitCoreNative.SplitsComponent_state(ptr, timer.ptr, layoutSettings.ptr));
             return result;
         }
         /// <summary>
@@ -6270,11 +6592,12 @@ namespace LiveSplitCore
         /// </summary>
         public void ScrollUp()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.SplitsComponent_scroll_up(this.ptr);
+
+            LiveSplitCoreNative.SplitsComponent_scroll_up(ptr);
         }
         /// <summary>
         /// Scrolls down the window of the segments that are shown. Doesn't move the
@@ -6282,11 +6605,12 @@ namespace LiveSplitCore
         /// </summary>
         public void ScrollDown()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.SplitsComponent_scroll_down(this.ptr);
+
+            LiveSplitCoreNative.SplitsComponent_scroll_down(ptr);
         }
         /// <summary>
         /// The amount of segments to show in the list at any given time. If this is
@@ -6296,11 +6620,12 @@ namespace LiveSplitCore
         /// </summary>
         public void SetVisualSplitCount(ulong count)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.SplitsComponent_set_visual_split_count(this.ptr, (UIntPtr)count);
+
+            LiveSplitCoreNative.SplitsComponent_set_visual_split_count(ptr, (UIntPtr)count);
         }
         /// <summary>
         /// If there's more segments than segments that are shown, the window
@@ -6311,11 +6636,12 @@ namespace LiveSplitCore
         /// </summary>
         public void SetSplitPreviewCount(ulong count)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.SplitsComponent_set_split_preview_count(this.ptr, (UIntPtr)count);
+
+            LiveSplitCoreNative.SplitsComponent_set_split_preview_count(ptr, (UIntPtr)count);
         }
         /// <summary>
         /// If not every segment is shown in the scrolling window of segments, then
@@ -6325,11 +6651,12 @@ namespace LiveSplitCore
         /// </summary>
         public void SetAlwaysShowLastSplit(bool alwaysShowLastSplit)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.SplitsComponent_set_always_show_last_split(this.ptr, alwaysShowLastSplit);
+
+            LiveSplitCoreNative.SplitsComponent_set_always_show_last_split(ptr, alwaysShowLastSplit);
         }
         /// <summary>
         /// If the last segment is to always be shown, this determines whether to
@@ -6339,11 +6666,12 @@ namespace LiveSplitCore
         /// </summary>
         public void SetSeparatorLastSplit(bool separatorLastSplit)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.SplitsComponent_set_separator_last_split(this.ptr, separatorLastSplit);
+
+            LiveSplitCoreNative.SplitsComponent_set_separator_last_split(ptr, separatorLastSplit);
         }
         internal SplitsComponentRefMut(IntPtr ptr) : base(ptr) { }
     }
@@ -6361,7 +6689,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.SplitsComponent_drop(this.ptr);
+                LiveSplitCoreNative.SplitsComponent_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -6379,7 +6707,7 @@ namespace LiveSplitCore
         /// </summary>
         public SplitsComponent() : base(IntPtr.Zero)
         {
-            this.ptr = LiveSplitCoreNative.SplitsComponent_new();
+            ptr = LiveSplitCoreNative.SplitsComponent_new();
         }
         /// <summary>
         /// Converts the component into a generic component suitable for using with a
@@ -6387,12 +6715,13 @@ namespace LiveSplitCore
         /// </summary>
         public Component IntoGeneric()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new Component(LiveSplitCoreNative.SplitsComponent_into_generic(this.ptr));
-            this.ptr = IntPtr.Zero;
+
+            var result = new Component(LiveSplitCoreNative.SplitsComponent_into_generic(ptr));
+            ptr = IntPtr.Zero;
             return result;
         }
         internal SplitsComponent(IntPtr ptr) : base(ptr) { }
@@ -6410,11 +6739,12 @@ namespace LiveSplitCore
         /// </summary>
         public bool FinalSeparatorShown()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.SplitsComponentState_final_separator_shown(this.ptr) != 0;
+
+            var result = LiveSplitCoreNative.SplitsComponentState_final_separator_shown(ptr) != 0;
             return result;
         }
         /// <summary>
@@ -6422,11 +6752,12 @@ namespace LiveSplitCore
         /// </summary>
         public ulong Len()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = (ulong)LiveSplitCoreNative.SplitsComponentState_len(this.ptr);
+
+            var result = (ulong)LiveSplitCoreNative.SplitsComponentState_len(ptr);
             return result;
         }
         /// <summary>
@@ -6434,11 +6765,12 @@ namespace LiveSplitCore
         /// </summary>
         public ulong IconChangeCount()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = (ulong)LiveSplitCoreNative.SplitsComponentState_icon_change_count(this.ptr);
+
+            var result = (ulong)LiveSplitCoreNative.SplitsComponentState_icon_change_count(ptr);
             return result;
         }
         /// <summary>
@@ -6449,11 +6781,12 @@ namespace LiveSplitCore
         /// </summary>
         public ulong IconChangeSegmentIndex(ulong iconChangeIndex)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = (ulong)LiveSplitCoreNative.SplitsComponentState_icon_change_segment_index(this.ptr, (UIntPtr)iconChangeIndex);
+
+            var result = (ulong)LiveSplitCoreNative.SplitsComponentState_icon_change_segment_index(ptr, (UIntPtr)iconChangeIndex);
             return result;
         }
         /// <summary>
@@ -6463,11 +6796,12 @@ namespace LiveSplitCore
         /// </summary>
         public IntPtr IconChangeIconPtr(ulong iconChangeIndex)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.SplitsComponentState_icon_change_icon_ptr(this.ptr, (UIntPtr)iconChangeIndex);
+
+            var result = LiveSplitCoreNative.SplitsComponentState_icon_change_icon_ptr(ptr, (UIntPtr)iconChangeIndex);
             return result;
         }
         /// <summary>
@@ -6476,11 +6810,12 @@ namespace LiveSplitCore
         /// </summary>
         public ulong IconChangeIconLen(ulong iconChangeIndex)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = (ulong)LiveSplitCoreNative.SplitsComponentState_icon_change_icon_len(this.ptr, (UIntPtr)iconChangeIndex);
+
+            var result = (ulong)LiveSplitCoreNative.SplitsComponentState_icon_change_icon_len(ptr, (UIntPtr)iconChangeIndex);
             return result;
         }
         /// <summary>
@@ -6489,11 +6824,12 @@ namespace LiveSplitCore
         /// </summary>
         public string Name(ulong index)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.SplitsComponentState_name(this.ptr, (UIntPtr)index);
+
+            var result = LiveSplitCoreNative.SplitsComponentState_name(ptr, (UIntPtr)index);
             return result;
         }
         /// <summary>
@@ -6504,11 +6840,12 @@ namespace LiveSplitCore
         /// </summary>
         public ulong ColumnsLen(ulong index)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = (ulong)LiveSplitCoreNative.SplitsComponentState_columns_len(this.ptr, (UIntPtr)index);
+
+            var result = (ulong)LiveSplitCoreNative.SplitsComponentState_columns_len(ptr, (UIntPtr)index);
             return result;
         }
         /// <summary>
@@ -6518,11 +6855,12 @@ namespace LiveSplitCore
         /// </summary>
         public string ColumnValue(ulong index, ulong columnIndex)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.SplitsComponentState_column_value(this.ptr, (UIntPtr)index, (UIntPtr)columnIndex);
+
+            var result = LiveSplitCoreNative.SplitsComponentState_column_value(ptr, (UIntPtr)index, (UIntPtr)columnIndex);
             return result;
         }
         /// <summary>
@@ -6532,11 +6870,12 @@ namespace LiveSplitCore
         /// </summary>
         public string ColumnSemanticColor(ulong index, ulong columnIndex)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.SplitsComponentState_column_semantic_color(this.ptr, (UIntPtr)index, (UIntPtr)columnIndex);
+
+            var result = LiveSplitCoreNative.SplitsComponentState_column_semantic_color(ptr, (UIntPtr)index, (UIntPtr)columnIndex);
             return result;
         }
         /// <summary>
@@ -6545,11 +6884,12 @@ namespace LiveSplitCore
         /// </summary>
         public bool IsCurrentSplit(ulong index)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.SplitsComponentState_is_current_split(this.ptr, (UIntPtr)index) != 0;
+
+            var result = LiveSplitCoreNative.SplitsComponentState_is_current_split(ptr, (UIntPtr)index) != 0;
             return result;
         }
         /// <summary>
@@ -6558,11 +6898,12 @@ namespace LiveSplitCore
         /// </summary>
         public bool HasColumnLabels()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.SplitsComponentState_has_column_labels(this.ptr) != 0;
+
+            var result = LiveSplitCoreNative.SplitsComponentState_has_column_labels(ptr) != 0;
             return result;
         }
         /// <summary>
@@ -6571,11 +6912,12 @@ namespace LiveSplitCore
         /// </summary>
         public string ColumnLabel(ulong index)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.SplitsComponentState_column_label(this.ptr, (UIntPtr)index);
+
+            var result = LiveSplitCoreNative.SplitsComponentState_column_label(ptr, (UIntPtr)index);
             return result;
         }
         internal SplitsComponentStateRef(IntPtr ptr)
@@ -6601,7 +6943,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.SplitsComponentState_drop(this.ptr);
+                LiveSplitCoreNative.SplitsComponentState_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -6650,15 +6992,17 @@ namespace LiveSplitCore
         /// </summary>
         public PotentialCleanUp NextPotentialCleanUp()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new PotentialCleanUp(LiveSplitCoreNative.SumOfBestCleaner_next_potential_clean_up(this.ptr));
+
+            var result = new PotentialCleanUp(LiveSplitCoreNative.SumOfBestCleaner_next_potential_clean_up(ptr));
             if (result.ptr == IntPtr.Zero)
             {
                 return null;
             }
+
             return result;
         }
         /// <summary>
@@ -6666,15 +7010,17 @@ namespace LiveSplitCore
         /// </summary>
         public void Apply(PotentialCleanUp cleanUp)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (cleanUp.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("cleanUp");
             }
-            LiveSplitCoreNative.SumOfBestCleaner_apply(this.ptr, cleanUp.ptr);
+
+            LiveSplitCoreNative.SumOfBestCleaner_apply(ptr, cleanUp.ptr);
             cleanUp.ptr = IntPtr.Zero;
         }
         internal SumOfBestCleanerRefMut(IntPtr ptr) : base(ptr) { }
@@ -6694,7 +7040,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.SumOfBestCleaner_drop(this.ptr);
+                LiveSplitCoreNative.SumOfBestCleaner_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -6727,15 +7073,17 @@ namespace LiveSplitCore
         /// </summary>
         public string StateAsJson(TimerRef timer)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (timer.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("timer");
             }
-            var result = LiveSplitCoreNative.SumOfBestComponent_state_as_json(this.ptr, timer.ptr);
+
+            var result = LiveSplitCoreNative.SumOfBestComponent_state_as_json(ptr, timer.ptr);
             return result;
         }
         /// <summary>
@@ -6743,15 +7091,17 @@ namespace LiveSplitCore
         /// </summary>
         public KeyValueComponentState State(TimerRef timer)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (timer.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("timer");
             }
-            var result = new KeyValueComponentState(LiveSplitCoreNative.SumOfBestComponent_state(this.ptr, timer.ptr));
+
+            var result = new KeyValueComponentState(LiveSplitCoreNative.SumOfBestComponent_state(ptr, timer.ptr));
             return result;
         }
         internal SumOfBestComponentRef(IntPtr ptr)
@@ -6789,7 +7139,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.SumOfBestComponent_drop(this.ptr);
+                LiveSplitCoreNative.SumOfBestComponent_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -6807,7 +7157,7 @@ namespace LiveSplitCore
         /// </summary>
         public SumOfBestComponent() : base(IntPtr.Zero)
         {
-            this.ptr = LiveSplitCoreNative.SumOfBestComponent_new();
+            ptr = LiveSplitCoreNative.SumOfBestComponent_new();
         }
         /// <summary>
         /// Converts the component into a generic component suitable for using with a
@@ -6815,12 +7165,13 @@ namespace LiveSplitCore
         /// </summary>
         public Component IntoGeneric()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new Component(LiveSplitCoreNative.SumOfBestComponent_into_generic(this.ptr));
-            this.ptr = IntPtr.Zero;
+
+            var result = new Component(LiveSplitCoreNative.SumOfBestComponent_into_generic(ptr));
+            ptr = IntPtr.Zero;
             return result;
         }
         internal SumOfBestComponent(IntPtr ptr) : base(ptr) { }
@@ -6839,15 +7190,17 @@ namespace LiveSplitCore
         /// </summary>
         public string StateAsJson(TimerRef timer)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (timer.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("timer");
             }
-            var result = LiveSplitCoreNative.TextComponent_state_as_json(this.ptr, timer.ptr);
+
+            var result = LiveSplitCoreNative.TextComponent_state_as_json(ptr, timer.ptr);
             return result;
         }
         /// <summary>
@@ -6855,15 +7208,17 @@ namespace LiveSplitCore
         /// </summary>
         public TextComponentState State(TimerRef timer)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (timer.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("timer");
             }
-            var result = new TextComponentState(LiveSplitCoreNative.TextComponent_state(this.ptr, timer.ptr));
+
+            var result = new TextComponentState(LiveSplitCoreNative.TextComponent_state(ptr, timer.ptr));
             return result;
         }
         internal TextComponentRef(IntPtr ptr)
@@ -6885,11 +7240,12 @@ namespace LiveSplitCore
         /// </summary>
         public void SetCenter(string text)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.TextComponent_set_center(this.ptr, text);
+
+            LiveSplitCoreNative.TextComponent_set_center(ptr, text);
         }
         /// <summary>
         /// Sets the left text. If the current mode is centered, it is switched to
@@ -6897,11 +7253,12 @@ namespace LiveSplitCore
         /// </summary>
         public void SetLeft(string text)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.TextComponent_set_left(this.ptr, text);
+
+            LiveSplitCoreNative.TextComponent_set_left(ptr, text);
         }
         /// <summary>
         /// Sets the right text. If the current mode is centered, it is switched to
@@ -6909,11 +7266,12 @@ namespace LiveSplitCore
         /// </summary>
         public void SetRight(string text)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.TextComponent_set_right(this.ptr, text);
+
+            LiveSplitCoreNative.TextComponent_set_right(ptr, text);
         }
         internal TextComponentRefMut(IntPtr ptr) : base(ptr) { }
     }
@@ -6929,7 +7287,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.TextComponent_drop(this.ptr);
+                LiveSplitCoreNative.TextComponent_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -6947,7 +7305,7 @@ namespace LiveSplitCore
         /// </summary>
         public TextComponent() : base(IntPtr.Zero)
         {
-            this.ptr = LiveSplitCoreNative.TextComponent_new();
+            ptr = LiveSplitCoreNative.TextComponent_new();
         }
         /// <summary>
         /// Converts the component into a generic component suitable for using with a
@@ -6955,12 +7313,13 @@ namespace LiveSplitCore
         /// </summary>
         public Component IntoGeneric()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new Component(LiveSplitCoreNative.TextComponent_into_generic(this.ptr));
-            this.ptr = IntPtr.Zero;
+
+            var result = new Component(LiveSplitCoreNative.TextComponent_into_generic(ptr));
+            ptr = IntPtr.Zero;
             return result;
         }
         internal TextComponent(IntPtr ptr) : base(ptr) { }
@@ -6978,11 +7337,12 @@ namespace LiveSplitCore
         /// </summary>
         public string Left()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.TextComponentState_left(this.ptr);
+
+            var result = LiveSplitCoreNative.TextComponentState_left(ptr);
             return result;
         }
         /// <summary>
@@ -6991,11 +7351,12 @@ namespace LiveSplitCore
         /// </summary>
         public string Right()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.TextComponentState_right(this.ptr);
+
+            var result = LiveSplitCoreNative.TextComponentState_right(ptr);
             return result;
         }
         /// <summary>
@@ -7004,11 +7365,12 @@ namespace LiveSplitCore
         /// </summary>
         public string Center()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.TextComponentState_center(this.ptr);
+
+            var result = LiveSplitCoreNative.TextComponentState_center(ptr);
             return result;
         }
         /// <summary>
@@ -7016,11 +7378,12 @@ namespace LiveSplitCore
         /// </summary>
         public bool IsSplit()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.TextComponentState_is_split(this.ptr) != 0;
+
+            var result = LiveSplitCoreNative.TextComponentState_is_split(ptr) != 0;
             return result;
         }
         internal TextComponentStateRef(IntPtr ptr)
@@ -7046,7 +7409,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.TextComponentState_drop(this.ptr);
+                LiveSplitCoreNative.TextComponentState_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -7074,11 +7437,12 @@ namespace LiveSplitCore
         /// </summary>
         public Time Clone()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new Time(LiveSplitCoreNative.Time_clone(this.ptr));
+
+            var result = new Time(LiveSplitCoreNative.Time_clone(ptr));
             return result;
         }
         /// <summary>
@@ -7086,15 +7450,17 @@ namespace LiveSplitCore
         /// </summary>
         public TimeSpanRef RealTime()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new TimeSpanRef(LiveSplitCoreNative.Time_real_time(this.ptr));
+
+            var result = new TimeSpanRef(LiveSplitCoreNative.Time_real_time(ptr));
             if (result.ptr == IntPtr.Zero)
             {
                 return null;
             }
+
             return result;
         }
         /// <summary>
@@ -7102,15 +7468,17 @@ namespace LiveSplitCore
         /// </summary>
         public TimeSpanRef GameTime()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new TimeSpanRef(LiveSplitCoreNative.Time_game_time(this.ptr));
+
+            var result = new TimeSpanRef(LiveSplitCoreNative.Time_game_time(ptr));
             if (result.ptr == IntPtr.Zero)
             {
                 return null;
             }
+
             return result;
         }
         /// <summary>
@@ -7118,15 +7486,17 @@ namespace LiveSplitCore
         /// </summary>
         public TimeSpanRef Index(byte timingMethod)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new TimeSpanRef(LiveSplitCoreNative.Time_index(this.ptr, timingMethod));
+
+            var result = new TimeSpanRef(LiveSplitCoreNative.Time_index(ptr, timingMethod));
             if (result.ptr == IntPtr.Zero)
             {
                 return null;
             }
+
             return result;
         }
         internal TimeRef(IntPtr ptr)
@@ -7154,7 +7524,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.Time_drop(this.ptr);
+                LiveSplitCoreNative.Time_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -7181,11 +7551,12 @@ namespace LiveSplitCore
         /// </summary>
         public TimeSpan Clone()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new TimeSpan(LiveSplitCoreNative.TimeSpan_clone(this.ptr));
+
+            var result = new TimeSpan(LiveSplitCoreNative.TimeSpan_clone(ptr));
             return result;
         }
         /// <summary>
@@ -7194,11 +7565,12 @@ namespace LiveSplitCore
         /// </summary>
         public double TotalSeconds()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.TimeSpan_total_seconds(this.ptr);
+
+            var result = LiveSplitCoreNative.TimeSpan_total_seconds(ptr);
             return result;
         }
         /// <summary>
@@ -7207,11 +7579,12 @@ namespace LiveSplitCore
         /// </summary>
         public long WholeSeconds()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.TimeSpan_whole_seconds(this.ptr);
+
+            var result = LiveSplitCoreNative.TimeSpan_whole_seconds(ptr);
             return result;
         }
         /// <summary>
@@ -7220,11 +7593,12 @@ namespace LiveSplitCore
         /// </summary>
         public int SubsecNanoseconds()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.TimeSpan_subsec_nanoseconds(this.ptr);
+
+            var result = LiveSplitCoreNative.TimeSpan_subsec_nanoseconds(ptr);
             return result;
         }
         internal TimeSpanRef(IntPtr ptr)
@@ -7250,7 +7624,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.TimeSpan_drop(this.ptr);
+                LiveSplitCoreNative.TimeSpan_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -7282,6 +7656,7 @@ namespace LiveSplitCore
             {
                 return null;
             }
+
             return result;
         }
         internal TimeSpan(IntPtr ptr) : base(ptr) { }
@@ -7302,11 +7677,12 @@ namespace LiveSplitCore
         /// </summary>
         public long CurrentSplitIndex()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = (long)LiveSplitCoreNative.Timer_current_split_index(this.ptr);
+
+            var result = (long)LiveSplitCoreNative.Timer_current_split_index(ptr);
             return result;
         }
         /// <summary>
@@ -7317,11 +7693,12 @@ namespace LiveSplitCore
         /// </summary>
         public bool CurrentAttemptHasNewBestTimes()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.Timer_current_attempt_has_new_best_times(this.ptr) != 0;
+
+            var result = LiveSplitCoreNative.Timer_current_attempt_has_new_best_times(ptr) != 0;
             return result;
         }
         /// <summary>
@@ -7329,11 +7706,12 @@ namespace LiveSplitCore
         /// </summary>
         public byte CurrentTimingMethod()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.Timer_current_timing_method(this.ptr);
+
+            var result = LiveSplitCoreNative.Timer_current_timing_method(ptr);
             return result;
         }
         /// <summary>
@@ -7342,11 +7720,12 @@ namespace LiveSplitCore
         /// </summary>
         public string CurrentComparison()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.Timer_current_comparison(this.ptr);
+
+            var result = LiveSplitCoreNative.Timer_current_comparison(ptr);
             return result;
         }
         /// <summary>
@@ -7355,11 +7734,12 @@ namespace LiveSplitCore
         /// </summary>
         public bool IsGameTimeInitialized()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.Timer_is_game_time_initialized(this.ptr) != 0;
+
+            var result = LiveSplitCoreNative.Timer_is_game_time_initialized(ptr) != 0;
             return result;
         }
         /// <summary>
@@ -7368,11 +7748,12 @@ namespace LiveSplitCore
         /// </summary>
         public bool IsGameTimePaused()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.Timer_is_game_time_paused(this.ptr) != 0;
+
+            var result = LiveSplitCoreNative.Timer_is_game_time_paused(ptr) != 0;
             return result;
         }
         /// <summary>
@@ -7380,11 +7761,12 @@ namespace LiveSplitCore
         /// </summary>
         public TimeSpanRef LoadingTimes()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new TimeSpanRef(LiveSplitCoreNative.Timer_loading_times(this.ptr));
+
+            var result = new TimeSpanRef(LiveSplitCoreNative.Timer_loading_times(ptr));
             return result;
         }
         /// <summary>
@@ -7392,11 +7774,12 @@ namespace LiveSplitCore
         /// </summary>
         public byte CurrentPhase()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.Timer_current_phase(this.ptr);
+
+            var result = LiveSplitCoreNative.Timer_current_phase(ptr);
             return result;
         }
         /// <summary>
@@ -7404,11 +7787,12 @@ namespace LiveSplitCore
         /// </summary>
         public RunRef GetRun()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new RunRef(LiveSplitCoreNative.Timer_get_run(this.ptr));
+
+            var result = new RunRef(LiveSplitCoreNative.Timer_get_run(ptr));
             return result;
         }
         /// <summary>
@@ -7416,11 +7800,12 @@ namespace LiveSplitCore
         /// </summary>
         public string SaveAsLss()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.Timer_save_as_lss(this.ptr);
+
+            var result = LiveSplitCoreNative.Timer_save_as_lss(ptr);
             return result;
         }
         /// <summary>
@@ -7429,11 +7814,12 @@ namespace LiveSplitCore
         /// </summary>
         public void PrintDebug()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.Timer_print_debug(this.ptr);
+
+            LiveSplitCoreNative.Timer_print_debug(ptr);
         }
         /// <summary>
         /// Returns the current time of the Timer. The Game Time is null if the Game
@@ -7441,11 +7827,12 @@ namespace LiveSplitCore
         /// </summary>
         public TimeRef CurrentTime()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new TimeRef(LiveSplitCoreNative.Timer_current_time(this.ptr));
+
+            var result = new TimeRef(LiveSplitCoreNative.Timer_current_time(ptr));
             return result;
         }
         internal TimerRef(IntPtr ptr)
@@ -7470,15 +7857,17 @@ namespace LiveSplitCore
         /// </summary>
         public bool ReplaceRun(RunRefMut run, bool updateSplits)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (run.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("run");
             }
-            var result = LiveSplitCoreNative.Timer_replace_run(this.ptr, run.ptr, updateSplits) != 0;
+
+            var result = LiveSplitCoreNative.Timer_replace_run(ptr, run.ptr, updateSplits) != 0;
             return result;
         }
         /// <summary>
@@ -7489,20 +7878,23 @@ namespace LiveSplitCore
         /// </summary>
         public Run SetRun(Run run)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (run.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("run");
             }
-            var result = new Run(LiveSplitCoreNative.Timer_set_run(this.ptr, run.ptr));
+
+            var result = new Run(LiveSplitCoreNative.Timer_set_run(ptr, run.ptr));
             run.ptr = IntPtr.Zero;
             if (result.ptr == IntPtr.Zero)
             {
                 return null;
             }
+
             return result;
         }
         /// <summary>
@@ -7511,11 +7903,12 @@ namespace LiveSplitCore
         /// </summary>
         public void Start()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.Timer_start(this.ptr);
+
+            LiveSplitCoreNative.Timer_start(ptr);
         }
         /// <summary>
         /// If an attempt is in progress, stores the current time as the time of the
@@ -7523,11 +7916,12 @@ namespace LiveSplitCore
         /// </summary>
         public void Split()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.Timer_split(this.ptr);
+
+            LiveSplitCoreNative.Timer_split(ptr);
         }
         /// <summary>
         /// Starts a new attempt or stores the current time as the time of the
@@ -7535,11 +7929,12 @@ namespace LiveSplitCore
         /// </summary>
         public void SplitOrStart()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.Timer_split_or_start(this.ptr);
+
+            LiveSplitCoreNative.Timer_split_or_start(ptr);
         }
         /// <summary>
         /// Skips the current split if an attempt is in progress and the
@@ -7547,11 +7942,12 @@ namespace LiveSplitCore
         /// </summary>
         public void SkipSplit()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.Timer_skip_split(this.ptr);
+
+            LiveSplitCoreNative.Timer_skip_split(ptr);
         }
         /// <summary>
         /// Removes the split time from the last split if an attempt is in progress
@@ -7560,11 +7956,12 @@ namespace LiveSplitCore
         /// </summary>
         public void UndoSplit()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.Timer_undo_split(this.ptr);
+
+            LiveSplitCoreNative.Timer_undo_split(ptr);
         }
         /// <summary>
         /// Resets the current attempt if there is one in progress. If the splits
@@ -7574,11 +7971,12 @@ namespace LiveSplitCore
         /// </summary>
         public void Reset(bool updateSplits)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.Timer_reset(this.ptr, updateSplits);
+
+            LiveSplitCoreNative.Timer_reset(ptr, updateSplits);
         }
         /// <summary>
         /// Resets the current attempt if there is one in progress. The splits are
@@ -7587,44 +7985,48 @@ namespace LiveSplitCore
         /// </summary>
         public void ResetAndSetAttemptAsPb()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.Timer_reset_and_set_attempt_as_pb(this.ptr);
+
+            LiveSplitCoreNative.Timer_reset_and_set_attempt_as_pb(ptr);
         }
         /// <summary>
         /// Pauses an active attempt that is not paused.
         /// </summary>
         public void Pause()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.Timer_pause(this.ptr);
+
+            LiveSplitCoreNative.Timer_pause(ptr);
         }
         /// <summary>
         /// Resumes an attempt that is paused.
         /// </summary>
         public void Resume()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.Timer_resume(this.ptr);
+
+            LiveSplitCoreNative.Timer_resume(ptr);
         }
         /// <summary>
         /// Toggles an active attempt between `Paused` and `Running`.
         /// </summary>
         public void TogglePause()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.Timer_toggle_pause(this.ptr);
+
+            LiveSplitCoreNative.Timer_toggle_pause(ptr);
         }
         /// <summary>
         /// Toggles an active attempt between `Paused` and `Running` or starts an
@@ -7632,11 +8034,12 @@ namespace LiveSplitCore
         /// </summary>
         public void TogglePauseOrStart()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.Timer_toggle_pause_or_start(this.ptr);
+
+            LiveSplitCoreNative.Timer_toggle_pause_or_start(ptr);
         }
         /// <summary>
         /// Removes all the pause times from the current time. If the current
@@ -7652,44 +8055,48 @@ namespace LiveSplitCore
         /// </summary>
         public void UndoAllPauses()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.Timer_undo_all_pauses(this.ptr);
+
+            LiveSplitCoreNative.Timer_undo_all_pauses(ptr);
         }
         /// <summary>
         /// Sets the current Timing Method to the Timing Method provided.
         /// </summary>
         public void SetCurrentTimingMethod(byte method)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.Timer_set_current_timing_method(this.ptr, method);
+
+            LiveSplitCoreNative.Timer_set_current_timing_method(ptr, method);
         }
         /// <summary>
         /// Switches the current comparison to the next comparison in the list.
         /// </summary>
         public void SwitchToNextComparison()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.Timer_switch_to_next_comparison(this.ptr);
+
+            LiveSplitCoreNative.Timer_switch_to_next_comparison(ptr);
         }
         /// <summary>
         /// Switches the current comparison to the previous comparison in the list.
         /// </summary>
         public void SwitchToPreviousComparison()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.Timer_switch_to_previous_comparison(this.ptr);
+
+            LiveSplitCoreNative.Timer_switch_to_previous_comparison(ptr);
         }
         /// <summary>
         /// Initializes Game Time for the current attempt. Game Time automatically
@@ -7697,22 +8104,24 @@ namespace LiveSplitCore
         /// </summary>
         public void InitializeGameTime()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.Timer_initialize_game_time(this.ptr);
+
+            LiveSplitCoreNative.Timer_initialize_game_time(ptr);
         }
         /// <summary>
         /// Deinitializes Game Time for the current attempt.
         /// </summary>
         public void DeinitializeGameTime()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.Timer_deinitialize_game_time(this.ptr);
+
+            LiveSplitCoreNative.Timer_deinitialize_game_time(ptr);
         }
         /// <summary>
         /// Pauses the Game Timer such that it doesn't automatically increment
@@ -7720,11 +8129,12 @@ namespace LiveSplitCore
         /// </summary>
         public void PauseGameTime()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.Timer_pause_game_time(this.ptr);
+
+            LiveSplitCoreNative.Timer_pause_game_time(ptr);
         }
         /// <summary>
         /// Resumes the Game Timer such that it automatically increments similar to
@@ -7732,11 +8142,12 @@ namespace LiveSplitCore
         /// </summary>
         public void ResumeGameTime()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.Timer_resume_game_time(this.ptr);
+
+            LiveSplitCoreNative.Timer_resume_game_time(ptr);
         }
         /// <summary>
         /// Sets the Game Time to the time specified. This also works if the Game
@@ -7746,15 +8157,17 @@ namespace LiveSplitCore
         /// </summary>
         public void SetGameTime(TimeSpanRef time)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (time.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("time");
             }
-            LiveSplitCoreNative.Timer_set_game_time(this.ptr, time.ptr);
+
+            LiveSplitCoreNative.Timer_set_game_time(ptr, time.ptr);
         }
         /// <summary>
         /// Instead of setting the Game Time directly, this method can be used to
@@ -7763,15 +8176,17 @@ namespace LiveSplitCore
         /// </summary>
         public void SetLoadingTimes(TimeSpanRef time)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (time.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("time");
             }
-            LiveSplitCoreNative.Timer_set_loading_times(this.ptr, time.ptr);
+
+            LiveSplitCoreNative.Timer_set_loading_times(ptr, time.ptr);
         }
         /// <summary>
         /// Marks the Run as unmodified, so that it is known that all the changes
@@ -7779,11 +8194,12 @@ namespace LiveSplitCore
         /// </summary>
         public void MarkAsUnmodified()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            LiveSplitCoreNative.Timer_mark_as_unmodified(this.ptr);
+
+            LiveSplitCoreNative.Timer_mark_as_unmodified(ptr);
         }
         internal TimerRefMut(IntPtr ptr) : base(ptr) { }
     }
@@ -7797,7 +8213,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.Timer_drop(this.ptr);
+                LiveSplitCoreNative.Timer_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -7822,12 +8238,14 @@ namespace LiveSplitCore
             {
                 throw new ObjectDisposedException("run");
             }
+
             var result = new Timer(LiveSplitCoreNative.Timer_new(run.ptr));
             run.ptr = IntPtr.Zero;
             if (result.ptr == IntPtr.Zero)
             {
                 return null;
             }
+
             return result;
         }
         /// <summary>
@@ -7836,12 +8254,13 @@ namespace LiveSplitCore
         /// </summary>
         public SharedTimer IntoShared()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new SharedTimer(LiveSplitCoreNative.Timer_into_shared(this.ptr));
-            this.ptr = IntPtr.Zero;
+
+            var result = new SharedTimer(LiveSplitCoreNative.Timer_into_shared(ptr));
+            ptr = IntPtr.Zero;
             return result;
         }
         /// <summary>
@@ -7852,12 +8271,13 @@ namespace LiveSplitCore
         /// </summary>
         public Run IntoRun(bool updateSplits)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new Run(LiveSplitCoreNative.Timer_into_run(this.ptr, updateSplits));
-            this.ptr = IntPtr.Zero;
+
+            var result = new Run(LiveSplitCoreNative.Timer_into_run(ptr, updateSplits));
+            ptr = IntPtr.Zero;
             return result;
         }
         internal Timer(IntPtr ptr) : base(ptr) { }
@@ -7876,19 +8296,22 @@ namespace LiveSplitCore
         /// </summary>
         public string StateAsJson(TimerRef timer, GeneralLayoutSettingsRef layoutSettings)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (timer.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("timer");
             }
+
             if (layoutSettings.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("layoutSettings");
             }
-            var result = LiveSplitCoreNative.TimerComponent_state_as_json(this.ptr, timer.ptr, layoutSettings.ptr);
+
+            var result = LiveSplitCoreNative.TimerComponent_state_as_json(ptr, timer.ptr, layoutSettings.ptr);
             return result;
         }
         /// <summary>
@@ -7897,19 +8320,22 @@ namespace LiveSplitCore
         /// </summary>
         public TimerComponentState State(TimerRef timer, GeneralLayoutSettingsRef layoutSettings)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (timer.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("timer");
             }
+
             if (layoutSettings.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("layoutSettings");
             }
-            var result = new TimerComponentState(LiveSplitCoreNative.TimerComponent_state(this.ptr, timer.ptr, layoutSettings.ptr));
+
+            var result = new TimerComponentState(LiveSplitCoreNative.TimerComponent_state(ptr, timer.ptr, layoutSettings.ptr));
             return result;
         }
         internal TimerComponentRef(IntPtr ptr)
@@ -7939,7 +8365,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.TimerComponent_drop(this.ptr);
+                LiveSplitCoreNative.TimerComponent_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -7957,7 +8383,7 @@ namespace LiveSplitCore
         /// </summary>
         public TimerComponent() : base(IntPtr.Zero)
         {
-            this.ptr = LiveSplitCoreNative.TimerComponent_new();
+            ptr = LiveSplitCoreNative.TimerComponent_new();
         }
         /// <summary>
         /// Converts the component into a generic component suitable for using with a
@@ -7965,12 +8391,13 @@ namespace LiveSplitCore
         /// </summary>
         public Component IntoGeneric()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new Component(LiveSplitCoreNative.TimerComponent_into_generic(this.ptr));
-            this.ptr = IntPtr.Zero;
+
+            var result = new Component(LiveSplitCoreNative.TimerComponent_into_generic(ptr));
+            ptr = IntPtr.Zero;
             return result;
         }
         internal TimerComponent(IntPtr ptr) : base(ptr) { }
@@ -7987,11 +8414,12 @@ namespace LiveSplitCore
         /// </summary>
         public string Time()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.TimerComponentState_time(this.ptr);
+
+            var result = LiveSplitCoreNative.TimerComponentState_time(ptr);
             return result;
         }
         /// <summary>
@@ -7999,11 +8427,12 @@ namespace LiveSplitCore
         /// </summary>
         public string Fraction()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.TimerComponentState_fraction(this.ptr);
+
+            var result = LiveSplitCoreNative.TimerComponentState_fraction(ptr);
             return result;
         }
         /// <summary>
@@ -8011,11 +8440,12 @@ namespace LiveSplitCore
         /// </summary>
         public string SemanticColor()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.TimerComponentState_semantic_color(this.ptr);
+
+            var result = LiveSplitCoreNative.TimerComponentState_semantic_color(ptr);
             return result;
         }
         internal TimerComponentStateRef(IntPtr ptr)
@@ -8041,7 +8471,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.TimerComponentState_drop(this.ptr);
+                LiveSplitCoreNative.TimerComponentState_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -8069,11 +8499,12 @@ namespace LiveSplitCore
         /// </summary>
         public TimerRef Timer()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new TimerRef(LiveSplitCoreNative.TimerReadLock_timer(this.ptr));
+
+            var result = new TimerRef(LiveSplitCoreNative.TimerReadLock_timer(ptr));
             return result;
         }
         internal TimerReadLockRef(IntPtr ptr)
@@ -8101,7 +8532,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.TimerReadLock_drop(this.ptr);
+                LiveSplitCoreNative.TimerReadLock_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -8141,11 +8572,12 @@ namespace LiveSplitCore
         /// </summary>
         public TimerRefMut Timer()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new TimerRefMut(LiveSplitCoreNative.TimerWriteLock_timer(this.ptr));
+
+            var result = new TimerRefMut(LiveSplitCoreNative.TimerWriteLock_timer(ptr));
             return result;
         }
         internal TimerWriteLockRefMut(IntPtr ptr) : base(ptr) { }
@@ -8161,7 +8593,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.TimerWriteLock_drop(this.ptr);
+                LiveSplitCoreNative.TimerWriteLock_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -8203,15 +8635,17 @@ namespace LiveSplitCore
         /// </summary>
         public string StateAsJson(TimerRef timer)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (timer.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("timer");
             }
-            var result = LiveSplitCoreNative.TitleComponent_state_as_json(this.ptr, timer.ptr);
+
+            var result = LiveSplitCoreNative.TitleComponent_state_as_json(ptr, timer.ptr);
             return result;
         }
         /// <summary>
@@ -8219,15 +8653,17 @@ namespace LiveSplitCore
         /// </summary>
         public TitleComponentState State(TimerRef timer)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (timer.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("timer");
             }
-            var result = new TitleComponentState(LiveSplitCoreNative.TitleComponent_state(this.ptr, timer.ptr));
+
+            var result = new TitleComponentState(LiveSplitCoreNative.TitleComponent_state(ptr, timer.ptr));
             return result;
         }
         internal TitleComponentRefMut(IntPtr ptr) : base(ptr) { }
@@ -8244,7 +8680,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.TitleComponent_drop(this.ptr);
+                LiveSplitCoreNative.TitleComponent_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -8262,7 +8698,7 @@ namespace LiveSplitCore
         /// </summary>
         public TitleComponent() : base(IntPtr.Zero)
         {
-            this.ptr = LiveSplitCoreNative.TitleComponent_new();
+            ptr = LiveSplitCoreNative.TitleComponent_new();
         }
         /// <summary>
         /// Converts the component into a generic component suitable for using with a
@@ -8270,12 +8706,13 @@ namespace LiveSplitCore
         /// </summary>
         public Component IntoGeneric()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new Component(LiveSplitCoreNative.TitleComponent_into_generic(this.ptr));
-            this.ptr = IntPtr.Zero;
+
+            var result = new Component(LiveSplitCoreNative.TitleComponent_into_generic(ptr));
+            ptr = IntPtr.Zero;
             return result;
         }
         internal TitleComponent(IntPtr ptr) : base(ptr) { }
@@ -8295,11 +8732,12 @@ namespace LiveSplitCore
         /// </summary>
         public IntPtr IconChangePtr()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.TitleComponentState_icon_change_ptr(this.ptr);
+
+            var result = LiveSplitCoreNative.TitleComponentState_icon_change_ptr(ptr);
             return result;
         }
         /// <summary>
@@ -8307,11 +8745,12 @@ namespace LiveSplitCore
         /// </summary>
         public ulong IconChangeLen()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = (ulong)LiveSplitCoreNative.TitleComponentState_icon_change_len(this.ptr);
+
+            var result = (ulong)LiveSplitCoreNative.TitleComponentState_icon_change_len(ptr);
             return result;
         }
         /// <summary>
@@ -8320,11 +8759,12 @@ namespace LiveSplitCore
         /// </summary>
         public string Line1()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.TitleComponentState_line1(this.ptr);
+
+            var result = LiveSplitCoreNative.TitleComponentState_line1(ptr);
             return result;
         }
         /// <summary>
@@ -8334,11 +8774,12 @@ namespace LiveSplitCore
         /// </summary>
         public string Line2()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.TitleComponentState_line2(this.ptr);
+
+            var result = LiveSplitCoreNative.TitleComponentState_line2(ptr);
             return result;
         }
         /// <summary>
@@ -8347,11 +8788,12 @@ namespace LiveSplitCore
         /// </summary>
         public bool IsCentered()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.TitleComponentState_is_centered(this.ptr) != 0;
+
+            var result = LiveSplitCoreNative.TitleComponentState_is_centered(ptr) != 0;
             return result;
         }
         /// <summary>
@@ -8360,11 +8802,12 @@ namespace LiveSplitCore
         /// </summary>
         public bool ShowsFinishedRuns()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.TitleComponentState_shows_finished_runs(this.ptr) != 0;
+
+            var result = LiveSplitCoreNative.TitleComponentState_shows_finished_runs(ptr) != 0;
             return result;
         }
         /// <summary>
@@ -8372,11 +8815,12 @@ namespace LiveSplitCore
         /// </summary>
         public uint FinishedRuns()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.TitleComponentState_finished_runs(this.ptr);
+
+            var result = LiveSplitCoreNative.TitleComponentState_finished_runs(ptr);
             return result;
         }
         /// <summary>
@@ -8384,11 +8828,12 @@ namespace LiveSplitCore
         /// </summary>
         public bool ShowsAttempts()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.TitleComponentState_shows_attempts(this.ptr) != 0;
+
+            var result = LiveSplitCoreNative.TitleComponentState_shows_attempts(ptr) != 0;
             return result;
         }
         /// <summary>
@@ -8396,11 +8841,12 @@ namespace LiveSplitCore
         /// </summary>
         public uint Attempts()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = LiveSplitCoreNative.TitleComponentState_attempts(this.ptr);
+
+            var result = LiveSplitCoreNative.TitleComponentState_attempts(ptr);
             return result;
         }
         internal TitleComponentStateRef(IntPtr ptr)
@@ -8426,7 +8872,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.TitleComponentState_drop(this.ptr);
+                LiveSplitCoreNative.TitleComponentState_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -8466,15 +8912,17 @@ namespace LiveSplitCore
         /// </summary>
         public string StateAsJson(TimerRef timer)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (timer.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("timer");
             }
-            var result = LiveSplitCoreNative.TotalPlaytimeComponent_state_as_json(this.ptr, timer.ptr);
+
+            var result = LiveSplitCoreNative.TotalPlaytimeComponent_state_as_json(ptr, timer.ptr);
             return result;
         }
         /// <summary>
@@ -8482,15 +8930,17 @@ namespace LiveSplitCore
         /// </summary>
         public KeyValueComponentState State(TimerRef timer)
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
+
             if (timer.ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("timer");
             }
-            var result = new KeyValueComponentState(LiveSplitCoreNative.TotalPlaytimeComponent_state(this.ptr, timer.ptr));
+
+            var result = new KeyValueComponentState(LiveSplitCoreNative.TotalPlaytimeComponent_state(ptr, timer.ptr));
             return result;
         }
         internal TotalPlaytimeComponentRefMut(IntPtr ptr) : base(ptr) { }
@@ -8506,7 +8956,7 @@ namespace LiveSplitCore
         {
             if (ptr != IntPtr.Zero)
             {
-                LiveSplitCoreNative.TotalPlaytimeComponent_drop(this.ptr);
+                LiveSplitCoreNative.TotalPlaytimeComponent_drop(ptr);
                 ptr = IntPtr.Zero;
             }
         }
@@ -8524,7 +8974,7 @@ namespace LiveSplitCore
         /// </summary>
         public TotalPlaytimeComponent() : base(IntPtr.Zero)
         {
-            this.ptr = LiveSplitCoreNative.TotalPlaytimeComponent_new();
+            ptr = LiveSplitCoreNative.TotalPlaytimeComponent_new();
         }
         /// <summary>
         /// Converts the component into a generic component suitable for using with a
@@ -8532,12 +8982,13 @@ namespace LiveSplitCore
         /// </summary>
         public Component IntoGeneric()
         {
-            if (this.ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero)
             {
                 throw new ObjectDisposedException("this");
             }
-            var result = new Component(LiveSplitCoreNative.TotalPlaytimeComponent_into_generic(this.ptr));
-            this.ptr = IntPtr.Zero;
+
+            var result = new Component(LiveSplitCoreNative.TotalPlaytimeComponent_into_generic(ptr));
+            ptr = IntPtr.Zero;
             return result;
         }
         internal TotalPlaytimeComponent(IntPtr ptr) : base(ptr) { }
@@ -9508,7 +9959,9 @@ namespace LiveSplitCore
         {
             var handle = lSCoreString.handle;
             if (handle == IntPtr.Zero)
+            {
                 return null;
+            }
 
             byte[] buffer = new byte[(long)LiveSplitCoreNative.get_buf_len()];
             Marshal.Copy(handle, buffer, 0, buffer.Length);
@@ -9521,6 +9974,7 @@ namespace LiveSplitCore
             {
                 Marshal.FreeHGlobal(handle);
             }
+
             return true;
         }
     }

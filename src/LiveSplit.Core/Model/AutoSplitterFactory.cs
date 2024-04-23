@@ -1,9 +1,10 @@
-﻿using LiveSplit.Options;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
+
+using LiveSplit.Options;
 
 namespace LiveSplit.Model
 {
@@ -32,7 +33,9 @@ namespace LiveSplit.Model
         public void Init()
         {
             if (AutoSplitters != null)
+            {
                 return;
+            }
 
             var document = DownloadAutoSplitters();
 
@@ -82,14 +85,18 @@ namespace LiveSplit.Model
         public AutoSplitter Create(string game)
         {
             if (AutoSplitters == null)
+            {
                 Init();
+            }
 
             if (AutoSplitters != null && !string.IsNullOrEmpty(game))
             {
                 game = game.ToLower();
 
                 if (AutoSplitters.ContainsKey(game))
+                {
                     return AutoSplitters[game];
+                }
             }
 
             return null;
@@ -107,10 +114,15 @@ namespace LiveSplit.Model
             {
                 Log.Error(ex);
                 if (File.Exists("LiveSplit.AutoSplitters.xml"))
+                {
                     autoSplitters.Load("LiveSplit.AutoSplitters.xml");
+                }
                 else
+                {
                     return null;
+                }
             }
+
             return autoSplitters;
         }
     }

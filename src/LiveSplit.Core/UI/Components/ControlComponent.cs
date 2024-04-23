@@ -1,8 +1,9 @@
-﻿using LiveSplit.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+
+using LiveSplit.Model;
 
 namespace LiveSplit.UI.Components
 {
@@ -34,7 +35,7 @@ namespace LiveSplit.UI.Components
         public float PaddingRight => 0;
 
         public bool ErrorWithControl { get; set; }
-        private Action<Exception> ErrorCallback;
+        private readonly Action<Exception> ErrorCallback;
 
         public IDictionary<string, Action> ContextMenuControls { get; protected set; }
 
@@ -49,9 +50,13 @@ namespace LiveSplit.UI.Components
         public void InvokeIfNeeded(Action x)
         {
             if (Form != null && Form.InvokeRequired)
+            {
                 Form.Invoke(x);
+            }
             else
+            {
                 x();
+            }
         }
 
         public void Reposition(float width, float height, Graphics g)

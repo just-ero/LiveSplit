@@ -1,10 +1,12 @@
-﻿using LiveSplit.Options;
-using LiveSplit.Web.Share;
-using SpeedrunComSharp;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
+using LiveSplit.Options;
+using LiveSplit.Web.Share;
+
+using SpeedrunComSharp;
 
 namespace LiveSplit.Model
 {
@@ -37,7 +39,9 @@ namespace LiveSplit.Model
                 run = new Lazy<SpeedrunComSharp.Run>(() => SpeedrunCom.Client.Runs.GetRun(runId));
 
                 if (value != null)
+                {
                     TriggerPropertyChanged(false);
+                }
             }
         }
 
@@ -53,7 +57,9 @@ namespace LiveSplit.Model
                 run = new Lazy<SpeedrunComSharp.Run>(() => value);
 
                 if (value != null)
+                {
                     TriggerPropertyChanged(false);
+                }
             }
         }
 
@@ -66,9 +72,11 @@ namespace LiveSplit.Model
             set
             {
                 if (platformName != value)
+                {
                     TriggerPropertyChanged(true);
+                }
 
-                platformName = value; 
+                platformName = value;
             }
         }
         public Platform Platform => Game?.Platforms.FirstOrDefault(x => x.Name == PlatformName);
@@ -82,7 +90,9 @@ namespace LiveSplit.Model
             set
             {
                 if (regionName != value)
+                {
                     TriggerPropertyChanged(true);
+                }
 
                 regionName = value;
             }
@@ -95,14 +105,18 @@ namespace LiveSplit.Model
             get
             {
                 if (Game == null)
+                {
                     return new Dictionary<Variable, VariableValue>();
+                }
 
                 var categoryId = Category != null ? Category.ID : null;
                 var variables = Game.FullGameVariables.Where(x => x.CategoryID == null || x.CategoryID == categoryId);
                 return variables.ToDictionary(x => x, x =>
                 {
                     if (!VariableValueNames.ContainsKey(x.Name))
+                    {
                         return null;
+                    }
 
                     var variableValue = VariableValueNames[x.Name];
                     var foundValue = x.Values.FirstOrDefault(y => y.Value == variableValue);
@@ -126,12 +140,13 @@ namespace LiveSplit.Model
             set
             {
                 if (usesEmulator != value)
+                {
                     TriggerPropertyChanged(true);
+                }
 
                 usesEmulator = value;
             }
         }
-
 
         public bool GameAvailable { get; private set; }
         public Game Game
@@ -182,7 +197,10 @@ namespace LiveSplit.Model
                                 var game = SpeedrunCom.Client.Games.GetGame(gameId, new GameEmbeds(embedRegions: true, embedPlatforms: true));
                                 gameLoaded = true;
                                 if (game != null)
+                                {
                                     GameAvailable = true;
+                                }
+
                                 return game;
                             }
                             catch
@@ -191,27 +209,32 @@ namespace LiveSplit.Model
                                 return null;
                             }
                         });
-                        this.game = new Lazy<Game>(() => gameTask.Result);
+                        game = new Lazy<Game>(() => gameTask.Result);
 
                         var platformTask = Task.Factory.StartNew(() =>
                             {
                                 var game = this.game.Value;
-                                if (game != null && !game.Platforms.Any(x => x.Name == PlatformName) || gameLoaded && game == null)
+                                if ((game != null && !game.Platforms.Any(x => x.Name == PlatformName)) || (gameLoaded && game == null))
+                                {
                                     PlatformName = string.Empty;
+                                }
                             });
                         var regionTask = Task.Factory.StartNew(() =>
                             {
                                 var game = this.game.Value;
-                                if (game != null && !game.Regions.Any(x => x.Name == RegionName) || gameLoaded && game == null)
+                                if ((game != null && !game.Regions.Any(x => x.Name == RegionName)) || (gameLoaded && game == null))
+                                {
                                     RegionName = string.Empty;
+                                }
                             });
                     }
                     else
-                        this.game = new Lazy<Game>(() => null);
+                    {
+                        game = new Lazy<Game>(() => null);
+                    }
 
                     oldCategoryName = null;
                 }
-
 
                 if (LiveSplitRun.CategoryName != oldCategoryName)
                 {
@@ -224,14 +247,19 @@ namespace LiveSplit.Model
                         {
                             var game = this.game.Value;
                             if (game == null)
+                            {
                                 return null;
+                            }
 
                             try
                             {
                                 var category = SpeedrunCom.Client.Games.GetCategories(game.ID, embeds: new CategoryEmbeds(embedVariables: true))
                                     .FirstOrDefault(x => x.Type == CategoryType.PerGame && x.Name == oldCategoryName);
                                 if (category != null)
+                                {
                                     CategoryAvailable = true;
+                                }
+
                                 return category;
                             }
                             catch
@@ -239,7 +267,7 @@ namespace LiveSplit.Model
                                 return null;
                             }
                         });
-                        this.category = new Lazy<Category>(() => categoryTask.Result);
+                        category = new Lazy<Category>(() => categoryTask.Result);
 
                         var variableTask = Task.Factory.StartNew(() =>
                             {
@@ -247,7 +275,9 @@ namespace LiveSplit.Model
                                 var categoryId = category != null ? category.ID : null;
                                 var game = this.game.Value;
                                 if (game == null && !gameLoaded)
+                                {
                                     return;
+                                }
 
                                 try
                                 {
@@ -263,7 +293,9 @@ namespace LiveSplit.Model
                                             var variable = variables.FirstOrDefault(x => x.Name == variableNamePair.Key);
                                             if (variable == null
                                             || (!variable.Values.Any(x => x.Value == variableNamePair.Value) && !variable.IsUserDefined))
+                                            {
                                                 deletions.Add(variableNamePair.Key);
+                                            }
                                         }
                                     }
                                     else
@@ -275,6 +307,7 @@ namespace LiveSplit.Model
                                     {
                                         variableValueNames.Remove(variable);
                                     }
+
                                     VariableValueNames = variableValueNames;
                                 }
                                 catch (Exception ex)
@@ -284,7 +317,9 @@ namespace LiveSplit.Model
                             });
                     }
                     else
-                        this.category = new Lazy<Category>(() => null);
+                    {
+                        category = new Lazy<Category>(() => null);
+                    }
                 }
             }
         }

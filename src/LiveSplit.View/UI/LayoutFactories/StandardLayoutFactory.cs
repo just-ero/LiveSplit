@@ -1,6 +1,7 @@
-﻿using LiveSplit.Model;
-using System.Drawing;
+﻿using System.Drawing;
 using System.IO;
+
+using LiveSplit.Model;
 
 namespace LiveSplit.UI.LayoutFactories
 {
@@ -22,7 +23,9 @@ namespace LiveSplit.UI.LayoutFactories
         public static void CenturyGothicFix(ILayout layout)
         {
             if (layout.Settings.TimerFont.Name != "Century Gothic")
+            {
                 layout.Settings.TimerFont = new Font("Calibri", layout.Settings.TimerFont.Size, FontStyle.Bold, GraphicsUnit.Pixel);
+            }
         }
     }
 }

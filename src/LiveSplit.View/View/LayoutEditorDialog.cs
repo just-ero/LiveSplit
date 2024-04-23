@@ -1,15 +1,16 @@
-﻿using LiveSplit.Model;
-using LiveSplit.Options;
-using LiveSplit.UI;
-using LiveSplit.UI.Components;
-using LiveSplit.Utils;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+
+using LiveSplit.Model;
+using LiveSplit.Options;
+using LiveSplit.UI;
+using LiveSplit.UI.Components;
+using LiveSplit.Utils;
 
 namespace LiveSplit.View
 {
@@ -35,9 +36,13 @@ namespace LiveSplit.View
             set
             {
                 if (value)
+                {
                     Layout.Mode = LayoutMode.Vertical;
+                }
                 else
+                {
                     Layout.Mode = LayoutMode.Horizontal;
+                }
             }
         }
         protected bool IsHorizontal { get { return !IsVertical; } set { IsVertical = !value; } }
@@ -58,11 +63,13 @@ namespace LiveSplit.View
             rdoVertical.CheckedChanged += rdoVertical_CheckedChanged;
 
             CurrentState = state;
-            var itemDragger = new ListBoxItemDragger(lbxComponents, form);
-            itemDragger.DragCursor = Cursors.SizeAll;
+            var itemDragger = new ListBoxItemDragger(lbxComponents, form)
+            {
+                DragCursor = Cursors.SizeAll
+            };
         }
 
-        void rdoVertical_CheckedChanged(object sender, EventArgs e)
+        private void rdoVertical_CheckedChanged(object sender, EventArgs e)
         {
             Layout.HasChanged = true;
             IsVertical = rdoVertical.Checked;
@@ -120,6 +127,7 @@ namespace LiveSplit.View
             {
                 AddComponentFactory(factory, groupItem);
             }
+
             menuAddComponents.Items.Add(groupItem);
         }
 
@@ -134,7 +142,10 @@ namespace LiveSplit.View
                 var category = group.Key;
                 var componentFactories = (IEnumerable<IComponentFactory>)group;
                 if (category == ComponentCategory.Other)
+                {
                     componentFactories = new[] { new SeparatorFactory() }.Concat(componentFactories).OrderBy(x => x.ComponentName);
+                }
+
                 AddGroup(category, componentFactories);
             }
 
@@ -169,7 +180,10 @@ namespace LiveSplit.View
                     {
                         var component = Layout.Components.ElementAt(lbxComponents.SelectedIndex);
                         if (component is IDeactivatableComponent)
+                        {
                             ((IDeactivatableComponent)component).Activated = false;
+                        }
+
                         ComponentsToDispose.Add(component);
                         BindingList.RemoveAt(lbxComponents.SelectedIndex);
                     }
@@ -237,19 +251,23 @@ namespace LiveSplit.View
             if (result == DialogResult.OK)
             {
                 if (oldSettings.BackgroundImage != null && oldSettings.BackgroundImage != Layout.Settings.BackgroundImage)
+                {
                     ImagesToDispose.Add(oldSettings.BackgroundImage);
+                }
 
                 Layout.HasChanged = true;
             }
             else if (result == DialogResult.Cancel)
             {
                 if (Layout.Settings.BackgroundImage != null && oldSettings.BackgroundImage != Layout.Settings.BackgroundImage)
+                {
                     Layout.Settings.BackgroundImage.Dispose();
+                }
 
                 Layout.Settings.Assign(oldSettings);
                 LayoutSettingsAssigned(null, null);
             }
-            
+
             BindingList.ResetBindings();
         }
 
@@ -266,8 +284,10 @@ namespace LiveSplit.View
                 var result = setSizeDialog.ShowDialog();
 
                 if (result == DialogResult.Cancel)
+                {
                     CurrentState.Form.Size = oldSize;
-            }   
+                }
+            }
         }
 
         private void lbxComponents_DoubleClick(object sender, EventArgs e)

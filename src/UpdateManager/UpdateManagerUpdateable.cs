@@ -13,7 +13,10 @@ namespace UpdateManager
             get
             {
                 if (_Instance == null)
+                {
                     _Instance = new UpdateManagerUpdateable();
+                }
+
                 return _Instance;
             }
         }

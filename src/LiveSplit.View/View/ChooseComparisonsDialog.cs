@@ -1,7 +1,8 @@
-﻿using LiveSplit.Model.Comparisons;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+
+using LiveSplit.Model.Comparisons;
 
 namespace LiveSplit.View
 {
@@ -14,7 +15,7 @@ namespace LiveSplit.View
         {
             InitializeComponent();
             DialogInitialized = false;
-            comparisonsListBox.Items.AddRange(new []
+            comparisonsListBox.Items.AddRange(new[]
             {
                 BestSegmentsComparisonGenerator.ComparisonName,
                 BestSplitTimesComparisonGenerator.ComparisonName,
@@ -54,6 +55,7 @@ namespace LiveSplit.View
             {
                 comparisonsListBox.SetItemChecked(comparisonsListBox.Items.IndexOf(generator.Key), generator.Value);
             }
+
             DialogInitialized = true;
         }
     }

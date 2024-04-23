@@ -1,9 +1,10 @@
-﻿using LiveSplit.Options;
-using System;
+﻿using System;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+
+using LiveSplit.Options;
 
 namespace LiveSplit.Server
 {
@@ -55,11 +56,15 @@ namespace LiveSplit.Server
                     command = Reader.ReadLine();
                 }
                 catch { }
+
                 if (command != null)
                 {
                     MessageReceived?.Invoke(this, new MessageEventArgs(this, command));
                 }
-                else break;
+                else
+                {
+                    break;
+                }
             }
 
             Disconnected?.Invoke(this, EventArgs.Empty);

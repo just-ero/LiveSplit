@@ -1,9 +1,10 @@
-﻿using LiveSplit.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+
+using LiveSplit.Model;
 
 namespace LiveSplit.UI.Components
 {
@@ -70,7 +71,9 @@ namespace LiveSplit.UI.Components
         public void Dispose()
         {
             foreach (var component in VisibleComponents)
+            {
                 component.Dispose();
+            }
 
             GC.SuppressFinalize(this);
         }

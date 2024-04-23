@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace LiveSplit.Model
 {
-    class Win32
+    internal class Win32
     {
         public const int WS_EX_LAYERED = 0x80000;
         public const int HTCAPTION = 0x02;
@@ -19,7 +19,10 @@ namespace LiveSplit.Model
             public int y;
 
             public Point(int x, int y)
-            { this.x = x; this.y = y; }
+            {
+                this.x = x;
+                this.y = y;
+            }
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -29,7 +32,10 @@ namespace LiveSplit.Model
             public int cy;
 
             public Size(int cx, int cy)
-            { this.cx = cx; this.cy = cy; }
+            {
+                this.cx = cx;
+                this.cy = cy;
+            }
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -88,5 +94,4 @@ namespace LiveSplit.Model
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool DeleteObject(IntPtr hObject);
     }
-
 }

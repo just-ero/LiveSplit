@@ -1,11 +1,12 @@
-﻿using LiveSplit.Model;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
+
+using LiveSplit.Model;
 using LiveSplit.Model.Comparisons;
 using LiveSplit.Model.Input;
 using LiveSplit.UI.Components;
 using LiveSplit.Web.SRL.RaceViewers;
-using System.Collections.Generic;
-using System.Windows.Forms;
-using System.Linq;
 
 namespace LiveSplit.Options.SettingsFactories
 {

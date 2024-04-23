@@ -1,13 +1,14 @@
-﻿using LiveSplit.Model;
-using LiveSplit.Model.Comparisons;
-using LiveSplit.Model.Input;
-using LiveSplit.Model.RunFactories;
-using LiveSplit.UI.Components;
-using LiveSplit.Web.SRL;
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Xml;
+
+using LiveSplit.Model;
+using LiveSplit.Model.Comparisons;
+using LiveSplit.Model.RunFactories;
+using LiveSplit.UI.Components;
+using LiveSplit.Web.SRL;
+
 using static LiveSplit.UI.SettingsHelper;
 
 namespace LiveSplit.Options.SettingsFactories
@@ -66,7 +67,9 @@ namespace LiveSplit.Options.SettingsFactories
                 {
                     var comparisonName = generatorNode.GetAttribute("name");
                     if (settings.ComparisonGeneratorStates.ContainsKey(comparisonName))
+                    {
                         settings.ComparisonGeneratorStates[comparisonName] = bool.Parse(generatorNode.InnerText);
+                    }
                 }
 
                 foreach (var splitNode in recentSplits.GetElementsByTagName("SplitsFile"))
@@ -77,11 +80,15 @@ namespace LiveSplit.Options.SettingsFactories
 
                     var method = TimingMethod.RealTime;
                     if (version >= new Version(1, 6, 1))
+                    {
                         method = (TimingMethod)Enum.Parse(typeof(TimingMethod), splitElement.GetAttribute("lastTimingMethod"));
+                    }
 
                     var hotkeyProfile = HotkeyProfile.DefaultHotkeyProfileName;
                     if (version >= new Version(1, 8))
+                    {
                         hotkeyProfile = splitElement.GetAttribute("lastHotkeyProfile");
+                    }
 
                     var path = splitElement.InnerText;
 
@@ -132,7 +139,7 @@ namespace LiveSplit.Options.SettingsFactories
 
             settings.RaceProvider.Clear();
             if (version >= new Version(1, 8, 8))
-            {                
+            {
                 foreach (var providerNode in parent["RaceProviderPlugins"].ChildNodes.OfType<XmlElement>())
                 {
                     var providerName = providerNode.GetAttribute("name");
@@ -143,17 +150,22 @@ namespace LiveSplit.Options.SettingsFactories
                         raceProviderSettings = factory.CreateSettings();
                     }
                     else
+                    {
                         raceProviderSettings = new UnloadedRaceProviderSettings();
+                    }
 
                     raceProviderSettings.FromXml(providerNode, version);
                     settings.RaceProvider.Add(raceProviderSettings);
-                }                
+                }
             }
+
             foreach (var factory in ComponentManager.RaceProviderFactories.Values)
             {
                 var raceProviderSettings = factory.CreateSettings();
                 if (!settings.RaceProvider.Any(x => x.GetType() == raceProviderSettings.GetType()))
+                {
                     settings.RaceProvider.Add(raceProviderSettings);
+                }
             }
 
             LoadDrift(parent);
@@ -172,7 +184,9 @@ namespace LiveSplit.Options.SettingsFactories
 
                 // Reset drift to 1 if it is too far off
                 if (Math.Abs(loadedDrift - 1) > 0.01)
+                {
                     loadedDrift = 1;
+                }
 
                 TimeStamp.PersistentDrift = TimeStamp.NewDrift = loadedDrift;
             }

@@ -1,9 +1,10 @@
-﻿using LiveSplit.Model.Comparisons;
-using LiveSplit.Model.RunFactories;
-using LiveSplit.UI;
-using System;
+﻿using System;
 using System.IO;
 using System.Windows.Forms;
+
+using LiveSplit.Model.Comparisons;
+using LiveSplit.Model.RunFactories;
+using LiveSplit.UI;
 
 namespace LiveSplit.Model.RunImporters
 {
@@ -36,7 +37,9 @@ namespace LiveSplit.Model.RunImporters
                         var comparisonName = Path.GetFileNameWithoutExtension(splitDialog.FileName);
                         result = InputBox.Show(form, "Enter Comparison Name", "Name:", ref comparisonName);
                         if (result != DialogResult.Cancel)
+                        {
                             return run.AddComparisonWithNameInput(imported, comparisonName, form);
+                        }
                     }
                 }
             }

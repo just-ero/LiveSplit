@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using static LiveSplit.Model.SumOfSegmentsHelper;
 
 namespace LiveSplit.Model
@@ -24,9 +25,8 @@ namespace LiveSplit.Model
                 {
                     foreach (var nullSegment in run[segmentIndex].SegmentHistory.Where(x => !x.Value[method].HasValue))
                     {
-                        Time segmentTime;
-                        if (segmentIndex == 0 
-                            || !run[segmentIndex - 1].SegmentHistory.TryGetValue(nullSegment.Key, out segmentTime)
+                        if (segmentIndex == 0
+                            || !run[segmentIndex - 1].SegmentHistory.TryGetValue(nullSegment.Key, out var segmentTime)
                             || segmentTime[method] != null)
                         {
                             var prediction = TrackBranch(run, currentTime, segmentIndex + 1, nullSegment.Key, method);
@@ -34,11 +34,13 @@ namespace LiveSplit.Model
                         }
                     }
                 }
+
                 if (useCurrentRun)
                 {
                     var currentRunPrediction = TrackCurrentRun(run, currentTime, segmentIndex, method);
                     PopulatePrediction(predictions, currentRunPrediction.Time[method], currentRunPrediction.Index);
                 }
+
                 var personalBestRunPrediction = TrackPersonalBestRun(run, currentTime, segmentIndex, method);
                 PopulatePrediction(predictions, personalBestRunPrediction.Time[method], personalBestRunPrediction.Index);
             }
@@ -55,6 +57,7 @@ namespace LiveSplit.Model
                 PopulatePredictions(run, currentTime, segmentIndex, predictions, simpleCalculation, useCurrentRun, method);
                 segmentIndex++;
             }
+
             return predictions[endIndex + 1];
         }
 
@@ -77,7 +80,8 @@ namespace LiveSplit.Model
                 {
                     var prediction = TrackBranch(run, currentTime, segmentIndex + 1, nullSegment.Key, method);
                     CheckPrediction(run, predictions, prediction.Time[method], segmentIndex - 1, prediction.Index - 1, nullSegment.Key, method, callback);
-                } 
+                }
+
                 segmentIndex++;
             }
         }
@@ -86,8 +90,7 @@ namespace LiveSplit.Model
         {
             if (predictedTime.HasValue && (!predictions[endingIndex + 1].HasValue || predictedTime < predictions[endingIndex + 1].Value))
             {
-                Time segmentHistoryElement;
-                if (run[endingIndex].SegmentHistory.TryGetValue(runIndex, out segmentHistoryElement))
+                if (run[endingIndex].SegmentHistory.TryGetValue(runIndex, out var segmentHistoryElement))
                 {
                     var parameters = new CleanUpCallbackParameters
                     {

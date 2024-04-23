@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
-using System.IO;
 using System.Xml;
-using System.Diagnostics;
 
 namespace UpdateManager
 {
@@ -18,7 +18,7 @@ namespace UpdateManager
         }
     }
 
-    public delegate void UpdatePercentageRefreshedEventHandler (object sender, UpdatePercentageRefreshedEventArgs e);
+    public delegate void UpdatePercentageRefreshedEventHandler(object sender, UpdatePercentageRefreshedEventArgs e);
 
     public static class Updater
     {
@@ -28,7 +28,10 @@ namespace UpdateManager
             get
             {
                 if (_Updaters == null)
+                {
                     _Updaters = new Dictionary<IUpdateable, UpdaterInternal>();
+                }
+
                 return _Updaters;
             }
         }
@@ -63,6 +66,7 @@ namespace UpdateManager
                             }
                         }
                         catch { }
+
                         _Updates = updateList;
                     }
 
@@ -84,8 +88,11 @@ namespace UpdateManager
                 foreach (Update update in Updates)
                 {
                     if (update.Version > Version)
+                    {
                         return true;
+                    }
                 }
+
                 return false;
             }
 
@@ -101,7 +108,10 @@ namespace UpdateManager
 
             public void PerformUpdate()
             {
-                string ConvertChangeUrlPartToPath(string xmlChangePath) => xmlChangePath.Replace('/', Path.DirectorySeparatorChar);
+                string ConvertChangeUrlPartToPath(string xmlChangePath)
+                {
+                    return xmlChangePath.Replace('/', Path.DirectorySeparatorChar);
+                }
 
                 IList<Update> updates = Updates.Where(x => x.Version > Version).ToList();
                 var addedFiles = new Dictionary<string, string>();
@@ -158,7 +168,9 @@ namespace UpdateManager
         {
             string dir = Path.GetDirectoryName(Path.Combine(Directory.GetCurrentDirectory(), path));
             if (!Directory.Exists(dir))
+            {
                 Directory.CreateDirectory(dir);
+            }
 
             new WebClient().DownloadFile(url, path);
         }
@@ -174,7 +186,9 @@ namespace UpdateManager
         internal static void UpdateAllInternally(IEnumerable<IUpdateable> updateables)
         {
             foreach (IUpdateable updateable in updateables.Where(x => x.CheckForUpdate()))
+            {
                 GetUpdater(updateable).PerformUpdate();
+            }
         }
 
         public static IEnumerable<string> GetChangeLogFromAll(IEnumerable<IUpdateable> updateables)
@@ -185,7 +199,9 @@ namespace UpdateManager
         internal static UpdaterInternal GetUpdater(IUpdateable updateable)
         {
             if (!Updaters.ContainsKey(updateable))
+            {
                 Updaters.Add(updateable, new UpdaterInternal(updateable.XMLURL, updateable.UpdateURL, updateable.Version));
+            }
 
             return Updaters[updateable];
         }

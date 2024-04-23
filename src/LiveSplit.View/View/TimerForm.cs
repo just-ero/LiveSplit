@@ -1,4 +1,21 @@
-﻿using LiveSplit.Model;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
+using System.Drawing.Text;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Xml;
+
+using LiveSplit.Model;
 using LiveSplit.Model.Comparisons;
 using LiveSplit.Model.Input;
 using LiveSplit.Model.RunFactories;
@@ -15,26 +32,11 @@ using LiveSplit.UI.LayoutFactories;
 using LiveSplit.UI.LayoutSavers;
 using LiveSplit.Updates;
 using LiveSplit.Utils;
-using LiveSplit.Web;
 using LiveSplit.Web.Share;
 using LiveSplit.Web.SRL;
+
 using Microsoft.WindowsAPICodePack.Taskbar;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
-using System.Drawing.Text;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Runtime.InteropServices;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Xml;
+
 using UpdateManager;
 
 namespace LiveSplit.View
@@ -84,8 +86,8 @@ namespace LiveSplit.View
         public const int WM_NCLBUTTONDOWN = 0xA1;
         public const int HT_CAPTION = 0x2;
         public const string SETTINGS_PATH = "settings.cfg";
-        const int WS_MINIMIZEBOX = 0x20000;
-        const int CS_DBLCLKS = 0x8;
+        private const int WS_MINIMIZEBOX = 0x20000;
+        private const int CS_DBLCLKS = 0x8;
 
         protected override CreateParams CreateParams
         {
@@ -101,7 +103,7 @@ namespace LiveSplit.View
         protected bool MouseIsDown = false;
         protected Point MousePoint;
 
-        private List<Action> RacesToRefresh = new List<Action>();
+        private readonly List<Action> RacesToRefresh = new List<Action>();
         private bool ShouldRefreshRaces = false;
 
         protected Task RefreshTask { get; set; }
@@ -122,7 +124,10 @@ namespace LiveSplit.View
                 // If we're trying to set to false and it's already false, don't bother doing anything.
                 // We can't do this for setting to true because setting Opacity may have messed the GWL_EXSTYLE flags up.
                 if (!value && !MousePassThroughState)
+                {
                     return;
+                }
+
                 MousePassThroughState = value;
 
                 var prevWindowLong = GetWindowLong(Handle, GWL_EXSTYLE);
@@ -157,10 +162,10 @@ namespace LiveSplit.View
         private float? ResizingInitialAspectRatio { get; set; } = null;
 
         [DllImport("user32.dll")]
-        static extern int GetUpdateRgn(IntPtr hWnd, IntPtr hRgn, [MarshalAs(UnmanagedType.Bool)] bool bErase);
+        private static extern int GetUpdateRgn(IntPtr hWnd, IntPtr hRgn, [MarshalAs(UnmanagedType.Bool)] bool bErase);
 
         [DllImport("gdi32.dll")]
-        static extern IntPtr CreateRectRgn(int nLeftRect, int nTopRect, int nRightRect, int nBottomRect);
+        private static extern IntPtr CreateRectRgn(int nLeftRect, int nTopRect, int nRightRect, int nBottomRect);
 
         [DllImport("user32")]
         private static extern uint SetWindowLong(IntPtr hwnd, int nIndex, uint dwNewLong);
@@ -274,7 +279,9 @@ namespace LiveSplit.View
 
             InTimerOnlyMode = run == timerOnlyRun;
             if (InTimerOnlyMode)
+            {
                 SetInTimerOnlyMode();
+            }
 
             CurrentState.LayoutSettings = Layout.Settings;
             CreateAutoSplitter();
@@ -329,7 +336,7 @@ namespace LiveSplit.View
             DragEnter += TimerForm_DragEnter;
         }
 
-        void UpdateRaceProviderIntegration()
+        private void UpdateRaceProviderIntegration()
         {
             if (RightClickMenu.InvokeRequired)
             {
@@ -342,7 +349,7 @@ namespace LiveSplit.View
             int lastRaceProvider = RightClickMenu.Items.IndexOfKey("endRaceSection") - 1;
             if (lastRaceProvider - firstRaceProvider >= 0)
             {
-                for (int i = 0; i < (lastRaceProvider - firstRaceProvider) + 1; i++)
+                for (int i = 0; i < lastRaceProvider - firstRaceProvider + 1; i++)
                 {
                     RightClickMenu.Items[firstRaceProvider].Tag = null;
                     RightClickMenu.Items[firstRaceProvider].MouseHover -= racingMenuItem_MouseHover;
@@ -355,7 +362,9 @@ namespace LiveSplit.View
             foreach (var raceProvider in RaceProvider.Reverse())
             {
                 if (Settings.RaceProvider.Any(x => x.DisplayName == raceProvider.ProviderName && !x.Enabled))
+                {
                     continue;
+                }
 
                 raceProvider.RacesRefreshedCallback = RacesRefreshed;
                 ToolStripMenuItem raceProviderItem = new ToolStripMenuItem()
@@ -369,6 +378,7 @@ namespace LiveSplit.View
                 RightClickMenu.Items.Insert(menuItemIndex + 1, raceProviderItem);
                 raceProvider.RefreshRacesListAsync();
             }
+
             var srlRaceProvider = RaceProvider.FirstOrDefault(x => x.ProviderName == "SRL");
             if (srlRaceProvider != null)
             {
@@ -377,7 +387,7 @@ namespace LiveSplit.View
             }
         }
 
-        void SetWindowTitle()
+        private void SetWindowTitle()
         {
             var lowestAvailableNumber = 0;
             var currentName = "LiveSplit";
@@ -391,30 +401,36 @@ namespace LiveSplit.View
             Text = currentName;
         }
 
-        void CurrentState_OnSwitchComparisonNext(object sender, EventArgs e)
+        private void CurrentState_OnSwitchComparisonNext(object sender, EventArgs e)
         {
             RefreshComparisonItems();
         }
 
-        void RefreshComparisonItems()
+        private void RefreshComparisonItems()
         {
             var numSeparators = 0;
             foreach (var item in comparisonMenuItem.DropDownItems.OfType<ToolStripItem>().Reverse())
             {
                 if (item is ToolStripSeparator)
-                    numSeparators++;
-                if (item is ToolStripMenuItem)
                 {
-                    var toolItem = (ToolStripMenuItem)item;
+                    numSeparators++;
+                }
+
+                if (item is ToolStripMenuItem toolItem)
+                {
                     if (numSeparators == 0)
+                    {
                         toolItem.Checked = toolItem.Name == CurrentState.CurrentTimingMethod.ToString();
+                    }
                     else
+                    {
                         toolItem.Checked = toolItem.Text == CurrentState.CurrentComparison.EscapeMenuItemText();
+                    }
                 }
             }
         }
 
-        void CurrentState_OnSwitchComparisonPrevious(object sender, EventArgs e)
+        private void CurrentState_OnSwitchComparisonPrevious(object sender, EventArgs e)
         {
             RefreshComparisonItems();
         }
@@ -422,7 +438,10 @@ namespace LiveSplit.View
         private string GetShortenedGameAndGoal(string goal)
         {
             if (goal.Length > 65)
+            {
                 return goal.Substring(0, 60) + "...";
+            }
+
             return goal;
         }
 
@@ -438,7 +457,7 @@ namespace LiveSplit.View
             }
         }
 
-        void RacesRefreshed(RaceProviderAPI raceProvider)
+        private void RacesRefreshed(RaceProviderAPI raceProvider)
         {
             Action<List<ToolStripItem>> replaceItems = null;
 
@@ -454,9 +473,10 @@ namespace LiveSplit.View
                 }
                 else
                 {
-                    ToolStripMenuItem racingMenuItem = RightClickMenu.Items.Find($"{raceProvider.ProviderName}racesMenuItem", false).FirstOrDefault() as ToolStripMenuItem;
-                    if (racingMenuItem == null)
+                    if (!(RightClickMenu.Items.Find($"{raceProvider.ProviderName}racesMenuItem", false).FirstOrDefault() is ToolStripMenuItem racingMenuItem))
+                    {
                         return;
+                    }
 
                     racingMenuItem.DropDownItems.Clear();
                     racingMenuItem.DropDownItems.AddRange(x.ToArray());
@@ -468,27 +488,35 @@ namespace LiveSplit.View
             foreach (var race in raceProvider.GetRaces())
             {
                 if (race.State != 1)
+                {
                     continue;
+                }
 
                 var gameAndGoal = GetShortenedGameAndGoal(string.Format("{0} - {1}", race.GameName, race.Goal));
                 var entrants = race.NumEntrants;
                 var plural = entrants == 1 ? "" : "s";
                 var title = string.Format("{0} ({1} Entrant{2})", gameAndGoal, entrants, plural) as string;
 
-                var item = new ToolStripMenuItem();
-                item.Text = title.EscapeMenuItemText();
-                item.Tag = race.Id;
+                var item = new ToolStripMenuItem
+                {
+                    Text = title.EscapeMenuItemText(),
+                    Tag = race.Id
+                };
                 item.Click += (s, e) => { raceProvider.JoinRace?.Invoke(Model, race.Id); };
                 menuItemsToAdd.Add(item);
             }
 
             if (menuItemsToAdd.Count > 0)
+            {
                 menuItemsToAdd.Add(new ToolStripSeparator());
+            }
 
             foreach (var race in raceProvider.GetRaces())
             {
                 if (race.State != 3)
+                {
                     continue;
+                }
 
                 var gameAndGoal = GetShortenedGameAndGoal(string.Format("{0} - {1}", race.GameName, race.Goal));
                 var startTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
@@ -527,7 +555,9 @@ namespace LiveSplit.View
                 tsItem.Click += (s, ev) =>
                 {
                     if (!race.IsParticipant(raceProvider.Username))
+                    {
                         Settings.RaceViewer.ShowRace(race);
+                    }
                     else
                     {
                         tsItem.Tag = race.Id;
@@ -539,27 +569,34 @@ namespace LiveSplit.View
             }
 
             if (menuItemsToAdd.Count > 0 && !(menuItemsToAdd[menuItemsToAdd.Count - 1] is ToolStripSeparator))
+            {
                 menuItemsToAdd.Add(new ToolStripSeparator());
+            }
 
-            var newRaceItem = new ToolStripMenuItem();
-            newRaceItem.Text = "New Race...";
+            var newRaceItem = new ToolStripMenuItem
+            {
+                Text = "New Race..."
+            };
             newRaceItem.Click += (s, e) => { raceProvider.CreateRace?.Invoke(Model); };
             menuItemsToAdd.Add(newRaceItem);
 
             replaceItems(menuItemsToAdd);
         }
 
-        void UpdateTitle(ToolStripMenuItem item, IRaceInfo race, DateTime startTime, string gameAndGoal)
+        private void UpdateTitle(ToolStripMenuItem item, IRaceInfo race, DateTime startTime, string gameAndGoal)
         {
             var timeSpan = TimeStamp.CurrentDateTime - startTime;
             if (timeSpan < TimeSpan.Zero)
+            {
                 timeSpan = TimeSpan.Zero;
+            }
+
             var time = new RegularTimeFormatter().Format(timeSpan);
             var title = string.Format("[{0}] {1} ({2}/{3} Finished)", time, gameAndGoal, race.Finishes, race.NumEntrants - race.Forfeits) as string;
             item.Text = title.EscapeMenuItemText();
         }
 
-        void SRL_JoinRace(ITimerModel model, string raceId)
+        private void SRL_JoinRace(ITimerModel model, string raceId)
         {
             if (ShowSRLRules())
             {
@@ -570,7 +607,7 @@ namespace LiveSplit.View
             }
         }
 
-        void SRL_NewRace(ITimerModel model)
+        private void SRL_NewRace(ITimerModel model)
         {
             if (ShowSRLRules())
             {
@@ -588,14 +625,16 @@ namespace LiveSplit.View
                         gameCategory = gameName + " - " + gameCategory;
                         gameName = "New Game";
                     }
+
                     var form = new SpeedRunsLiveForm(CurrentState, model, gameName, id, gameCategory);
                     form.Show(this);
                 }
+
                 TopMost = CurrentState.LayoutSettings.AlwaysOnTop;
             }
         }
 
-        void TimerForm_SizeChanged(object sender, EventArgs e)
+        private void TimerForm_SizeChanged(object sender, EventArgs e)
         {
             CreateBakedBackground();
             if (RefreshesRemaining <= 0)
@@ -610,6 +649,7 @@ namespace LiveSplit.View
                     Layout.HorizontalWidth = Size.Width;
                     Layout.HorizontalHeight = Size.Height;
                 }
+
                 MaintainMinimumSize();
             }
         }
@@ -633,20 +673,25 @@ namespace LiveSplit.View
                             .ToArray());
         }
 
-        void CurrentState_OnUndoSplit(object sender, EventArgs e)
+        private void CurrentState_OnUndoSplit(object sender, EventArgs e)
         {
             this.InvokeIfRequired(() =>
             {
                 pauseMenuItem.Enabled = true;
                 splitMenuItem.Enabled = true;
                 if (CurrentState.CurrentSplitIndex == 0)
+                {
                     undoSplitMenuItem.Enabled = false;
+                }
+
                 if (CurrentState.CurrentSplitIndex < CurrentState.Run.Count - 1)
+                {
                     skipSplitMenuItem.Enabled = true;
+                }
             });
         }
 
-        void ServerMenuItem_Click(object sender, EventArgs e)
+        private void ServerMenuItem_Click(object sender, EventArgs e)
         {
             if (ServerStarted)
             {
@@ -668,17 +713,20 @@ namespace LiveSplit.View
             ServerStarted = !ServerStarted;
         }
 
-        void CurrentState_OnSkipSplit(object sender, EventArgs e)
+        private void CurrentState_OnSkipSplit(object sender, EventArgs e)
         {
             this.InvokeIfRequired(() =>
             {
                 if (CurrentState.CurrentSplitIndex >= CurrentState.Run.Count - 1)
+                {
                     skipSplitMenuItem.Enabled = false;
+                }
+
                 undoSplitMenuItem.Enabled = true;
             });
         }
 
-        void CurrentState_OnSplit(object sender, EventArgs e)
+        private void CurrentState_OnSplit(object sender, EventArgs e)
         {
             this.InvokeIfRequired(() =>
             {
@@ -687,13 +735,17 @@ namespace LiveSplit.View
                     pauseMenuItem.Enabled = false;
                     splitMenuItem.Enabled = false;
                 }
+
                 if (CurrentState.CurrentSplitIndex >= CurrentState.Run.Count - 1)
+                {
                     skipSplitMenuItem.Enabled = false;
+                }
+
                 undoSplitMenuItem.Enabled = true;
             });
         }
 
-        void CurrentState_OnStart(object sender, EventArgs e)
+        private void CurrentState_OnStart(object sender, EventArgs e)
         {
             this.InvokeIfRequired(() =>
             {
@@ -705,7 +757,7 @@ namespace LiveSplit.View
             });
         }
 
-        void CurrentState_OnReset(object sender, TimerPhase e)
+        private void CurrentState_OnReset(object sender, TimerPhase e)
         {
             RegenerateComparisons();
 
@@ -718,6 +770,7 @@ namespace LiveSplit.View
 
                     SetRun(timerOnlyRun);
                 }
+
                 resetMenuItem.Enabled = false;
                 pauseMenuItem.Enabled = false;
                 undoPausesMenuItem.Enabled = false;
@@ -728,7 +781,7 @@ namespace LiveSplit.View
             });
         }
 
-        void CurrentState_OnResume(object sender, EventArgs e)
+        private void CurrentState_OnResume(object sender, EventArgs e)
         {
             this.InvokeIfRequired(() =>
             {
@@ -737,7 +790,7 @@ namespace LiveSplit.View
             });
         }
 
-        void CurrentState_OnPause(object sender, EventArgs e)
+        private void CurrentState_OnPause(object sender, EventArgs e)
         {
             this.InvokeIfRequired(() =>
             {
@@ -770,7 +823,9 @@ namespace LiveSplit.View
         protected void SetInTimerOnlyMode()
         {
             if (Layout.Components.Count() != 1 || Layout.Components.FirstOrDefault().ComponentName != "Timer")
+            {
                 InTimerOnlyMode = false;
+            }
         }
 
         private void UpdateRecentSplits()
@@ -787,15 +842,19 @@ namespace LiveSplit.View
                 foreach (var category in game
                     .GroupBy(x => x.CategoryName ?? ""))
                 {
-                    var categoryMenuItem = new ToolStripMenuItem();
-                    categoryMenuItem.Tag = "Category";
+                    var categoryMenuItem = new ToolStripMenuItem
+                    {
+                        Tag = "Category"
+                    };
 
                     foreach (var splitsFile in category)
                     {
                         string fileName = Path.GetFileName(splitsFile.Path);
 
-                        var menuItem = new ToolStripMenuItem(fileName.EscapeMenuItemText());
-                        menuItem.Tag = "FileName";
+                        var menuItem = new ToolStripMenuItem(fileName.EscapeMenuItemText())
+                        {
+                            Tag = "FileName"
+                        };
                         menuItem.Click += (x, y) =>
                         {
                             OpenRunFromFile(splitsFile.Path);
@@ -816,7 +875,9 @@ namespace LiveSplit.View
                     {
                         string categoryName;
                         if (string.IsNullOrEmpty(category.Key))
+                        {
                             categoryName = "Unknown Category";
+                        }
                         else
                         {
                             categoryName = category.Key;
@@ -838,7 +899,9 @@ namespace LiveSplit.View
                         gameMenuItem = (ToolStripMenuItem)gameMenuItem.DropDownItems[0];
                         gameName = gameMenuItem.Text;
                         if (gameMenuItem.Text == "Unknown Category")
+                        {
                             gameName = "Unknown";
+                        }
                     }
                 }
                 else
@@ -851,7 +914,9 @@ namespace LiveSplit.View
                         if ((string)gameMenuItem.Tag == "Category")
                         {
                             if (!gameMenuItem.Text.StartsWith("Unknown Category"))
+                            {
                                 gameName += " - " + gameMenuItem.Text;
+                            }
                         }
                         else
                         {
@@ -864,8 +929,12 @@ namespace LiveSplit.View
 
                 openSplitsMenuItem.DropDownItems.Add(gameMenuItem);
             }
+
             if (openSplitsMenuItem.DropDownItems.Count > 0)
+            {
                 openSplitsMenuItem.DropDownItems.Add(new ToolStripSeparator());
+            }
+
             var openFromFileMenuItem = new ToolStripMenuItem("From File...");
             openFromFileMenuItem.Click += openSplitsFromFileMenuItem_Click;
             openSplitsMenuItem.DropDownItems.Add(openFromFileMenuItem);
@@ -881,7 +950,7 @@ namespace LiveSplit.View
             openSplitsMenuItem.DropDownItems.Add(editSplitHistoryMenuItem);
         }
 
-        void openFromSpeedrunComMenuItem_Click(object sender, EventArgs e)
+        private void openFromSpeedrunComMenuItem_Click(object sender, EventArgs e)
         {
             try
             {
@@ -894,9 +963,15 @@ namespace LiveSplit.View
                 if (run != null)
                 {
                     if (!WarnUserAboutSplitsSave())
+                    {
                         return;
+                    }
+
                     if (!WarnAndRemoveTimerOnly(true))
+                    {
                         return;
+                    }
+
                     run.HasChanged = true;
                     SetRun(run);
                     CurrentState.CallRunManuallyModified();
@@ -909,12 +984,14 @@ namespace LiveSplit.View
             }
         }
 
-        void editSplitHistoryMenuItem_Click(object sender, EventArgs e)
+        private void editSplitHistoryMenuItem_Click(object sender, EventArgs e)
         {
             using (var editHistoryDialog = new EditHistoryDialog(Settings.RecentSplits.Select(x => x.Path)))
             {
                 if (editHistoryDialog.ShowDialog(this) != DialogResult.Cancel)
+                {
                     Settings.RecentSplits = new List<RecentSplitsFile>(Settings.RecentSplits.Where(x => editHistoryDialog.History.Contains(x.Path)));
+                }
             }
 
             UpdateRecentSplits();
@@ -930,8 +1007,12 @@ namespace LiveSplit.View
                 menuItem.Click += (x, y) => { OpenLayoutFromFile(item); };
                 openLayoutMenuItem.DropDownItems.Add(menuItem);
             }
+
             if (openLayoutMenuItem.DropDownItems.Count > 0)
+            {
                 openLayoutMenuItem.DropDownItems.Add(new ToolStripSeparator());
+            }
+
             var openLayoutFromFileMenuItem = new ToolStripMenuItem("From File...");
             openLayoutFromFileMenuItem.Click += openLayoutFromFileMenuItem_Click;
             openLayoutMenuItem.DropDownItems.Add(openLayoutFromFileMenuItem);
@@ -947,18 +1028,21 @@ namespace LiveSplit.View
             openLayoutMenuItem.DropDownItems.Add(editLayoutHistoryMenuItem);
         }
 
-        void editLayoutHistoryMenuItem_Click(object sender, EventArgs e)
+        private void editLayoutHistoryMenuItem_Click(object sender, EventArgs e)
         {
             using (var editHistoryDialog = new EditHistoryDialog(Settings.RecentLayouts))
             {
 
                 if (editHistoryDialog.ShowDialog(this) != System.Windows.Forms.DialogResult.Cancel)
+                {
                     Settings.RecentLayouts = editHistoryDialog.History;
+                }
             }
+
             UpdateRecentLayouts();
         }
 
-        void openLayoutFromURLMenuItem_Click(object sender, EventArgs e)
+        private void openLayoutFromURLMenuItem_Click(object sender, EventArgs e)
         {
             try
             {
@@ -1018,7 +1102,7 @@ namespace LiveSplit.View
             }
         }
 
-        void openSplitsFromURLMenuItem_Click(object sender, EventArgs e)
+        private void openSplitsFromURLMenuItem_Click(object sender, EventArgs e)
         {
             var runImporter = new URLRunImporter();
             var run = runImporter.Import(this);
@@ -1026,9 +1110,15 @@ namespace LiveSplit.View
             if (run != null)
             {
                 if (!WarnUserAboutSplitsSave())
+                {
                     return;
+                }
+
                 if (!WarnAndRemoveTimerOnly(true))
+                {
                     return;
+                }
+
                 run.HasChanged = true;
                 SetRun(run);
                 CurrentState.CallRunManuallyModified();
@@ -1055,7 +1145,7 @@ namespace LiveSplit.View
             }
         }
 
-        void hook_KeyOrButtonPressed(object sender, KeyOrButton e)
+        private void hook_KeyOrButtonPressed(object sender, KeyOrButton e)
         {
             Action action = () =>
             {
@@ -1067,12 +1157,16 @@ namespace LiveSplit.View
                     {
                         if (hotkeyProfile.HotkeyDelay > 0)
                         {
-                            var splitTimer = new System.Timers.Timer(hotkeyProfile.HotkeyDelay * 1000f);
-                            splitTimer.Enabled = true;
+                            var splitTimer = new System.Timers.Timer(hotkeyProfile.HotkeyDelay * 1000f)
+                            {
+                                Enabled = true
+                            };
                             splitTimer.Elapsed += splitTimer_Elapsed;
                         }
                         else
+                        {
                             StartOrSplit();
+                        }
                     }
 
                     else if (hotkeyProfile.UndoKey == e)
@@ -1094,19 +1188,26 @@ namespace LiveSplit.View
                     {
                         if (hotkeyProfile.HotkeyDelay > 0)
                         {
-                            var pauseTimer = new System.Timers.Timer(hotkeyProfile.HotkeyDelay * 1000f);
-                            pauseTimer.Enabled = true;
+                            var pauseTimer = new System.Timers.Timer(hotkeyProfile.HotkeyDelay * 1000f)
+                            {
+                                Enabled = true
+                            };
                             pauseTimer.Elapsed += pauseTimer_Elapsed;
                         }
                         else
+                        {
                             Model.Pause();
+                        }
                     }
 
                     else if (hotkeyProfile.SwitchComparisonPrevious == e)
+                    {
                         Model.SwitchComparisonPrevious();
-
+                    }
                     else if (hotkeyProfile.SwitchComparisonNext == e)
+                    {
                         Model.SwitchComparisonNext();
+                    }
                 }
 
                 if (hotkeyProfile.ToggleGlobalHotkeys == e)
@@ -1129,19 +1230,19 @@ namespace LiveSplit.View
             }).Start();
         }
 
-        void pauseTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        private void pauseTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             ((System.Timers.Timer)sender).Stop();
             Model.Pause();
         }
 
-        void splitTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        private void splitTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             ((System.Timers.Timer)sender).Stop();
             StartOrSplit();
         }
 
-        void RefreshTimerWorker()
+        private void RefreshTimerWorker()
         {
             while (true)
             {
@@ -1154,7 +1255,7 @@ namespace LiveSplit.View
             }
         }
 
-        void TimerElapsed()
+        private void TimerElapsed()
         {
             try
             {
@@ -1163,19 +1264,27 @@ namespace LiveSplit.View
                     try
                     {
                         if (Hook != null)
+                        {
                             Hook.Poll();
+                        }
 
                         if (CurrentState.Run.IsAutoSplitterActive())
+                        {
                             CurrentState.Run.AutoSplitter.Component.Update(null, CurrentState, 0, 0, Layout.Mode);
+                        }
 
                         if (DontRedraw)
+                        {
                             return;
+                        }
 
                         if (RefreshesRemaining > 0 || InvalidationRequired)
                         {
                             InvalidateForm();
                             if (InvalidationRequired)
+                            {
                                 InvalidationRequired = false;
+                            }
                         }
                         else
                         {
@@ -1183,7 +1292,9 @@ namespace LiveSplit.View
                             GlobalCache["LayoutHashCode"] = new XMLLayoutSaver().CreateLayoutNode(null, null, Layout);
 
                             if (GlobalCache.HasChanged)
+                            {
                                 InvalidateForm();
+                            }
                             else
                             {
                                 Invalidator.Restart();
@@ -1230,16 +1341,26 @@ namespace LiveSplit.View
                 {
                     MinimumSize = new Size(0, 0);
                     if (Layout.Mode == LayoutMode.Vertical)
-                        Height = (int)((currentSize / (double)OldSize) * Height + 0.5);
+                    {
+                        Height = (int)((currentSize / (double)OldSize * Height) + 0.5);
+                    }
                     else
-                        Width = (int)((currentSize / (double)OldSize) * Width + 0.5);
+                    {
+                        Width = (int)((currentSize / (double)OldSize * Width) + 0.5);
+                    }
+
                     OldSize = currentSize;
                 }
-                var minSize = (int)(currentSize / 5 + 0.5f);
+
+                var minSize = (int)((currentSize / 5) + 0.5f);
                 if (Layout.Mode == LayoutMode.Vertical)
+                {
                     MinimumSize = new Size(25, Math.Max(minSize, 25));
+                }
                 else
+                {
                     MinimumSize = new Size(Math.Max(minSize, 25), 25);
+                }
             }
         }
 
@@ -1248,14 +1369,23 @@ namespace LiveSplit.View
             if (RefreshesRemaining > 0)
             {
                 if (Layout.Mode == LayoutMode.Vertical)
+                {
                     Size = new Size(Layout.VerticalWidth, Layout.VerticalHeight);
+                }
                 else
+                {
                     Size = new Size(Layout.HorizontalWidth, Layout.HorizontalHeight);
+                }
 
                 if (OldSize != ComponentRenderer.OverallSize)
+                {
                     UpdateRefreshesRemaining();
+                }
                 else
+                {
                     RefreshesRemaining--;
+                }
+
                 OldSize = ComponentRenderer.OverallSize;
             }
         }
@@ -1285,13 +1415,17 @@ namespace LiveSplit.View
         protected void UpdateAllComponents()
         {
             foreach (var component in Layout.Components)
+            {
                 component.Update(null, CurrentState, Width, Height, Layout.Mode);
+            }
         }
 
         private void PaintForm(Graphics g, Region clip)
         {
             if (!clip.GetBounds(g).Equals(UpdateRegion.GetBounds(g)))
+            {
                 UpdateRegion.Union(clip);
+            }
 
             DrawBackground(g);
 
@@ -1301,9 +1435,14 @@ namespace LiveSplit.View
             MousePassThrough = Layout.Settings.MousePassThroughWhileRunning && Model.CurrentState.CurrentPhase == TimerPhase.Running && !IsForegroundWindow;
 
             if (Layout.Settings.AntiAliasing)
+            {
                 g.TextRenderingHint = TextRenderingHint.AntiAlias;
+            }
             else
+            {
                 g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
+            }
+
             g.CompositingQuality = CompositingQuality.GammaCorrected;
             g.InterpolationMode = InterpolationMode.Bilinear;
             g.SmoothingMode = SmoothingMode.AntiAlias;
@@ -1321,9 +1460,13 @@ namespace LiveSplit.View
             float transformedHeight = Height;
 
             if (Layout.Mode == LayoutMode.Vertical)
+            {
                 transformedWidth /= scaleFactor;
+            }
             else
+            {
                 transformedHeight /= scaleFactor;
+            }
 
             ComponentRenderer.Render(g, CurrentState, transformedWidth, transformedHeight, Layout.Mode, UpdateRegion);
 
@@ -1359,6 +1502,7 @@ namespace LiveSplit.View
                     {
                         CreateBakedBackground();
                     }
+
                     foreach (var rectangle in UpdateRegion.GetRegionScans(g.Transform))
                     {
                         var rect = Rectangle.Round(rectangle);
@@ -1367,8 +1511,8 @@ namespace LiveSplit.View
                 }
             }
             else if (Layout.Settings.BackgroundColor != Color.Transparent
-                || Layout.Settings.BackgroundType != BackgroundType.SolidColor
-                && Layout.Settings.BackgroundColor2 != Color.Transparent)
+                || (Layout.Settings.BackgroundType != BackgroundType.SolidColor
+                && Layout.Settings.BackgroundColor2 != Color.Transparent))
             {
                 var gradientBrush = new LinearGradientBrush(
                             new PointF(0, 0),
@@ -1396,9 +1540,13 @@ namespace LiveSplit.View
                     if (blur != previousBlur || image != previousBackground)
                     {
                         if (blurredBackground != null)
+                        {
                             blurredBackground.Dispose();
+                        }
+
                         blurredBackground = ImageBlur.Generate(image, blur * 10);
                     }
+
                     image = blurredBackground;
                 }
 
@@ -1418,8 +1566,10 @@ namespace LiveSplit.View
 
                 using (var graphics = Graphics.FromImage(bitmap))
                 {
-                    var matrix = new ColorMatrix();
-                    matrix.Matrix33 = opacity;
+                    var matrix = new ColorMatrix
+                    {
+                        Matrix33 = opacity
+                    };
                     var attributes = new ImageAttributes();
                     attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
 
@@ -1435,7 +1585,9 @@ namespace LiveSplit.View
                 }
 
                 if (bakedBackground != null)
+                {
                     bakedBackground.Dispose();
+                }
 
                 bakedBackground = bitmap;
                 previousBackground = Layout.Settings.BackgroundImage;
@@ -1466,7 +1618,10 @@ namespace LiveSplit.View
         private void TimerForm_MouseUp(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
+            {
                 MouseIsDown = false;
+            }
+
             if (e.Button == MouseButtons.Right)
             {
                 RightClickMenu.Show(this, e.Location);
@@ -1497,8 +1652,10 @@ namespace LiveSplit.View
                     Settings.AgreedToSRLRules = true;
                     return true;
                 }
+
                 return false;
             }
+
             return true;
         }
 
@@ -1529,13 +1686,13 @@ namespace LiveSplit.View
 
                 Dictionary<uint, Rectangle> boxes = new Dictionary<uint, Rectangle>() {
                     {HTBOTTOMLEFT, new Rectangle(0, formSize.Height - RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE)},
-                    {HTBOTTOM, new Rectangle(RESIZE_HANDLE_SIZE, formSize.Height - RESIZE_HANDLE_SIZE, formSize.Width - 2*RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE)},
+                    {HTBOTTOM, new Rectangle(RESIZE_HANDLE_SIZE, formSize.Height - RESIZE_HANDLE_SIZE, formSize.Width - (2*RESIZE_HANDLE_SIZE), RESIZE_HANDLE_SIZE)},
                     {HTBOTTOMRIGHT, new Rectangle(formSize.Width - RESIZE_HANDLE_SIZE, formSize.Height - RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE)},
-                    {HTRIGHT, new Rectangle(formSize.Width - RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE, formSize.Height - 2*RESIZE_HANDLE_SIZE)},
+                    {HTRIGHT, new Rectangle(formSize.Width - RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE, formSize.Height - (2*RESIZE_HANDLE_SIZE))},
                     {HTTOPRIGHT, new Rectangle(formSize.Width - RESIZE_HANDLE_SIZE, 0, RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE) },
-                    {HTTOP, new Rectangle(RESIZE_HANDLE_SIZE, 0, formSize.Width - 2*RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE) },
+                    {HTTOP, new Rectangle(RESIZE_HANDLE_SIZE, 0, formSize.Width - (2*RESIZE_HANDLE_SIZE), RESIZE_HANDLE_SIZE) },
                     {HTTOPLEFT, new Rectangle(0, 0, RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE) },
-                    {HTLEFT, new Rectangle(0, RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE, formSize.Height - 2*RESIZE_HANDLE_SIZE) }
+                    {HTLEFT, new Rectangle(0, RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE, formSize.Height - (2*RESIZE_HANDLE_SIZE)) }
                 };
 
                 foreach (KeyValuePair<uint, Rectangle> hitBox in boxes)
@@ -1560,6 +1717,7 @@ namespace LiveSplit.View
                 {
                     DeleteObject(hRgn);
                 }
+
                 hRgn = CreateRectRgn(0, 0, 0, 0);
                 var x = GetUpdateRgn(Handle, hRgn, false);
                 try
@@ -1593,10 +1751,14 @@ namespace LiveSplit.View
             const uint WMSZ_BOTTOMRIGHT = 8;
 
             if (!ResizingInitialAspectRatio.HasValue)
+            {
                 return false;
+            }
 
             if (!ModifierKeys.HasFlag(Keys.Shift))
+            {
                 return false;
+            }
 
             bool anchorLeft;
             bool anchorTop;
@@ -1631,17 +1793,25 @@ namespace LiveSplit.View
             {
                 var newWidth = (int)(rect.Height * ResizingInitialAspectRatio.Value);
                 if (anchorLeft)
+                {
                     rect.Right = rect.Left + newWidth;
+                }
                 else
+                {
                     rect.Left = rect.Right - newWidth;
+                }
             }
             else
             {
                 var newHeight = (int)(rect.Width / ResizingInitialAspectRatio.Value);
                 if (anchorTop)
+                {
                     rect.Bottom = rect.Top + newHeight;
+                }
                 else
+                {
                     rect.Top = rect.Bottom - newHeight;
+                }
             }
 
             Marshal.StructureToPtr(rect, m.LParam, false);
@@ -1649,10 +1819,10 @@ namespace LiveSplit.View
             return true;
         }
 
-        IntPtr hRgn = IntPtr.Zero;
+        private IntPtr hRgn = IntPtr.Zero;
         [DllImport("gdi32.dll", EntryPoint = "DeleteObject")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool DeleteObject([In] IntPtr hObject);
+        private static extern bool DeleteObject([In] IntPtr hObject);
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1669,8 +1839,11 @@ namespace LiveSplit.View
             foreach (var icon in CurrentState.Run.Select(x => x.Icon).Except(run.Select(x => x.Icon)))
             {
                 if (icon != null)
+                {
                     icon.Dispose();
+                }
             }
+
             if (CurrentState.Run.GameIcon != null && CurrentState.Run.GameIcon != run.GameIcon)
             {
                 CurrentState.Run.GameIcon.Dispose();
@@ -1678,7 +1851,10 @@ namespace LiveSplit.View
 
             run.ComparisonGenerators = new List<IComparisonGenerator>(CurrentState.Run.ComparisonGenerators);
             foreach (var generator in run.ComparisonGenerators)
+            {
                 generator.Run = run;
+            }
+
             run.FixSplits();
             DeactivateAutoSplitter();
             CurrentState.Run = run;
@@ -1687,7 +1863,7 @@ namespace LiveSplit.View
             SwitchComparison(CurrentState.CurrentComparison);
             CreateAutoSplitter();
             UpdateRefreshesRemaining();
-            if (!String.IsNullOrEmpty(run.LayoutPath))
+            if (!string.IsNullOrEmpty(run.LayoutPath))
             {
                 if (run.LayoutPath == "?default")
                 {
@@ -1710,20 +1886,26 @@ namespace LiveSplit.View
                 if (splitter.IsActivated
                 && CurrentState.Run.AutoSplitterSettings != null
                 && CurrentState.Run.AutoSplitterSettings.GetAttribute("gameName") == CurrentState.Run.GameName)
+                {
                     CurrentState.Run.AutoSplitter.Component.SetSettings(CurrentState.Run.AutoSplitterSettings);
+                }
             }
         }
 
         private void DeactivateAutoSplitter()
         {
             if (CurrentState.Run.AutoSplitter != null)
+            {
                 CurrentState.Run.AutoSplitter.Deactivate();
+            }
         }
 
         private void AddCurrentSplitsToLRU(TimingMethod lastTimingMethod, string lastHotkeyProfile)
         {
             if (CurrentState.Run != null && Settings.RecentSplits.Any(x => x.Path == CurrentState.Run.FilePath))
+            {
                 AddSplitsFileToLRU(CurrentState.Run.FilePath, CurrentState.Run, lastTimingMethod, lastHotkeyProfile);
+            }
         }
 
         private IRun LoadRunFromFile(string filePath, TimingMethod? previousTimingMethod = null, string previousHotkeyProfile = null)
@@ -1739,7 +1921,9 @@ namespace LiveSplit.View
             }
 
             if (previousTimingMethod.HasValue && previousHotkeyProfile != null)
+            {
                 AddCurrentSplitsToLRU(previousTimingMethod.Value, previousHotkeyProfile);
+            }
 
             AddSplitsFileToLRU(filePath, run, CurrentState.CurrentTimingMethod, CurrentState.CurrentHotkeyProfile);
 
@@ -1763,9 +1947,14 @@ namespace LiveSplit.View
             try
             {
                 if (!WarnUserAboutSplitsSave())
+                {
                     return;
+                }
+
                 if (!WarnAndRemoveTimerOnly(true))
+                {
                     return;
+                }
 
                 var previousTimingMethod = CurrentState.CurrentTimingMethod;
                 var previousHotkeyProfile = CurrentState.CurrentHotkeyProfile;
@@ -1783,6 +1972,7 @@ namespace LiveSplit.View
                 MessageBox.Show(this, "The selected file was not recognized as a splits file.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 DontRedraw = false;
             }
+
             Cursor.Current = Cursors.Arrow;
         }
 
@@ -1813,7 +2003,10 @@ namespace LiveSplit.View
                 try
                 {
                     if (Settings.RecentSplits.Any() && !string.IsNullOrEmpty(Settings.RecentSplits.Last().Path))
+                    {
                         splitDialog.InitialDirectory = Path.GetDirectoryName(Settings.RecentSplits.Last().Path);
+                    }
+
                     var result = splitDialog.ShowDialog(this);
                     if (result == DialogResult.OK)
                     {
@@ -1844,9 +2037,11 @@ namespace LiveSplit.View
                             MessageBox.Show(this, "Cannot save splits with a file type that is not .lss", "Save Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             return false;
                         }
+
                         CurrentState.Run.FilePath = splitDialog.FileName;
                         return SaveSplits(promptPBMessage);
                     }
+
                     return false;
                 }
                 finally
@@ -1883,7 +2078,9 @@ namespace LiveSplit.View
                     Model.ResetAndSetAttemptAsPB();
                 }
                 else if (result == DialogResult.Cancel)
+                {
                     return false;
+                }
             }
 
             var stateCopy = CurrentState;
@@ -1898,7 +2095,9 @@ namespace LiveSplit.View
             try
             {
                 if (!File.Exists(savePath))
+                {
                     File.Create(savePath).Close();
+                }
 
                 using (var memoryStream = new MemoryStream())
                 {
@@ -1921,6 +2120,7 @@ namespace LiveSplit.View
                 Log.Error(ex);
                 return false;
             }
+
             return true;
         }
 
@@ -1937,6 +2137,7 @@ namespace LiveSplit.View
                 Layout.HorizontalWidth = Width;
                 Layout.HorizontalHeight = Height;
             }
+
             Layout.X = Location.X;
             Layout.Y = Location.Y;
 
@@ -1948,7 +2149,9 @@ namespace LiveSplit.View
             try
             {
                 if (!File.Exists(savePath))
+                {
                     File.Create(savePath).Close();
+                }
 
                 using (var memoryStream = new MemoryStream())
                 {
@@ -1971,6 +2174,7 @@ namespace LiveSplit.View
                 Log.Error(ex);
                 return false;
             }
+
             return true;
         }
 
@@ -1988,20 +2192,29 @@ namespace LiveSplit.View
                     TopMost = false;
                     IsInDialogMode = true;
                     if (CurrentState.CurrentPhase == TimerPhase.NotRunning)
+                    {
                         editor.AllowChangingSegments = true;
+                    }
+
                     var result = editor.ShowDialog(this);
                     if (result == DialogResult.Cancel)
                     {
                         foreach (var image in runCopy.Select(x => x.Icon))
+                        {
                             editor.ImagesToDispose.Remove(image);
+                        }
+
                         editor.ImagesToDispose.Remove(runCopy.GameIcon);
 
                         CurrentState.Settings.ActiveAutoSplitters = activeAutoSplitters;
                         SetRun(runCopy);
                         CurrentState.CallRunManuallyModified();
                     }
+
                     foreach (var image in editor.ImagesToDispose)
+                    {
                         image.Dispose();
+                    }
                 }
                 finally
                 {
@@ -2015,17 +2228,17 @@ namespace LiveSplit.View
             }
         }
 
-        void editor_SegmentRemovedOrAdded(object sender, EventArgs e)
+        private void editor_SegmentRemovedOrAdded(object sender, EventArgs e)
         {
             InvalidationRequired = true;
         }
 
-        void editor_ComparisonRenamed(object sender, EventArgs e)
+        private void editor_ComparisonRenamed(object sender, EventArgs e)
         {
             CurrentState.CallComparisonRenamed(e);
         }
 
-        void editor_RunEdited(object sender, EventArgs e)
+        private void editor_RunEdited(object sender, EventArgs e)
         {
             RegenerateComparisons();
             CurrentState.CallRunManuallyModified();
@@ -2037,7 +2250,9 @@ namespace LiveSplit.View
             if (InTimerOnlyMode)
             {
                 if (!WarnUserAboutLayoutSave(canCancel))
+                {
                     return false;
+                }
 
                 InTimerOnlyMode = false;
                 ILayout layout;
@@ -2045,19 +2260,25 @@ namespace LiveSplit.View
                 {
                     var lastLayoutPath = Settings.RecentLayouts.LastOrDefault(x => !string.IsNullOrEmpty(x));
                     if (lastLayoutPath != null)
+                    {
                         layout = LoadLayoutFromFile(lastLayoutPath);
+                    }
                     else
+                    {
                         layout = new StandardLayoutFactory().Create(CurrentState);
+                    }
                 }
                 catch (Exception ex)
                 {
                     Log.Error(ex);
                     layout = new StandardLayoutFactory().Create(CurrentState);
                 }
+
                 layout.X = Location.X;
                 layout.Y = Location.Y;
                 SetLayout(layout);
             }
+
             return true;
         }
 
@@ -2080,6 +2301,7 @@ namespace LiveSplit.View
                     Layout.HorizontalWidth = Size.Width;
                     Layout.HorizontalHeight = Size.Height;
                 }
+
                 var layoutCopy = (ILayout)Layout.Clone();
                 var document = new XmlDocument();
                 var componentSettings = Layout.Components.Select(x =>
@@ -2101,7 +2323,10 @@ namespace LiveSplit.View
                     if (editor.DialogResult == DialogResult.Cancel)
                     {
                         foreach (var component in layoutCopy.Components)
+                        {
                             editor.ComponentsToDispose.Remove(component);
+                        }
+
                         editor.ImagesToDispose.Remove(layoutCopy.Settings.BackgroundImage);
 
                         using (var enumerator = componentSettings.GetEnumerator())
@@ -2109,15 +2334,24 @@ namespace LiveSplit.View
                             foreach (var component in layoutCopy.Components)
                             {
                                 if (enumerator.MoveNext())
+                                {
                                     component.SetSettings(enumerator.Current);
+                                }
                             }
                         }
+
                         SetLayout(layoutCopy);
                     }
+
                     foreach (var component in editor.ComponentsToDispose)
+                    {
                         component.Dispose();
+                    }
+
                     foreach (var image in editor.ImagesToDispose)
+                    {
                         image.Dispose();
+                    }
                 }
                 finally
                 {
@@ -2129,12 +2363,12 @@ namespace LiveSplit.View
             }
         }
 
-        void editor_LayoutSettingsAssigned(object sender, EventArgs e)
+        private void editor_LayoutSettingsAssigned(object sender, EventArgs e)
         {
             InvalidationRequired = true;
         }
 
-        void editor_LayoutResized(object sender, EventArgs e)
+        private void editor_LayoutResized(object sender, EventArgs e)
         {
             SetInTimerOnlyMode();
             if (Layout.Mode == LayoutMode.Horizontal)
@@ -2149,7 +2383,7 @@ namespace LiveSplit.View
             }
         }
 
-        void editor_OrientationSwitched(object sender, EventArgs e)
+        private void editor_OrientationSwitched(object sender, EventArgs e)
         {
             ComponentRenderer.CalculateOverallSize(Layout.Mode);
             if (Layout.Mode == LayoutMode.Vertical)
@@ -2172,6 +2406,7 @@ namespace LiveSplit.View
                     Layout.HorizontalHeight = 45;
                 }
             }
+
             TopMost = false;
             SetLayout(Layout);
         }
@@ -2192,9 +2427,11 @@ namespace LiveSplit.View
                             MessageBox.Show(this, "Cannot save layout with a file type that is not .lsl", "Save Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             return false;
                         }
+
                         Layout.FilePath = layoutDialog.FileName;
                         return SaveLayout();
                     }
+
                     return false;
                 }
                 finally
@@ -2229,7 +2466,10 @@ namespace LiveSplit.View
                 try
                 {
                     if (Settings.RecentLayouts.Any() && !string.IsNullOrEmpty(Settings.RecentLayouts.Last()))
+                    {
                         layoutDialog.InitialDirectory = Path.GetDirectoryName(Settings.RecentLayouts.Last());
+                    }
+
                     var result = layoutDialog.ShowDialog(this);
                     if (result == DialogResult.OK)
                     {
@@ -2262,8 +2502,10 @@ namespace LiveSplit.View
                     MessageBox.Show(this, "The selected file was not recognized as a layout file. (" + e.Message + ")", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     DontRedraw = false;
                 }
+
                 Cursor.Current = Cursors.Arrow;
             }
+
             return success;
         }
 
@@ -2284,14 +2526,21 @@ namespace LiveSplit.View
             if (Layout != null && Layout != layout)
             {
                 if (Layout.Settings.BackgroundImage != null && Layout.Settings.BackgroundImage != layout.Settings.BackgroundImage)
+                {
                     Layout.Settings.BackgroundImage.Dispose();
+                }
 
                 foreach (var component in Layout.Components.Except(layout.Components))
+                {
                     component.Dispose();
+                }
 
                 foreach (var component in layout.Components.Except(Layout.Components).OfType<IDeactivatableComponent>())
+                {
                     component.Activated = true;
+                }
             }
+
             Layout = layout;
             ComponentRenderer.VisibleComponents = Layout.Components;
             CurrentState.LayoutSettings = layout.Settings;
@@ -2300,13 +2549,18 @@ namespace LiveSplit.View
             if (Layout.Mode == LayoutMode.Vertical)
             {
                 if (Layout.VerticalWidth != UI.Layout.InvalidSize && Layout.VerticalHeight != UI.Layout.InvalidSize)
+                {
                     Size = new Size(Layout.VerticalWidth, Layout.VerticalHeight);
+                }
             }
             else
             {
                 if (Layout.HorizontalWidth != UI.Layout.InvalidSize && Layout.HorizontalHeight != UI.Layout.InvalidSize)
+                {
                     Size = new Size(Layout.HorizontalWidth, Layout.HorizontalHeight);
+                }
             }
+
             var x = Math.Max(SystemInformation.VirtualScreen.X, Math.Min(Layout.X, SystemInformation.VirtualScreen.X + SystemInformation.VirtualScreen.Width - Width));
             var y = Math.Max(SystemInformation.VirtualScreen.Y, Math.Min(Layout.Y, SystemInformation.VirtualScreen.Y + SystemInformation.VirtualScreen.Height - Height));
             Location = new Point(x, y);
@@ -2319,9 +2573,14 @@ namespace LiveSplit.View
             var needToChangeLayout = Layout.Components.Count() != 1 || Layout.Components.FirstOrDefault().ComponentName != "Timer";
 
             if (!WarnUserAboutSplitsSave())
+            {
                 return;
+            }
+
             if (needToChangeLayout && !WarnUserAboutLayoutSave(true))
+            {
                 return;
+            }
 
             AddCurrentSplitsToLRU(CurrentState.CurrentTimingMethod, CurrentState.CurrentHotkeyProfile);
 
@@ -2422,10 +2681,12 @@ namespace LiveSplit.View
                     DontRedraw = false;
                 }
             }
+
             if (safeToContinue)
             {
                 Model.Reset();
             }
+
             return safeToContinue;
         }
 
@@ -2453,6 +2714,7 @@ namespace LiveSplit.View
                     DontRedraw = false;
                 }
             }
+
             return safeToContinue;
         }
 
@@ -2463,6 +2725,7 @@ namespace LiveSplit.View
                 e.Cancel = true;
                 return;
             }
+
             if (!WarnUserAboutLayoutSave(true))
             {
                 e.Cancel = true;
@@ -2476,7 +2739,9 @@ namespace LiveSplit.View
             {
                 var settingsPath = Path.Combine(BasePath, SETTINGS_PATH);
                 if (!File.Exists(settingsPath))
+                {
                     File.Create(settingsPath).Close();
+                }
 
                 using (var memoryStream = new MemoryStream())
                 {
@@ -2496,7 +2761,10 @@ namespace LiveSplit.View
             }
 
             foreach (var component in Layout.Components)
+            {
                 component.Dispose();
+            }
+
             DeactivateAutoSplitter();
             Server.StopAll();
         }
@@ -2517,13 +2785,16 @@ namespace LiveSplit.View
                         var regenerate = Settings.SimpleSumOfBest != oldSettings.SimpleSumOfBest;
                         CurrentState.Settings = Settings = oldSettings;
                         if (regenerate)
+                        {
                             RegenerateComparisons();
+                        }
                     }
                     else
                     {
                         SwitchComparisonGenerators();
                         CurrentState.CurrentHotkeyProfile = editor.SelectedHotkeyProfile;
                     }
+
                     Settings.RegisterHotkeys(Hook, CurrentState.CurrentHotkeyProfile);
                     UpdateRaceProviderIntegration();
                 }
@@ -2536,7 +2807,7 @@ namespace LiveSplit.View
             }
         }
 
-        void editor_SumOfBestModeChanged(object sender, EventArgs e)
+        private void editor_SumOfBestModeChanged(object sender, EventArgs e)
         {
             RegenerateComparisons();
         }
@@ -2559,6 +2830,7 @@ namespace LiveSplit.View
             {
                 Log.Error(e);
             }
+
             Settings = new StandardSettingsFactory().Create();
         }
 
@@ -2573,13 +2845,17 @@ namespace LiveSplit.View
             {
                 var minimumWidth = ComponentRenderer.MinimumWidth * (Height / ComponentRenderer.OverallSize);
                 if (Width < minimumWidth)
-                    Height = (int)(Height / (minimumWidth / Width) + 0.5f);
+                {
+                    Height = (int)((Height / (minimumWidth / Width)) + 0.5f);
+                }
             }
             else
             {
                 var minimumHeight = ComponentRenderer.MinimumHeight * (Width / ComponentRenderer.OverallSize);
                 if (Height < minimumHeight)
-                    Width = (int)(Width / (minimumHeight / Height) + 0.5f);
+                {
+                    Width = (int)((Width / (minimumHeight / Height)) + 0.5f);
+                }
             }
         }
 
@@ -2636,8 +2912,12 @@ namespace LiveSplit.View
                     break;
                 }
             }
-            if (!warnUser && (CurrentState.Run.Last().SplitTime[CurrentState.CurrentTimingMethod] != null && CurrentState.Run.Last().PersonalBestSplitTime[CurrentState.CurrentTimingMethod] == null) || CurrentState.Run.Last().SplitTime[CurrentState.CurrentTimingMethod] < CurrentState.Run.Last().PersonalBestSplitTime[CurrentState.CurrentTimingMethod])
+
+            if ((!warnUser && CurrentState.Run.Last().SplitTime[CurrentState.CurrentTimingMethod] != null && CurrentState.Run.Last().PersonalBestSplitTime[CurrentState.CurrentTimingMethod] == null) || CurrentState.Run.Last().SplitTime[CurrentState.CurrentTimingMethod] < CurrentState.Run.Last().PersonalBestSplitTime[CurrentState.CurrentTimingMethod])
+            {
                 warnUser = true;
+            }
+
             if (warnUser)
             {
                 DontRedraw = true;
@@ -2645,6 +2925,7 @@ namespace LiveSplit.View
                 DontRedraw = false;
                 return result;
             }
+
             return DialogResult.Yes;
         }
 
@@ -2664,10 +2945,16 @@ namespace LiveSplit.View
                     ResetMessageShown = true;
                     result = WarnAboutResetting();
                 }
+
                 if (result == DialogResult.Yes)
+                {
                     Model.Reset();
+                }
                 else if (result == DialogResult.No)
+                {
                     Model.Reset(false);
+                }
+
                 ResetMessageShown = false;
             }
         }
@@ -2704,9 +2991,13 @@ namespace LiveSplit.View
             var hotkeyProfile = Settings.HotkeyProfiles[CurrentState.CurrentHotkeyProfile];
 
             if (hotkeysMenuItem.Checked)
+            {
                 hotkeysMenuItem.Checked = hotkeyProfile.GlobalHotkeysEnabled = false;
+            }
             else
+            {
                 hotkeysMenuItem.Checked = hotkeyProfile.GlobalHotkeysEnabled = true;
+            }
 
             SetProgressBar();
         }
@@ -2737,7 +3028,9 @@ namespace LiveSplit.View
                     TaskbarManager.Instance.SetProgressValue(100, 100);
                 }
                 else
+                {
                     TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress);
+                }
             }
             catch (Exception ex)
             {
@@ -2756,10 +3049,14 @@ namespace LiveSplit.View
             comparisonMenuItem.DropDownItems.Clear();
 
             foreach (var customComparison in CurrentState.Run.CustomComparisons)
+            {
                 AddActionToComparisonsMenu(customComparison);
+            }
 
             if (CurrentState.Run.ComparisonGenerators.Count > 0)
+            {
                 comparisonMenuItem.DropDownItems.Add(new ToolStripSeparator());
+            }
 
             var raceSeparatorAdded = false;
             foreach (var generator in CurrentState.Run.ComparisonGenerators)
@@ -2769,6 +3066,7 @@ namespace LiveSplit.View
                     comparisonMenuItem.DropDownItems.Add(new ToolStripSeparator());
                     raceSeparatorAdded = true;
                 }
+
                 AddActionToComparisonsMenu(generator.Name);
             }
 
@@ -2787,13 +3085,13 @@ namespace LiveSplit.View
             RefreshComparisonItems();
         }
 
-        void gameTimeMenuItem_Click(object sender, EventArgs e)
+        private void gameTimeMenuItem_Click(object sender, EventArgs e)
         {
             CurrentState.CurrentTimingMethod = TimingMethod.GameTime;
             RefreshComparisonItems();
         }
 
-        void realTimeMenuItem_Click(object sender, EventArgs e)
+        private void realTimeMenuItem_Click(object sender, EventArgs e)
         {
             CurrentState.CurrentTimingMethod = TimingMethod.RealTime;
             RefreshComparisonItems();
@@ -2804,7 +3102,9 @@ namespace LiveSplit.View
             if (CurrentState != null && CurrentState.Run != null)
             {
                 foreach (var generator in CurrentState.Run.ComparisonGenerators)
+                {
                     generator.Generate(CurrentState.Settings);
+                }
             }
         }
 
@@ -2815,12 +3115,16 @@ namespace LiveSplit.View
             {
                 var generatorInRun = CurrentState.Run.ComparisonGenerators.FirstOrDefault(x => x.Name == generator.Name);
                 if (generatorInRun != null)
+                {
                     CurrentState.Run.ComparisonGenerators.Remove(generatorInRun);
+                }
 
                 if (Settings.ComparisonGeneratorStates[generator.Name])
+                {
                     CurrentState.Run.ComparisonGenerators.Add(generator);
-
+                }
             }
+
             SwitchComparison(CurrentState.CurrentComparison);
             RegenerateComparisons();
         }
@@ -2828,7 +3132,10 @@ namespace LiveSplit.View
         private void SwitchComparison(string name)
         {
             if (!CurrentState.Run.Comparisons.Contains(name))
+            {
                 name = Run.PersonalBestComparisonName;
+            }
+
             CurrentState.CurrentComparison = name;
         }
 
@@ -2867,7 +3174,9 @@ namespace LiveSplit.View
 
             var components = Layout.Components;
             if (CurrentState.Run.IsAutoSplitterActive())
+            {
                 components = components.Concat(new[] { CurrentState.Run.AutoSplitter.Component });
+            }
 
             var componentControls =
                 components
@@ -2894,7 +3203,9 @@ namespace LiveSplit.View
         private void TimerForm_ResizeBegin(object sender, EventArgs e)
         {
             if (Size.Height > 0)
+            {
                 ResizingInitialAspectRatio = (float)Size.Width / Size.Height;
+            }
         }
 
         private void TimerForm_ResizeEnd(object sender, EventArgs e)

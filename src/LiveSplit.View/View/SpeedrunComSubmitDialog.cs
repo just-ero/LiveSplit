@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+
 using LiveSplit.Model;
 using LiveSplit.Web.Share;
 
@@ -10,11 +11,11 @@ namespace LiveSplit.View
 {
     public partial class SpeedrunComSubmitDialog : Form
     {
-        private RunMetadata metadata;
-        private bool hasPersonalBestDateTime;
-        private DateTimePicker datePicker;
-        private TextBox txtWithoutLoads;
-        private TextBox txtGameTime;
+        private readonly RunMetadata metadata;
+        private readonly bool hasPersonalBestDateTime;
+        private readonly DateTimePicker datePicker;
+        private readonly TextBox txtWithoutLoads;
+        private readonly TextBox txtGameTime;
 
         public SpeedrunComSubmitDialog(RunMetadata metadata)
         {
@@ -28,15 +29,19 @@ namespace LiveSplit.View
 
             if (!hasPersonalBestDateTime)
             {
-                var dateLabel = new Label();
-                dateLabel.Text = "Date:";
+                var dateLabel = new Label
+                {
+                    Text = "Date:"
+                };
                 tableLayoutPanel.Controls.Add(dateLabel, 0, row);
                 dateLabel.Anchor = AnchorStyles.Left;
                 dateLabel.AutoSize = true;
 
-                datePicker = new DateTimePicker();
-                datePicker.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-                datePicker.TabIndex = row;
+                datePicker = new DateTimePicker
+                {
+                    Anchor = AnchorStyles.Left | AnchorStyles.Right,
+                    TabIndex = row
+                };
                 tableLayoutPanel.Controls.Add(datePicker, 1, row);
                 tableLayoutPanel.SetColumnSpan(datePicker, 2);
 
@@ -56,15 +61,19 @@ namespace LiveSplit.View
             {
                 if (usesWithoutLoads)
                 {
-                    var label = new Label();
-                    label.Text = "Without Loads:";
+                    var label = new Label
+                    {
+                        Text = "Without Loads:"
+                    };
                     tableLayoutPanel.Controls.Add(label, 0, row);
                     label.Anchor = AnchorStyles.Left;
                     label.AutoSize = true;
 
-                    txtWithoutLoads = new TextBox();
-                    txtWithoutLoads.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-                    txtWithoutLoads.TabIndex = row;
+                    txtWithoutLoads = new TextBox
+                    {
+                        Anchor = AnchorStyles.Left | AnchorStyles.Right,
+                        TabIndex = row
+                    };
                     tableLayoutPanel.Controls.Add(txtWithoutLoads, 1, row);
                     tableLayoutPanel.SetColumnSpan(txtWithoutLoads, 2);
 
@@ -73,18 +82,22 @@ namespace LiveSplit.View
 
                     row++;
                 }
-                
+
                 if (usesGameTime)
                 {
-                    var label = new Label();
-                    label.Text = "Game Time:";
+                    var label = new Label
+                    {
+                        Text = "Game Time:"
+                    };
                     tableLayoutPanel.Controls.Add(label, 0, row);
                     label.Anchor = AnchorStyles.Left;
                     label.AutoSize = true;
 
-                    txtGameTime = new TextBox();
-                    txtGameTime.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-                    txtGameTime.TabIndex = row;
+                    txtGameTime = new TextBox
+                    {
+                        Anchor = AnchorStyles.Left | AnchorStyles.Right,
+                        TabIndex = row
+                    };
                     tableLayoutPanel.Controls.Add(txtGameTime, 1, row);
                     tableLayoutPanel.SetColumnSpan(txtGameTime, 2);
 
@@ -110,7 +123,10 @@ namespace LiveSplit.View
             {
                 var videoText = txtVideo.Text;
                 if (!videoText.StartsWith("http"))
+                {
                     videoText = "http://" + videoText;
+                }
+
                 if (Uri.IsWellFormedUriString(videoText, UriKind.Absolute))
                 {
                     videoUri = new Uri(videoText);
@@ -161,8 +177,7 @@ namespace LiveSplit.View
                 }
             }
 
-            string reason;
-            var submitted = SpeedrunCom.SubmitRun(metadata.LiveSplitRun, out reason, 
+            var submitted = SpeedrunCom.SubmitRun(metadata.LiveSplitRun, out string reason,
                 comment: comment, videoUri: videoUri, date: date, withoutLoads: withoutLoads);
 
             if (submitted)
@@ -180,14 +195,18 @@ namespace LiveSplit.View
         private void patchGameTime(TimeSpan? gameTime)
         {
             if (!gameTime.HasValue)
+            {
                 return;
+            }
 
             var run = metadata.LiveSplitRun;
             var lastSplit = run.Last();
             var runTime = lastSplit.PersonalBestSplitTime;
 
             if (runTime.GameTime.HasValue)
+            {
                 return;
+            }
 
             var attempt = run.AttemptHistory.FirstOrDefault(x =>
                 x.Time.GameTime == runTime.GameTime

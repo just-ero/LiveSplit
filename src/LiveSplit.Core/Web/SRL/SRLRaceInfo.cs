@@ -1,15 +1,14 @@
-﻿using LiveSplit.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
+using LiveSplit.Model;
 
 namespace LiveSplit.Web.SRL
 {
     public class SRLRaceInfo : IRaceInfo
     {
-        private dynamic _data;
+        private readonly dynamic _data;
 
         public SRLRaceInfo(dynamic data)
         {
@@ -17,9 +16,14 @@ namespace LiveSplit.Web.SRL
             foreach (var entrant in _data.entrants.Properties.Values)
             {
                 if (entrant.time >= 0)
+                {
                     Finishes++;
+                }
+
                 if (entrant.statetext == "Forfeit")
+                {
                     Forfeits++;
+                }
             }
         }
 
@@ -38,7 +42,7 @@ namespace LiveSplit.Web.SRL
             var racers = ((IEnumerable<string>)_data.entrants.Properties.Keys).Select(x => x.ToLower());
             return racers.Contains((username ?? "").ToLower());
         }
-        
+
         public IEnumerable<string> LiveStreams
         {
             get
@@ -46,7 +50,9 @@ namespace LiveSplit.Web.SRL
                 foreach (var entrant in _data.entrants.Properties.Values)
                 {
                     if (entrant.statetext == "Forfeit" || entrant.time >= 0)
+                    {
                         continue;
+                    }
 
                     yield return entrant.twitch;
                 }

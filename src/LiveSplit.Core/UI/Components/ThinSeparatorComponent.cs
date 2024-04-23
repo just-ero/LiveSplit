@@ -1,9 +1,10 @@
-﻿using LiveSplit.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+
+using LiveSplit.Model;
 
 namespace LiveSplit.UI.Components
 {
@@ -43,10 +44,13 @@ namespace LiveSplit.UI.Components
             g.Clip = new Region();
             Line.LineColor = state.LayoutSettings.ThinSeparatorsColor;
             var scale = g.Transform.Elements.First();
-            var newHeight = Math.Max((int)(1f * scale + 0.5f), 1) / scale;
+            var newHeight = Math.Max((int)((1f * scale) + 0.5f), 1) / scale;
             Line.VerticalHeight = newHeight;
             if (LockToBottom)
+            {
                 g.TranslateTransform(0, 1f - newHeight);
+            }
+
             Line.DrawVertical(g, state, width, clipRegion);
             g.Clip = oldClip;
             g.Transform = oldMatrix;
@@ -62,9 +66,12 @@ namespace LiveSplit.UI.Components
             g.Clip = new Region();
             Line.LineColor = state.LayoutSettings.ThinSeparatorsColor;
             var scale = g.Transform.Elements.First();
-            var newWidth = Math.Max((int)(1f * scale + 0.5f), 1) / scale;
+            var newWidth = Math.Max((int)((1f * scale) + 0.5f), 1) / scale;
             if (LockToBottom)
+            {
                 g.TranslateTransform(1f - newWidth, 0);
+            }
+
             Line.HorizontalWidth = newWidth;
             Line.DrawHorizontal(g, state, height, clipRegion);
             g.Clip = oldClip;
@@ -74,7 +81,6 @@ namespace LiveSplit.UI.Components
 
         public string ComponentName
             => "Thin Separator";
-
 
         public Control GetSettingsControl(LayoutMode mode)
         {
@@ -120,7 +126,9 @@ namespace LiveSplit.UI.Components
             Cache["LockToBottom"] = LockToBottom;
 
             if (invalidator != null && Cache.HasChanged)
+            {
                 invalidator.Invalidate(0, 0, width, height);
+            }
         }
 
         public void Dispose()

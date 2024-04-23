@@ -1,15 +1,9 @@
-﻿using LiveSplit.Options;
-using LiveSplit.UI.Components;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+
+using LiveSplit.Options;
 
 namespace LiveSplit.View
 {
@@ -32,11 +26,11 @@ namespace LiveSplit.View
 
         private void LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            var link = sender as LinkLabel;
-            if (link != null && !string.IsNullOrEmpty(link.Text))
+            if (sender is LinkLabel link && !string.IsNullOrEmpty(link.Text))
+            {
                 Process.Start($"{link.Text}");
+            }
         }
-
 
         private void btnOK_Click(object sender, EventArgs e)
         {
@@ -58,7 +52,9 @@ namespace LiveSplit.View
         private void providerListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (providerListBox.SelectedIndex < 0)
+            {
                 return;
+            }
 
             websiteLink.Text = Settings[providerListBox.SelectedIndex].WebsiteLink;
             rulesLink.Text = Settings[providerListBox.SelectedIndex].RulesLink;

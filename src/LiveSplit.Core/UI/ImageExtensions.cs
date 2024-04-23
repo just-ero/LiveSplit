@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LiveSplit.UI
 {
@@ -19,12 +14,16 @@ namespace LiveSplit.UI
         public static Image Scale(this Image image, int maxDim)
         {
             if (image == null)
+            {
                 return null;
+            }
 
             var width = image.Width;
             var height = image.Height;
             if (width <= maxDim && height <= maxDim)
+            {
                 return image;
+            }
 
             using (image)
             {

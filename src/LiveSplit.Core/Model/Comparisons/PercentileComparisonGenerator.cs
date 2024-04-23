@@ -1,7 +1,9 @@
-using LiveSplit.Options;
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
+
+using LiveSplit.Options;
+
 using static System.Math;
 
 namespace LiveSplit.Model.Comparisons
@@ -19,9 +21,15 @@ namespace LiveSplit.Model.Comparisons
             Run = run;
         }
 
-        protected double GetWeight(int index, int count) => Pow(Weight, count - index - 1);
+        protected double GetWeight(int index, int count)
+        {
+            return Pow(Weight, count - index - 1);
+        }
 
-        protected double ReWeight(double a, double b, double c) => (a - b) / c;
+        protected double ReWeight(double a, double b, double c)
+        {
+            return (a - b) / c;
+        }
 
         protected TimeSpan Calculate(double perc, TimeSpan Value1, double Key1, TimeSpan Value2, double Key2)
         {
@@ -34,7 +42,10 @@ namespace LiveSplit.Model.Comparisons
         {
             var allHistory = new List<List<IndexedTimeSpan>>();
             foreach (var segment in Run)
+            {
                 allHistory.Add(new List<IndexedTimeSpan>());
+            }
+
             foreach (var attempt in Run.AttemptHistory)
             {
                 var ind = attempt.Index;
@@ -42,8 +53,7 @@ namespace LiveSplit.Model.Comparisons
                 foreach (var segment in Run)
                 {
                     var currentIndex = Run.IndexOf(segment);
-                    Time history;
-                    if (segment.SegmentHistory.TryGetValue(ind, out history))
+                    if (segment.SegmentHistory.TryGetValue(ind, out var history))
                     {
                         if (history[method] != null)
                         {
@@ -51,7 +61,10 @@ namespace LiveSplit.Model.Comparisons
                             historyStartingIndex = currentIndex;
                         }
                     }
-                    else historyStartingIndex = currentIndex;
+                    else
+                    {
+                        historyStartingIndex = currentIndex;
+                    }
                 }
             }
 
@@ -89,7 +102,7 @@ namespace LiveSplit.Model.Comparisons
                     if (tempList.Count > 1)
                     {
                         tempList = tempList.OrderBy(x => x.Value).ToList();
-                        var totalWeight = tempList.Aggregate(0.0, (s, x) => (s + x.Key));
+                        var totalWeight = tempList.Aggregate(0.0, (s, x) => s + x.Key);
                         var smallestWeight = tempList[0].Key;
                         var rangeWeight = totalWeight - smallestWeight;
                         var aggWeight = 0.0;
@@ -98,18 +111,27 @@ namespace LiveSplit.Model.Comparisons
                             aggWeight += value.Key;
                             weightedList.Add(new KeyValuePair<double, TimeSpan>(ReWeight(aggWeight, smallestWeight, rangeWeight), value.Value));
                         }
+
                         weightedList = weightedList.OrderBy(x => x.Value).ToList();
                     }
-                    else weightedList.Add(new KeyValuePair<double, TimeSpan>(1.0, tempList[0].Value));
+                    else
+                    {
+                        weightedList.Add(new KeyValuePair<double, TimeSpan>(1.0, tempList[0].Value));
+                    }
+
                     weightedLists.Add(weightedList);
                 }
                 else
+                {
                     weightedLists.Add(null);
+                }
             }
 
             TimeSpan? goalTime = null;
             if (Run[Run.Count - 1].PersonalBestSplitTime[method].HasValue)
+            {
                 goalTime = Run[Run.Count - 1].PersonalBestSplitTime[method].Value;
+            }
 
             var runSum = TimeSpan.Zero;
             var outputSplits = new List<TimeSpan>();
@@ -122,7 +144,7 @@ namespace LiveSplit.Model.Comparisons
             {
                 runSum = TimeSpan.Zero;
                 outputSplits.Clear();
-                percentile = 0.5 * (percMax - percMin) + percMin;
+                percentile = (0.5 * (percMax - percMin)) + percMin;
                 foreach (var weightedList in weightedLists)
                 {
                     if (weightedList != null)
@@ -137,6 +159,7 @@ namespace LiveSplit.Model.Comparisons
                                     curValue = Calculate(percentile, weightedList[n].Value, weightedList[n].Key, weightedList[n - 1].Value, weightedList[n - 1].Key);
                                     break;
                                 }
+
                                 if (weightedList[n].Key == percentile)
                                 {
                                     curValue = weightedList[n].Value;
@@ -148,15 +171,25 @@ namespace LiveSplit.Model.Comparisons
                         {
                             curValue = weightedList[0].Value;
                         }
+
                         outputSplits.Add(curValue);
                         runSum += curValue;
                     }
                     else
+                    {
                         outputSplits.Add(TimeSpan.Zero);
+                    }
                 }
+
                 if (runSum > goalTime)
+                {
                     percMax = percentile;
-                else percMin = percentile;
+                }
+                else
+                {
+                    percMin = percentile;
+                }
+
                 loopProtection += 1;
             } while (!(runSum - goalTime).Equals(TimeSpan.Zero) && loopProtection < 50 && goalTime != null);
 
@@ -166,9 +199,14 @@ namespace LiveSplit.Model.Comparisons
             {
                 totalTime += outputSplits[ind];
                 if (outputSplits[ind] == TimeSpan.Zero)
+                {
                     useTime = null;
+                }
                 else
+                {
                     useTime = totalTime;
+                }
+
                 var time = new Time(Run[ind].Comparisons[Name]);
                 time[method] = useTime;
                 Run[ind].Comparisons[Name] = time;
@@ -181,7 +219,7 @@ namespace LiveSplit.Model.Comparisons
             Generate(TimingMethod.GameTime);
         }
 
-        class IndexedTimeSpan
+        private class IndexedTimeSpan
         {
             public TimeSpan Time { get; set; }
             public int Index { get; set; }

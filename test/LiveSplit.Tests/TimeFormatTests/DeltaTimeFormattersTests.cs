@@ -1,10 +1,12 @@
 ﻿using System;
+
 using LiveSplit.TimeFormatters;
+
 using Xunit;
 
 namespace LiveSplit.Tests.TimeFormatterTests
 {
-    public class DeltaTimeFormattersTests 
+    public class DeltaTimeFormattersTests
     {
         // All these formatters (currently) give identical output:
         // - new DeltaTimeFormatter(timeAccuracy, dropDecimals);
@@ -26,7 +28,7 @@ namespace LiveSplit.Tests.TimeFormatterTests
             var formattedTime = sut.Format(null);
             Assert.Equal(TimeFormatConstants.DASH, formattedTime);
         }
-        
+
         [Theory]
         [InlineData("00:00:00", TimeAccuracy.Seconds, false, "0")]
         [InlineData("00:00:00.001", TimeAccuracy.Seconds, false, "+0")]
@@ -105,7 +107,7 @@ namespace LiveSplit.Tests.TimeFormatterTests
             var formattedTime = sut.Format(null);
             Assert.Equal(TimeFormatConstants.DASH, formattedTime);
         }
-        
+
         [Theory]
         [InlineData("00:00:00", TimeAccuracy.Seconds, false, "0")]
         [InlineData("00:00:00.001", TimeAccuracy.Seconds, false, "+0")]
@@ -125,7 +127,7 @@ namespace LiveSplit.Tests.TimeFormatterTests
         [InlineData("9.11:01:01.999", TimeAccuracy.Hundredths, false, "+227:01:01.99")]
         [InlineData("9.11:01:01.999", TimeAccuracy.Hundredths, true, "+227:01:01")]
         [InlineData("-9.11:01:01.999", TimeAccuracy.Hundredths, false, "−227:01:01.99")]
-        public void DeltaSplitTimeFormatterFormatsTimeCorrectly_WhenTimeIsValid(string timespanText, TimeAccuracy timeAccuracy, bool dropDecimals, string expectedDelta) 
+        public void DeltaSplitTimeFormatterFormatsTimeCorrectly_WhenTimeIsValid(string timespanText, TimeAccuracy timeAccuracy, bool dropDecimals, string expectedDelta)
         {
             var sut = new DeltaSplitTimeFormatter(timeAccuracy, dropDecimals: dropDecimals);
             var time = TimeSpan.Parse(timespanText);

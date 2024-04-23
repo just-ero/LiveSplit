@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
-using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace CustomFontDialog
 {
@@ -30,6 +30,7 @@ namespace CustomFontDialog
                                 break;
                             }
                         }
+
                         if (firstAvailableStyle.HasValue)
                         {
                             lstFont.Items.Add(new FontItem(new Font(f, 12, firstAvailableStyle.Value)));
@@ -39,7 +40,6 @@ namespace CustomFontDialog
                 catch (Exception ex)
                 {
                 }
-
             }
         }
 
@@ -48,18 +48,24 @@ namespace CustomFontDialog
             get
             {
                 if (lstFont.SelectedItem != null)
+                {
                     return ((FontItem)lstFont.SelectedItem).Font.FontFamily;
+                }
                 else
+                {
                     return null;
+                }
             }
             set
             {
-                if (value == null) lstFont.ClearSelected();
+                if (value == null)
+                {
+                    lstFont.ClearSelected();
+                }
                 else
                 {
                     lstFont.SelectedIndex = IndexOf(value);
                 }
-
             }
         }
 
@@ -94,7 +100,10 @@ namespace CustomFontDialog
 
         private void txtFont_TextChanged(object sender, EventArgs e)
         {
-            if (!txtFont.Focused) return;
+            if (!txtFont.Focused)
+            {
+                return;
+            }
 
             for (int i = 0; i < lstFont.Items.Count; i++)
             {
@@ -106,7 +115,7 @@ namespace CustomFontDialog
                     const uint WM_VSCROLL = 0x0115;
                     const uint SB_THUMBPOSITION = 4;
 
-                    uint b = ((uint)(lstFont.SelectedIndex) << 16) | (SB_THUMBPOSITION & 0xffff);
+                    uint b = ((uint)lstFont.SelectedIndex << 16) | (SB_THUMBPOSITION & 0xffff);
                     SendMessage(lstFont.Handle, WM_VSCROLL, b, 0);
 
                     return;
@@ -119,7 +128,6 @@ namespace CustomFontDialog
             txtFont.SelectAll();
         }
 
-
         [DllImport("user32.dll")]
         private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, uint wParam, uint lParam);
 
@@ -131,7 +139,7 @@ namespace CustomFontDialog
         private void lstFont_KeyDown(object sender, KeyEventArgs e)
         {
             // if you type alphanumeric characters while focus is on ListBox, it shifts the focus to TextBox.
-            if (Char.IsLetterOrDigit((char)e.KeyValue))
+            if (char.IsLetterOrDigit((char)e.KeyValue))
             {
                 txtFont.Focus();
                 txtFont.Text = ((char)e.KeyValue).ToString();
@@ -142,7 +150,7 @@ namespace CustomFontDialog
         // ensures that focus is lstFont control whenever the form is loaded
         private void FontList_Load(object sender, EventArgs e)
         {
-            this.ActiveControl = lstFont;
+            ActiveControl = lstFont;
         }
     }
 }

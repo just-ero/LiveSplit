@@ -1,6 +1,7 @@
-﻿using LiveSplit.Web;
-using System;
+﻿using System;
 using System.Xml;
+
+using LiveSplit.Web;
 
 namespace LiveSplit.Model
 {
@@ -37,9 +38,13 @@ namespace LiveSplit.Model
             set
             {
                 if (method == TimingMethod.RealTime)
+                {
                     RealTime = value;
+                }
                 else
+                {
                     GameTime = value;
+                }
             }
         }
 
@@ -50,13 +55,19 @@ namespace LiveSplit.Model
             if (element.GetElementsByTagName("RealTime").Count > 0)
             {
                 if (TimeSpan.TryParse(element["RealTime"].InnerText, out x))
+                {
                     newTime.RealTime = x;
+                }
             }
+
             if (element.GetElementsByTagName("GameTime").Count > 0)
             {
                 if (TimeSpan.TryParse(element["GameTime"].InnerText, out x))
+                {
                     newTime.GameTime = x;
+                }
             }
+
             return newTime;
         }
 
@@ -69,12 +80,14 @@ namespace LiveSplit.Model
                 realTime.InnerText = RealTime.ToString();
                 parent.AppendChild(realTime);
             }
+
             if (GameTime != null)
             {
                 var gameTime = document.CreateElement("GameTime");
                 gameTime.InnerText = GameTime.ToString();
                 parent.AppendChild(gameTime);
             }
+
             return parent;
         }
 
@@ -90,25 +103,43 @@ namespace LiveSplit.Model
         {
             var splits = text.Split('|');
             var newTime = new Time();
-            TimeSpan x;
-            if (TimeSpan.TryParse(splits[0].TrimEnd(), out x))
+            if (TimeSpan.TryParse(splits[0].TrimEnd(), out var x))
+            {
                 newTime.RealTime = x;
+            }
             else
+            {
                 newTime.RealTime = null;
+            }
+
             if (splits.Length > 1)
             {
                 if (TimeSpan.TryParse(splits[1].TrimStart(), out x))
+                {
                     newTime.GameTime = x;
+                }
                 else
+                {
                     newTime.GameTime = null;
+                }
             }
+
             return newTime;
         }
 
-        public override string ToString() => $"{ RealTime } | { GameTime }";
+        public override string ToString()
+        {
+            return $"{RealTime} | {GameTime}";
+        }
 
-        public static Time operator + (Time a, Time b) => new Time(a.RealTime + b.RealTime, a.GameTime + b.GameTime);
+        public static Time operator +(Time a, Time b)
+        {
+            return new Time(a.RealTime + b.RealTime, a.GameTime + b.GameTime);
+        }
 
-        public static Time operator -(Time a, Time b) => new Time(a.RealTime - b.RealTime, a.GameTime - b.GameTime);
+        public static Time operator -(Time a, Time b)
+        {
+            return new Time(a.RealTime - b.RealTime, a.GameTime - b.GameTime);
+        }
     }
 }

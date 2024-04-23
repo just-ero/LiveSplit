@@ -1,19 +1,19 @@
-﻿using LiveSplit.Model;
-using LiveSplit.Model.RunSavers;
-using LiveSplit.Options;
-using LiveSplit.Updates;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Web;
 using System.Windows.Forms;
-using LiveSplit.Model.RunFactories;
+
+using LiveSplit.Model;
 using LiveSplit.Model.Comparisons;
-using System.Globalization;
-using System.Linq;
+using LiveSplit.Model.RunFactories;
+using LiveSplit.Model.RunSavers;
+using LiveSplit.Options;
 
 namespace LiveSplit.Web.Share
 {
@@ -33,8 +33,8 @@ namespace LiveSplit.Web.Share
 
         public string PlatformName => "Splits.io";
 
-        public string Description =>
-            "Splits.io is the best platform for sharing individual "
+        public string Description
+            => "Splits.io is the best platform for sharing individual "
             + "splits with the world and downloading them from there. "
             + "You can also browse Splits.io with \"Open Splits From Splits.io...\" "
             + "or import splits as a comparison with \"Import Comparison From Splits.io...\". "
@@ -82,11 +82,10 @@ namespace LiveSplit.Web.Share
                 {
                     int.TryParse(response.Headers["Total"], NumberStyles.Integer, CultureInfo.InvariantCulture, out totalItems);
                     int.TryParse(response.Headers["Per-Page"], NumberStyles.Integer, CultureInfo.InvariantCulture, out perPage);
-                    lastPage = (int) Math.Ceiling(totalItems/(double) perPage);
+                    lastPage = (int)Math.Ceiling(totalItems / (double)perPage);
 
                     yield return JSON.FromResponse(response);
                 }
-
             } while (page++ < lastPage);
         }
 
@@ -153,11 +152,15 @@ namespace LiveSplit.Web.Share
             try
             {
                 if (string.IsNullOrEmpty(speedrunComId))
+                {
                     return;
+                }
 
                 var speedrunComRun = SpeedrunCom.Client.Runs.GetRun(speedrunComId);
                 if (speedrunComRun == null)
+                {
                     return;
+                }
 
                 run.PatchRun(speedrunComRun);
             }
@@ -198,7 +201,10 @@ namespace LiveSplit.Web.Share
 
                     var run = runFactory.Create(new StandardComparisonGeneratorsFactory());
                     if (patchRun)
+                    {
                         PatchRun(run, splitsIORun.run.srdc_id);
+                    }
+
                     return run;
                 }
             }
@@ -233,8 +239,9 @@ namespace LiveSplit.Web.Share
                     var factor1 = 280.0 / image.Width;
                     var factor2 = 150.0 / image.Height;
                     var factor = Math.Max(factor1, factor2);
-                    image = new Bitmap(image, (int)(factor * image.Width + 0.5), (int)(factor * image.Height + 0.5));
+                    image = new Bitmap(image, (int)((factor * image.Width) + 0.5), (int)((factor * image.Height) + 0.5));
                 }
+
                 var result = Imgur.Instance.UploadImage(image);
                 image_url = (string)result.data.link;
             }
@@ -250,6 +257,7 @@ namespace LiveSplit.Web.Share
                 {
                     WriteKeyAndValue(writer, "image_url", image_url);
                 }
+
                 writer.WriteLine("--AaB03x--");
                 writer.Flush();
             }

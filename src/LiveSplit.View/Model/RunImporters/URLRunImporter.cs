@@ -1,12 +1,13 @@
-﻿using LiveSplit.Model.Comparisons;
+﻿using System;
+using System.IO;
+using System.Net;
+using System.Windows.Forms;
+
+using LiveSplit.Model.Comparisons;
 using LiveSplit.Model.RunFactories;
 using LiveSplit.Options;
 using LiveSplit.UI;
 using LiveSplit.Web.Share;
-using System;
-using System.IO;
-using System.Net;
-using System.Windows.Forms;
 
 namespace LiveSplit.Model.RunImporters
 {
@@ -33,6 +34,7 @@ namespace LiveSplit.Model.RunImporters
                 {
                     return SplitsIO.Instance.DownloadRunByUri(uri, true);
                 }
+
                 if (host == "www.speedrun.com" || host == "speedrun.com")
                 {
                     var speedrunComRun = SpeedrunCom.Client.Runs.GetRunFromSiteUri(url);
@@ -72,6 +74,7 @@ namespace LiveSplit.Model.RunImporters
                 Log.Error(ex);
                 MessageBox.Show(form, "The splits file couldn't be downloaded.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+
             return null;
         }
 
@@ -82,6 +85,7 @@ namespace LiveSplit.Model.RunImporters
             {
                 return LoadRunFromURL(url, form);
             }
+
             return null;
         }
 
@@ -94,6 +98,7 @@ namespace LiveSplit.Model.RunImporters
                 var imported = LoadRunFromURL(url, form);
                 return run.AddComparisonWithNameInput(imported, name, form);
             }
+
             return null;
         }
     }

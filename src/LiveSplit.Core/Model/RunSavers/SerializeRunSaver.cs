@@ -10,7 +10,7 @@ namespace LiveSplit.Model.RunSavers
             var obj = (IRun)run.Clone();
             foreach (var segment in obj)
             {
-                segment.SplitTime = default(Time);
+                segment.SplitTime = default;
             }
 
             var formatter = new BinaryFormatter();

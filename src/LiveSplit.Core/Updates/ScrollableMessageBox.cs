@@ -5,8 +5,8 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Windows.Forms;
 using System.IO;
+using System.Windows.Forms;
 
 namespace LiveSplit.Updates
 {
@@ -57,7 +57,6 @@ namespace LiveSplit.Updates
             }
         }
 
-
         /// <summary>
         /// 
         /// </summary>
@@ -100,7 +99,7 @@ namespace LiveSplit.Updates
             return ShowDialog();
         }
 
-        void RemoveButtons()
+        private void RemoveButtons()
         {
             List<Button> buttons = new List<Button>();
             foreach (Control c in Controls)
@@ -117,7 +116,7 @@ namespace LiveSplit.Updates
             }
         }
 
-        void ChooseButtons(MessageBoxButtons buttonType)
+        private void ChooseButtons(MessageBoxButtons buttonType)
         {
             // remove existing buttons
             RemoveButtons();
@@ -142,10 +141,12 @@ namespace LiveSplit.Updates
 
         private void AddOKButton()
         {
-            Button btnOK = new Button();
-            btnOK.Text = "OK";
+            Button btnOK = new Button
+            {
+                Text = "OK"
+            };
             Controls.Add(btnOK);
-            btnOK.Location = new Point(Width / 2 - 35, txtMessage.Bottom + 5);
+            btnOK.Location = new Point((Width / 2) - 35, txtMessage.Bottom + 5);
             btnOK.Size = new Size(70, 20);
             btnOK.DialogResult = DialogResult.OK;
             AcceptButton = btnOK;
@@ -153,21 +154,25 @@ namespace LiveSplit.Updates
 
         private void AddYesNoButtons()
         {
-            Button btnYes = new Button();
-            btnYes.Text = "Yes";
+            Button btnYes = new Button
+            {
+                Text = "Yes"
+            };
             Controls.Add(btnYes);
 
             // calculate the location of the buttons so that they are centered
             // at the bottom
-            btnYes.Location = new Point(Width / 2 - 80, txtMessage.Bottom + 5);
+            btnYes.Location = new Point((Width / 2) - 80, txtMessage.Bottom + 5);
             btnYes.Size = new Size(75, 23);
             btnYes.DialogResult = DialogResult.Yes;
             AcceptButton = btnYes;
 
-            Button btnNo = new Button();
-            btnNo.Text = "No";
+            Button btnNo = new Button
+            {
+                Text = "No"
+            };
             Controls.Add(btnNo);
-            btnNo.Location = new Point(Width / 2 + 5, txtMessage.Bottom + 5);
+            btnNo.Location = new Point((Width / 2) + 5, txtMessage.Bottom + 5);
             btnNo.Size = new Size(75, 23);
             btnNo.DialogResult = DialogResult.No;
             CancelButton = btnNo;
@@ -175,18 +180,22 @@ namespace LiveSplit.Updates
 
         private void AddOkCancelButtons()
         {
-            Button btnOK = new Button();
-            btnOK.Text = "OK";
+            Button btnOK = new Button
+            {
+                Text = "OK"
+            };
             Controls.Add(btnOK);
-            btnOK.Location = new Point(Width / 2 - 75, txtMessage.Bottom + 5);
+            btnOK.Location = new Point((Width / 2) - 75, txtMessage.Bottom + 5);
             btnOK.Size = new Size(70, 20);
             btnOK.DialogResult = DialogResult.OK;
             AcceptButton = btnOK;
 
-            Button btnCancel = new Button();
-            btnCancel.Text = "Cancel";
+            Button btnCancel = new Button
+            {
+                Text = "Cancel"
+            };
             Controls.Add(btnCancel);
-            btnCancel.Location = new Point(Width / 2 + 5, txtMessage.Bottom + 5);
+            btnCancel.Location = new Point((Width / 2) + 5, txtMessage.Bottom + 5);
             btnCancel.Size = new Size(70, 20);
             btnCancel.DialogResult = DialogResult.Cancel;
             CancelButton = btnCancel;

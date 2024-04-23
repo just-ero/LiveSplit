@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
-using Xunit;
+
 using LiveSplit.Model;
+
+using Xunit;
 
 namespace LiveSplit.Tests.TimeParseTests
 {

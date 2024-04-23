@@ -1,11 +1,12 @@
-﻿using LiveSplit.Options;
-using LiveSplit.UI.Components;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Windows.Forms;
+
+using LiveSplit.Options;
+using LiveSplit.UI.Components;
 
 namespace LiveSplit.Model
 {
@@ -37,7 +38,10 @@ namespace LiveSplit.Model
                 try
                 {
                     if (!IsDownloaded || Type == AutoSplitterType.Script || Type == AutoSplitterType.AutoSplittingRuntimeScript)
+                    {
                         DownloadFiles();
+                    }
+
                     switch (Type)
                     {
                         case AutoSplitterType.Component:
@@ -83,7 +87,9 @@ namespace LiveSplit.Model
                     {
                         var factory = ComponentManager.LoadFactory<IComponentFactory>(localPath);
                         if (factory != null)
+                        {
                             ComponentManager.ComponentFactories.Add(fileName, factory);
+                        }
                     }
                 }
                 catch (WebException)
@@ -139,6 +145,9 @@ namespace LiveSplit.Model
             };
         }
 
-        object ICloneable.Clone() => Clone();
+        object ICloneable.Clone()
+        {
+            return Clone();
+        }
     }
 }

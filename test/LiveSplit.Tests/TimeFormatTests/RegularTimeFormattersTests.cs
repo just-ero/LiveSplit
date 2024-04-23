@@ -1,5 +1,7 @@
 ﻿using System;
+
 using LiveSplit.TimeFormatters;
+
 using Xunit;
 
 namespace LiveSplit.Tests.TimeFormatterTests
@@ -24,7 +26,7 @@ namespace LiveSplit.Tests.TimeFormatterTests
             var formattedTime = sut.Format(null);
             Assert.Equal(expectedTime, formattedTime);
         }
-        
+
         [Theory]
         [InlineData("00:00:00", TimeAccuracy.Seconds, "0:00")]
         [InlineData("00:00:00", TimeAccuracy.Tenths, "0:00.0")]
@@ -39,7 +41,7 @@ namespace LiveSplit.Tests.TimeFormatterTests
         [InlineData("00:00:00.05", TimeAccuracy.Hundredths, "0:00.05")]
         [InlineData("00:10:00.006", TimeAccuracy.Hundredths, "10:00.00")]
         [InlineData("9.11:01:01.999", TimeAccuracy.Hundredths, "227:01:01.99")]
-        [InlineData("1.00:00:01.999", TimeAccuracy.Hundredths, "24:00:01.99")] 
+        [InlineData("1.00:00:01.999", TimeAccuracy.Hundredths, "24:00:01.99")]
         public void RegularTimeFormatterFormatsTimeCorrectlyInGivenAccuracy_WhenTimeIsValid(string timespanText, TimeAccuracy timeAccuracy, string expectedTime)
         {
             var sut = new RegularTimeFormatter(timeAccuracy);
@@ -78,7 +80,7 @@ namespace LiveSplit.Tests.TimeFormatterTests
         {
             var sut = new RegularSplitTimeFormatter(timeAccuracy);
             var time = TimeSpan.Parse(timespanText);
-            
+
             var formattedTime = sut.Format(time);
             Assert.Equal(expectedTime, formattedTime);
         }

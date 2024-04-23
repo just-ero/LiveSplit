@@ -1,11 +1,13 @@
-﻿using LiveSplit.Options;
-using SharpDX.DirectInput;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+
+using LiveSplit.Options;
+
+using SharpDX.DirectInput;
 
 namespace LiveSplit.Model.Input
 {
@@ -49,17 +51,26 @@ namespace LiveSplit.Model.Input
         public override string ToString()
         {
             if (IsKey)
+            {
                 return Key.ToString();
+            }
             else
+            {
                 return Button.Button.ToString() + " " + Button.GamepadName;
+            }
         }
 
         public static bool operator ==(KeyOrButton a, KeyOrButton b)
         {
-            if ((object)a == null && (object)b == null)
+            if (a is null && b is null)
+            {
                 return true;
-            if ((object)a == null || (object)b == null)
+            }
+
+            if (a is null || b is null)
+            {
                 return false;
+            }
 
             if (a.IsKey && b.IsKey)
             {
@@ -69,6 +80,7 @@ namespace LiveSplit.Model.Input
             {
                 return a.Button == b.Button;
             }
+
             return false;
         }
 
@@ -94,9 +106,13 @@ namespace LiveSplit.Model.Input
             {
                 allowGamepads = value;
                 if (allowGamepads)
+                {
                     InitializeGamepadHook();
+                }
                 else
+                {
                     CallInitializeEvent();
+                }
             }
         }
         private bool gamepadHookInitialized;
@@ -129,10 +145,12 @@ namespace LiveSplit.Model.Input
             return GamepadHook.GetMouse();
         }
 
-        void InitializeGamepadHook()
+        private void InitializeGamepadHook()
         {
             if (gamepadHookInitialized)
+            {
                 return;
+            }
 
             gamepadHookInitialized = true;
 
@@ -160,7 +178,9 @@ namespace LiveSplit.Model.Input
                             try
                             {
                                 if (AllowGamepads)
+                                {
                                     GamepadHook.Poll();
+                                }
                             }
                             catch (Exception ex)
                             {
@@ -173,7 +193,7 @@ namespace LiveSplit.Model.Input
             });
         }
 
-        void CallInitializeEvent()
+        private void CallInitializeEvent()
         {
             if (!initializeEventCalled && GamepadHookInitialized != null)
             {
@@ -182,13 +202,13 @@ namespace LiveSplit.Model.Input
             }
         }
 
-        void KeyboardHook_KeyPressed(object sender, KeyEventArgs e)
+        private void KeyboardHook_KeyPressed(object sender, KeyEventArgs e)
         {
             KeyPressed?.Invoke(this, e);
             KeyOrButtonPressed?.Invoke(this, new KeyOrButton(e.KeyCode | e.Modifiers));
         }
 
-        void GamepadHook_ButtonPressed(object sender, GamepadButton e)
+        private void GamepadHook_ButtonPressed(object sender, GamepadButton e)
         {
             AnyGamepadButtonPressed?.Invoke(this, e);
 
@@ -217,9 +237,13 @@ namespace LiveSplit.Model.Input
         public void RegisterHotKey(KeyOrButton keyOrButton)
         {
             if (keyOrButton.IsKey)
+            {
                 RegisterHotKey(keyOrButton.Key);
+            }
             else
+            {
                 RegisterGamepadButton(keyOrButton.Button);
+            }
         }
 
         public void Poll()

@@ -21,7 +21,9 @@ namespace LiveSplit.Model.RunSavers
                 writer.Write(Escape(run.GameName));
 
                 if (!string.IsNullOrEmpty(run.CategoryName))
+                {
                     writer.Write(" - ");
+                }
             }
 
             writer.WriteLine(Escape(run.CategoryName));

@@ -5,23 +5,23 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
-// Note: Please be careful when modifying this because it could break existing components!
+using OffsetT = System.Int32;
 
 namespace LiveSplit.ComponentUtil
 {
-    using OffsetT = Int32;
+    // Note: Please be careful when modifying this because it could break existing components!
 
     public class DeepPointer
     {
         public enum DerefType { Auto, Bit32, Bit64 }
 
-        private IntPtr _absoluteBase;
-        private bool _usingAbsoluteBase;
-        private DerefType _derefType;
+        private readonly IntPtr _absoluteBase;
+        private readonly bool _usingAbsoluteBase;
+        private readonly DerefType _derefType;
 
-        private OffsetT _base;
+        private readonly OffsetT _base;
         private List<OffsetT> _offsets;
-        private string _module;
+        private readonly string _module;
 
         public DeepPointer(IntPtr absoluteBase, params OffsetT[] offsets)
             : this(absoluteBase, DerefType.Auto, offsets) { }
@@ -54,21 +54,22 @@ namespace LiveSplit.ComponentUtil
             InitializeOffsets(offsets);
         }
 
-        public T Deref<T>(Process process, T default_ = default(T)) where T : struct // all value types including structs
+        public T Deref<T>(Process process, T default_ = default) where T : struct // all value types including structs
         {
-            T val;
-            if (!Deref(process, out val))
+            if (!Deref(process, out T val))
+            {
                 val = default_;
+            }
+
             return val;
         }
 
         public bool Deref<T>(Process process, out T value) where T : struct
         {
-            IntPtr ptr;
-            if (!DerefOffsets(process, out ptr)
+            if (!DerefOffsets(process, out var ptr)
                 || !process.ReadValue(ptr, out value))
             {
-                value = default(T);
+                value = default;
                 return false;
             }
 
@@ -77,16 +78,17 @@ namespace LiveSplit.ComponentUtil
 
         public byte[] DerefBytes(Process process, int count)
         {
-            byte[] bytes;
-            if (!DerefBytes(process, count, out bytes))
+            if (!DerefBytes(process, count, out var bytes))
+            {
                 bytes = null;
+            }
+
             return bytes;
         }
 
         public bool DerefBytes(Process process, int count, out byte[] value)
         {
-            IntPtr ptr;
-            if (!DerefOffsets(process, out ptr)
+            if (!DerefOffsets(process, out var ptr)
                 || !process.ReadBytes(ptr, count, out value))
             {
                 value = null;
@@ -98,17 +100,21 @@ namespace LiveSplit.ComponentUtil
 
         public string DerefString(Process process, int numBytes, string default_ = null)
         {
-            string str;
-            if (!DerefString(process, ReadStringType.AutoDetect, numBytes, out str))
+            if (!DerefString(process, ReadStringType.AutoDetect, numBytes, out string str))
+            {
                 str = default_;
+            }
+
             return str;
         }
 
         public string DerefString(Process process, ReadStringType type, int numBytes, string default_ = null)
         {
-            string str;
-            if (!DerefString(process, type, numBytes, out str))
+            if (!DerefString(process, type, numBytes, out string str))
+            {
                 str = default_;
+            }
+
             return str;
         }
 
@@ -125,6 +131,7 @@ namespace LiveSplit.ComponentUtil
                 str = null;
                 return false;
             }
+
             str = sb.ToString();
             return true;
         }
@@ -136,12 +143,12 @@ namespace LiveSplit.ComponentUtil
 
         public bool DerefString(Process process, ReadStringType type, StringBuilder sb)
         {
-            IntPtr ptr;
-            if (!DerefOffsets(process, out ptr)
+            if (!DerefOffsets(process, out var ptr)
                 || !process.ReadString(ptr, type, sb))
             {
                 return false;
             }
+
             return true;
         }
 
@@ -149,9 +156,13 @@ namespace LiveSplit.ComponentUtil
         {
             bool is64Bit;
             if (_derefType == DerefType.Auto)
+            {
                 is64Bit = process.Is64Bit();
+            }
             else
+            {
                 is64Bit = _derefType == DerefType.Bit64;
+            }
 
             if (!string.IsNullOrEmpty(_module))
             {
@@ -183,14 +194,16 @@ namespace LiveSplit.ComponentUtil
                 }
             }
 
-            ptr = ptr + _offsets[_offsets.Count - 1];
+            ptr += _offsets[_offsets.Count - 1];
             return true;
         }
 
         private void InitializeOffsets(params OffsetT[] offsets)
         {
-            _offsets = new List<OffsetT>();
-            _offsets.Add(0); // deref base first
+            _offsets = new List<OffsetT>
+            {
+                0 // deref base first
+            };
             _offsets.AddRange(offsets);
         }
     }
@@ -215,16 +228,16 @@ namespace LiveSplit.ComponentUtil
 
         public float Distance(Vector3f other)
         {
-            float result = (X - other.X) * (X - other.X) +
-                (Y - other.Y) * (Y - other.Y) +
-                (Z - other.Z) * (Z - other.Z);
+            float result = ((X - other.X) * (X - other.X)) +
+                ((Y - other.Y) * (Y - other.Y)) +
+                ((Z - other.Z) * (Z - other.Z));
             return (float)Math.Sqrt(result);
         }
 
         public float DistanceXY(Vector3f other)
         {
-            float result = (X - other.X) * (X - other.X) +
-                (Y - other.Y) * (Y - other.Y);
+            float result = ((X - other.X) * (X - other.X)) +
+                ((Y - other.Y) * (Y - other.Y));
             return (float)Math.Sqrt(result);
         }
 

@@ -1,6 +1,7 @@
-﻿using LiveSplit.Options;
-using System;
+﻿using System;
 using System.Collections.Generic;
+
+using LiveSplit.Options;
 
 namespace LiveSplit.UI
 {
@@ -30,7 +31,7 @@ namespace LiveSplit.UI
                         HasChanged = true;
                     }
                 }
-                else if (!Equals(FlagDirectory[flag],value))
+                else if (!Equals(FlagDirectory[flag], value))
                 {
                     FlagDirectory[flag] = value;
                     HasChanged = true;

@@ -1,25 +1,26 @@
-﻿using LiveSplit.Model;
-using LiveSplit.Model.RunImporters;
-using LiveSplit.Options;
-using LiveSplit.TimeFormatters;
-using LiveSplit.UI;
-using LiveSplit.Web;
-using LiveSplit.Utils;
-using LiveSplit.Web.Share;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
-using System.Threading;
+
+using LiveSplit.Model;
+using LiveSplit.Model.RunImporters;
+using LiveSplit.Options;
+using LiveSplit.TimeFormatters;
+using LiveSplit.UI;
+using LiveSplit.Utils;
+using LiveSplit.Web;
+using LiveSplit.Web.Share;
 using LiveSplit.Web.SRL;
-using System.IO;
 
 namespace LiveSplit.View
 {
@@ -74,7 +75,10 @@ namespace LiveSplit.View
                 {
                     Run.GameName = value;
                     if (IsMetadataTab)
+                    {
                         metadataControl.RefreshInformation();
+                    }
+
                     RefreshCategoryAutoCompleteList();
                     RaiseRunEdited();
                     Run.Metadata.RunID = null;
@@ -90,7 +94,10 @@ namespace LiveSplit.View
                 {
                     Run.CategoryName = value;
                     if (IsMetadataTab)
+                    {
                         metadataControl.RefreshInformation();
+                    }
+
                     RaiseRunEdited();
                     Run.Metadata.RunID = null;
                 }
@@ -105,7 +112,9 @@ namespace LiveSplit.View
             set
             {
                 if (Regex.IsMatch(value, "[^0-9:.\\-−]"))
+                {
                     return;
+                }
 
                 try
                 {
@@ -118,7 +127,11 @@ namespace LiveSplit.View
         public int AttemptCount
         {
             get { return Run.AttemptCount; }
-            set { Run.AttemptCount = Math.Max(0, value); RaiseRunEdited(); }
+            set
+            {
+                Run.AttemptCount = Math.Max(0, value);
+                RaiseRunEdited();
+            }
         }
 
         private class ParsingResults
@@ -147,10 +160,12 @@ namespace LiveSplit.View
             ImagesToDispose = new List<Image>();
             SegmentTimeList = new List<TimeSpan?>();
             TimeFormatter = new ShortTimeFormatter();
-            SegmentList = new BindingList<ISegment>(Run);
-            SegmentList.AllowNew = true;
-            SegmentList.AllowRemove = true;
-            SegmentList.AllowEdit = true;
+            SegmentList = new BindingList<ISegment>(Run)
+            {
+                AllowNew = true,
+                AllowRemove = true,
+                AllowEdit = true
+            };
             SegmentList.ListChanged += SegmentList_ListChanged;
             runGrid.AutoGenerateColumns = false;
             runGrid.AutoSize = true;
@@ -163,39 +178,50 @@ namespace LiveSplit.View
             runGrid.CellEndEdit += runGrid_CellEndEdit;
             runGrid.SelectionChanged += runGrid_SelectionChanged;
 
-            var iconColumn = new DataGridViewImageColumn() { ImageLayout = DataGridViewImageCellLayout.Zoom };
-            iconColumn.Name = "Icon";
-            iconColumn.Width = 50;
-            iconColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            var iconColumn = new DataGridViewImageColumn
+            {
+                ImageLayout = DataGridViewImageCellLayout.Zoom,
+                Name = "Icon",
+                Width = 50,
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.None
+            };
             iconColumn.DefaultCellStyle.NullValue = new Bitmap(1, 1);
             runGrid.Columns.Add(iconColumn);
 
-            var column = new DataGridViewTextBoxColumn();
-            column.Name = "Segment Name";
-            column.MinimumWidth = 120;
-            column.SortMode = DataGridViewColumnSortMode.NotSortable;
+            var column = new DataGridViewTextBoxColumn
+            {
+                Name = "Segment Name",
+                MinimumWidth = 120,
+                SortMode = DataGridViewColumnSortMode.NotSortable
+            };
             runGrid.Columns.Add(column);
 
-            column = new DataGridViewTextBoxColumn();
-            column.Name = "Split Time";
-            column.Width = 100;
-            column.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            column = new DataGridViewTextBoxColumn
+            {
+                Name = "Split Time",
+                Width = 100,
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.None
+            };
             column.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
             column.SortMode = DataGridViewColumnSortMode.NotSortable;
             runGrid.Columns.Add(column);
 
-            column = new DataGridViewTextBoxColumn();
-            column.Name = "Segment Time";
-            column.Width = 100;
-            column.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            column = new DataGridViewTextBoxColumn
+            {
+                Name = "Segment Time",
+                Width = 100,
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.None
+            };
             column.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
             column.SortMode = DataGridViewColumnSortMode.NotSortable;
             runGrid.Columns.Add(column);
 
-            column = new DataGridViewTextBoxColumn();
-            column.Name = "Best Segment";
-            column.Width = 100;
-            column.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            column = new DataGridViewTextBoxColumn
+            {
+                Name = "Best Segment",
+                Width = 100,
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.None
+            };
             column.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
             column.SortMode = DataGridViewColumnSortMode.NotSortable;
             runGrid.Columns.Add(column);
@@ -236,15 +262,19 @@ namespace LiveSplit.View
                 .ToArray();
         }
 
-        void Run_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void Run_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "GameName")
+            {
                 cbxGameName.Text = Run.GameName;
+            }
             else if (e.PropertyName == "CategoryName")
+            {
                 cbxRunCategory.Text = Run.CategoryName;
+            }
         }
 
-        void metadataControl_MetadataChanged(object sender, EventArgs e)
+        private void metadataControl_MetadataChanged(object sender, EventArgs e)
         {
             var args = (MetadataChangedEventArgs)e;
             if (args.ClearRunID)
@@ -252,10 +282,11 @@ namespace LiveSplit.View
                 Run.Metadata.RunID = null;
                 metadataControl.RefreshAssociateButton();
             }
+
             RaiseRunEdited();
         }
 
-        void cbxGameName_TextChanged(object sender, EventArgs e)
+        private void cbxGameName_TextChanged(object sender, EventArgs e)
         {
             if (IsInitialized)
             {
@@ -267,6 +298,7 @@ namespace LiveSplit.View
                     splitter.Activate(CurrentState);
                     SetAutoSplitterSettings();
                 }
+
                 RefreshAutoSplittingUI();
             }
         }
@@ -274,7 +306,9 @@ namespace LiveSplit.View
         private void DeactivateAutoSplitter()
         {
             if (Run.IsAutoSplitterActive())
+            {
                 Run.AutoSplitter.Deactivate();
+            }
         }
 
         private void FillCbxGameName()
@@ -301,7 +335,9 @@ namespace LiveSplit.View
                         });
                     }
                     else
+                    {
                         cachedGameNames = new string[0];
+                    }
 
                     var fetchedGameNames = CompositeGameList.Instance.GetGameNames(false);
                     if (fetchedGameNames != null)
@@ -339,7 +375,7 @@ namespace LiveSplit.View
             });
         }
 
-        void RefreshCategoryAutoCompleteList()
+        private void RefreshCategoryAutoCompleteList()
         {
             Task.Factory.StartNew(() =>
             {
@@ -350,12 +386,15 @@ namespace LiveSplit.View
                     {
                         var game = Run.Metadata.Game;
                         if (game != null)
+                        {
                             categoryNames = game.FullGameCategories.Select(x => x.Name).ToArray();
+                        }
                     }
                     catch (Exception ex)
                     {
                         Log.Error(ex);
                     }
+
                     this.InvokeIfRequired(() =>
                     {
                         try
@@ -376,12 +415,12 @@ namespace LiveSplit.View
             });
         }
 
-        void runGrid_SelectionChanged(object sender, EventArgs e)
+        private void runGrid_SelectionChanged(object sender, EventArgs e)
         {
             UpdateButtonsStatus();
         }
 
-        void SegmentList_ListChanged(object sender, ListChangedEventArgs e)
+        private void SegmentList_ListChanged(object sender, ListChangedEventArgs e)
         {
             TimesModified();
             UpdateButtonsStatus();
@@ -416,7 +455,7 @@ namespace LiveSplit.View
             }
         }
 
-        void runGrid_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
+        private void runGrid_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
         {
             eCtl = e.Control;
             eCtl.TextChanged -= new EventHandler(eCtl_TextChanged);
@@ -447,17 +486,19 @@ namespace LiveSplit.View
             }
         }
 
-        void runGrid_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        private void runGrid_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
             runGrid.Rows[e.RowIndex].ErrorText = "";
         }
 
-        void runGrid_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+        private void runGrid_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
         {
             if (e.ColumnIndex == SPLITTIMEINDEX || e.ColumnIndex == BESTSEGMENTINDEX || e.ColumnIndex == SEGMENTTIMEINDEX || e.ColumnIndex >= CUSTOMCOMPARISONSINDEX)
             {
                 if (string.IsNullOrWhiteSpace(e.FormattedValue.ToString()))
+                {
                     return;
+                }
 
                 try
                 {
@@ -471,7 +512,7 @@ namespace LiveSplit.View
             }
         }
 
-        void runGrid_CellParsing(object sender, DataGridViewCellParsingEventArgs e)
+        private void runGrid_CellParsing(object sender, DataGridViewCellParsingEventArgs e)
         {
             var parsingResults = ParseCell(e.Value, e.RowIndex, e.ColumnIndex, true);
             if (parsingResults.Parsed)
@@ -480,7 +521,9 @@ namespace LiveSplit.View
                 e.Value = parsingResults.Value;
             }
             else
+            {
                 e.ParsingApplied = false;
+            }
         }
 
         private ParsingResults ParseCell(object value, int rowIndex, int columnIndex, bool shouldFix)
@@ -501,26 +544,35 @@ namespace LiveSplit.View
                     time[SelectedMethod] = null;
                     Run[rowIndex].PersonalBestSplitTime = time;
                 }
+
                 if (columnIndex == BESTSEGMENTINDEX)
                 {
                     var time = new Time(Run[rowIndex].BestSegmentTime);
                     time[SelectedMethod] = null;
                     Run[rowIndex].BestSegmentTime = time;
                 }
+
                 if (columnIndex == SEGMENTTIMEINDEX)
                 {
                     SegmentTimeList[rowIndex] = null;
                     if (shouldFix)
+                    {
                         FixSplitsFromSegments();
+                    }
                 }
+
                 if (columnIndex >= CUSTOMCOMPARISONSINDEX)
                 {
                     var time = new Time(Run[rowIndex].Comparisons[runGrid.Columns[columnIndex].Name]);
                     time[SelectedMethod] = null;
                     Run[rowIndex].Comparisons[runGrid.Columns[columnIndex].Name] = time;
                 }
+
                 if (shouldFix)
+                {
                     Fix();
+                }
+
                 TimesModified();
                 return new ParsingResults(true, value);
             }
@@ -532,28 +584,37 @@ namespace LiveSplit.View
                 {
                     SegmentTimeList[rowIndex] = (TimeSpan)value;
                     if (shouldFix)
+                    {
                         FixSplitsFromSegments();
+                    }
                 }
+
                 if (columnIndex >= CUSTOMCOMPARISONSINDEX)
                 {
                     var time = new Time(Run[rowIndex].Comparisons[runGrid.Columns[columnIndex].Name]);
                     time[SelectedMethod] = (TimeSpan)value;
                     Run[rowIndex].Comparisons[runGrid.Columns[columnIndex].Name] = time;
                 }
+
                 if (columnIndex == SPLITTIMEINDEX)
                 {
                     var time = new Time(Run[rowIndex].PersonalBestSplitTime);
                     time[SelectedMethod] = (TimeSpan)value;
                     Run[rowIndex].PersonalBestSplitTime = time;
                 }
+
                 if (columnIndex == BESTSEGMENTINDEX)
                 {
                     var time = new Time(Run[rowIndex].BestSegmentTime);
                     time[SelectedMethod] = (TimeSpan)value;
                     Run[rowIndex].BestSegmentTime = time;
                 }
+
                 if (shouldFix)
+                {
                     Fix();
+                }
+
                 TimesModified();
                 return new ParsingResults(true, value);
             }
@@ -562,7 +623,7 @@ namespace LiveSplit.View
             return new ParsingResults(false, null);
         }
 
-        void runGrid_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        private void runGrid_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
             if (e.RowIndex < Run.Count)
             {
@@ -632,12 +693,14 @@ namespace LiveSplit.View
             }
         }
 
-        void runGrid_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        private void runGrid_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.ColumnIndex == ICONINDEX && e.RowIndex >= 0 && e.RowIndex < Run.Count)
             {
-                var dialog = new OpenFileDialog();
-                dialog.Filter = "Image Files|*.BMP;*.JPG;*.GIF;*.JPEG;*.PNG|All files (*.*)|*.*";
+                var dialog = new OpenFileDialog
+                {
+                    Filter = "Image Files|*.BMP;*.JPG;*.GIF;*.JPEG;*.PNG|All files (*.*)|*.*"
+                };
                 var multiEdit = runGrid.SelectedCells.Count > 1;
                 if (!string.IsNullOrEmpty(Run[e.RowIndex].Name) && !multiEdit)
                 {
@@ -647,6 +710,7 @@ namespace LiveSplit.View
                 {
                     dialog.Title = "Set Icon...";
                 }
+
                 var result = dialog.ShowDialog();
                 if (result == DialogResult.OK)
                 {
@@ -665,7 +729,9 @@ namespace LiveSplit.View
                 {
                     var oldImage = (Image)runGrid.Rows[rowIndex].Cells[ICONINDEX].Value;
                     if (oldImage != null)
+                    {
                         ImagesToDispose.Add(oldImage);
+                    }
 
                     Run[rowIndex].Icon = image;
                     runGrid.NotifyCurrentCellDirty(true);
@@ -675,11 +741,15 @@ namespace LiveSplit.View
                     foreach (DataGridViewCell cell in runGrid.SelectedCells)
                     {
                         if (cell.ColumnIndex != ICONINDEX)
+                        {
                             continue;
+                        }
 
                         var oldImage = (Image)cell.Value;
                         if (oldImage != null)
+                        {
                             ImagesToDispose.Add(oldImage);
+                        }
 
                         Run[cell.RowIndex].Icon = (Image)image.Clone();
                         runGrid.UpdateCellValue(ICONINDEX, cell.RowIndex);
@@ -703,7 +773,9 @@ namespace LiveSplit.View
             runGrid.InvalidateColumn(BESTSEGMENTINDEX);
             runGrid.InvalidateColumn(SEGMENTTIMEINDEX);
             for (var index = CUSTOMCOMPARISONSINDEX; index < runGrid.Columns.Count; index++)
+            {
                 runGrid.InvalidateColumn(index);
+            }
         }
 
         private void SetGameIcon(Image icon)
@@ -725,6 +797,7 @@ namespace LiveSplit.View
             {
                 dialog.Title = "Set Game Icon...";
             }
+
             dialog.Filter = "Image Files|*.BMP;*.JPG;*.GIF;*.JPEG;*.PNG|All files (*.*)|*.*";
             var result = dialog.ShowDialog();
             if (result == DialogResult.OK)
@@ -752,15 +825,18 @@ namespace LiveSplit.View
                 {
                     initialPath = Path.GetDirectoryName(CurrentState.Layout.FilePath);
                 }
+
                 if (initialPath != null)
                 {
                     openFileDialog.InitialDirectory = initialPath;
                 }
+
                 openFileDialog.Filter = "LiveSplit Layout (*.lsl)|*.lsl|All files (*.*)|*.*";
                 if (openFileDialog.ShowDialog() != DialogResult.OK)
                 {
                     return;
                 }
+
                 if (SaveAndApplyLayoutPath(openFileDialog.FileName))
                 {
                     ApplyLayoutPathToCbx(openFileDialog.FileName);
@@ -773,7 +849,7 @@ namespace LiveSplit.View
             cbxLayoutToUse.Items.Add(Tuple.Create("Default Layout", "?default"));
             var range = CurrentState.Settings.RecentLayouts
                 .Reverse()
-                .Where(e => !String.IsNullOrEmpty(e))
+                .Where(e => !string.IsNullOrEmpty(e))
                 .Select(value =>
                 {
                     var key = Path.GetFileNameWithoutExtension(value).EscapeMenuItemText();
@@ -793,12 +869,14 @@ namespace LiveSplit.View
                     break;
                 }
             }
+
             if (selected == null)
             {
                 var fileName = Path.GetFileNameWithoutExtension(layoutPath).EscapeMenuItemText();
                 selected = Tuple.Create(fileName, layoutPath);
                 cbxLayoutToUse.Items.Insert(1, selected);
             }
+
             cbxLayoutToUse.SelectedItem = selected;
         }
 
@@ -806,12 +884,13 @@ namespace LiveSplit.View
         {
             cbxLayoutToUse.DisplayMember = "Item1";
             FillCbxLayoutToUseItems();
-            if (String.IsNullOrEmpty(Run.LayoutPath))
+            if (string.IsNullOrEmpty(Run.LayoutPath))
             {
                 chkbxUseLayout.Checked = false;
                 flpnlLayoutSelect.Enabled = false;
                 return;
             }
+
             ApplyLayoutPathToCbx(Run.LayoutPath);
             chkbxUseLayout.Checked = true;
         }
@@ -828,6 +907,7 @@ namespace LiveSplit.View
             {
                 return true;
             }
+
             TimerForm timerForm;
             try
             {
@@ -854,6 +934,7 @@ namespace LiveSplit.View
             {
                 SaveLayoutPath(layoutPath);
             }
+
             return success;
         }
 
@@ -863,11 +944,13 @@ namespace LiveSplit.View
             {
                 return;
             }
+
             var selected = ((Tuple<string, string>)cbxLayoutToUse.SelectedItem).Item2;
-            if (String.IsNullOrEmpty(selected))
+            if (string.IsNullOrEmpty(selected))
             {
                 return;
             }
+
             SaveAndApplyLayoutPath(selected);
         }
 
@@ -880,6 +963,7 @@ namespace LiveSplit.View
             {
                 return;
             }
+
             SaveLayoutPath(layoutPath);
         }
 
@@ -906,7 +990,9 @@ namespace LiveSplit.View
                 SegmentTimeList.Add(splitTime - previousTime);
 
                 if (splitTime != null)
+                {
                     previousTime = splitTime.Value;
+                }
             }
         }
 
@@ -923,7 +1009,9 @@ namespace LiveSplit.View
                 curSegment.PersonalBestSplitTime = time;
 
                 if (curSegTime != null)
+                {
                     previousTime = curSegment.PersonalBestSplitTime[SelectedMethod].Value;
+                }
             }
         }
 
@@ -934,7 +1022,10 @@ namespace LiveSplit.View
 
             var maxIndex = Run.AttemptHistory.Select(x => x.Index).DefaultIfEmpty(0).Max();
             for (var x = Run.GetMinSegmentHistoryIndex(); x <= maxIndex; x++)
-                newSegment.SegmentHistory.Add(x, default(Time));
+            {
+                newSegment.SegmentHistory.Add(x, default);
+            }
+
             SegmentList.Insert(runGrid.CurrentRow.Index, newSegment);
             runGrid.ClearSelection();
             runGrid.CurrentCell = runGrid.Rows[runGrid.CurrentRow.Index - 1].Cells[runGrid.CurrentCell.ColumnIndex];
@@ -949,10 +1040,16 @@ namespace LiveSplit.View
         {
             var newSegment = new Segment("");
             if (runGrid.CurrentRow.Index + 1 < Run.Count)
+            {
                 Run.ImportBestSegment(runGrid.CurrentRow.Index + 1);
+            }
+
             var maxIndex = Run.AttemptHistory.Select(x => x.Index).DefaultIfEmpty(0).Max();
             for (var x = Run.GetMinSegmentHistoryIndex(); x <= maxIndex; x++)
-                newSegment.SegmentHistory.Add(x, default(Time));
+            {
+                newSegment.SegmentHistory.Add(x, default);
+            }
+
             SegmentList.Insert(runGrid.CurrentRow.Index + 1, newSegment);
             runGrid.ClearSelection();
             runGrid.CurrentCell = runGrid.Rows[runGrid.CurrentRow.Index + 1].Cells[runGrid.CurrentCell.ColumnIndex];
@@ -972,7 +1069,9 @@ namespace LiveSplit.View
                     var selectedCell = selectedObject;
 
                     if (selectedCell.RowIndex >= Run.Count || selectedCell.RowIndex < 0)
+                    {
                         continue;
+                    }
 
                     if (selectedCell.ColumnIndex == SEGMENTNAMEINDEX)
                     {
@@ -982,7 +1081,10 @@ namespace LiveSplit.View
                     else if (selectedCell.ColumnIndex == ICONINDEX)
                     {
                         if (Run[selectedCell.RowIndex].Icon != null)
+                        {
                             ImagesToDispose.Add(Run[selectedCell.RowIndex].Icon);
+                        }
+
                         Run[selectedCell.RowIndex].Icon = null;
                         RaiseRunEdited();
                     }
@@ -1011,10 +1113,12 @@ namespace LiveSplit.View
                             time[SelectedMethod] = null;
                             Run[selectedCell.RowIndex].Comparisons[selectedCell.OwningColumn.Name] = time;
                         }
+
                         Fix();
                         TimesModified();
                     }
                 }
+
                 runGrid.Invalidate();
             }
 
@@ -1048,11 +1152,18 @@ namespace LiveSplit.View
                             if (runGrid.ColumnCount - 1 >= iCol)
                             {
                                 if (iCol == SEGMENTTIMEINDEX)
+                                {
                                     segmentsChanged = true;
+                                }
                                 else if (iCol == SPLITTIMEINDEX)
+                                {
                                     splitsChanged = true;
+                                }
+
                                 if (iCol != SEGMENTNAMEINDEX)
+                                {
                                     shouldFix = true;
+                                }
 
                                 var cell = runGrid.Rows[iRow].Cells[iCol];
                                 var parsingResults = ParseCell(valuesInRow[iCol - c], iRow, iCol, false);
@@ -1068,7 +1179,10 @@ namespace LiveSplit.View
                     if (shouldFix)
                     {
                         if (segmentsChanged && !splitsChanged)
+                        {
                             FixSplitsFromSegments();
+                        }
+
                         Fix();
                     }
                 }
@@ -1083,7 +1197,10 @@ namespace LiveSplit.View
                 var selectedIndex = selectedCell.RowIndex;
 
                 if (Run.Count <= 1 || selectedIndex >= Run.Count || selectedIndex < 0)
+                {
                     continue;
+                }
+
                 FixAfterDeletion(selectedIndex);
                 if (selectedIndex == Run.Count - 1 && selectedIndex == runGrid.CurrentRow.Index)
                 {
@@ -1091,8 +1208,12 @@ namespace LiveSplit.View
                     runGrid.CurrentCell = runGrid.Rows[runGrid.CurrentRow.Index - 1].Cells[runGrid.CurrentCell.ColumnIndex];
                     runGrid.CurrentCell.Selected = true;
                 }
+
                 if (Run[selectedIndex].Icon != null)
+                {
                     ImagesToDispose.Add(Run[selectedIndex].Icon);
+                }
+
                 SegmentList.RemoveAt(selectedIndex);
             }
 
@@ -1111,10 +1232,8 @@ namespace LiveSplit.View
             for (var runIndex = Run.GetMinSegmentHistoryIndex(); runIndex <= maxIndex; runIndex++)
             {
                 //Remove both segment history elements if one of them has a null time and the other has has a non null time
-                Time firstHistory;
-                Time secondHistory;
-                var firstExists = firstSegment.SegmentHistory.TryGetValue(runIndex, out firstHistory);
-                var secondExists = secondSegment.SegmentHistory.TryGetValue(runIndex, out secondHistory);
+                var firstExists = firstSegment.SegmentHistory.TryGetValue(runIndex, out var firstHistory);
+                var secondExists = secondSegment.SegmentHistory.TryGetValue(runIndex, out var secondHistory);
 
                 if (firstExists && secondExists
                     && (firstHistory[TimingMethod.RealTime].HasValue != secondHistory[TimingMethod.RealTime].HasValue
@@ -1159,11 +1278,13 @@ namespace LiveSplit.View
                 {
                     curIndex = index + 1;
                     //If a history element isn't there in the segment that's deleted, remove it from the next segment's history as well
-                    Time segmentHistoryElement;
-                    if (!Run[index].SegmentHistory.TryGetValue(runIndex, out segmentHistoryElement))
+                    if (!Run[index].SegmentHistory.TryGetValue(runIndex, out var segmentHistoryElement))
                     {
                         if (Run[curIndex].SegmentHistory.ContainsKey(runIndex))
+                        {
                             Run[curIndex].SegmentHistory.Remove(runIndex);
+                        }
+
                         continue;
                     }
 
@@ -1171,13 +1292,13 @@ namespace LiveSplit.View
                     while (curSegment != null && curIndex < Run.Count)
                     {
                         //Add the removed segment's history times to the next non null times
-                        Time segment;
-                        if (Run[curIndex].SegmentHistory.TryGetValue(runIndex, out segment) && segment[method] != null)
+                        if (Run[curIndex].SegmentHistory.TryGetValue(runIndex, out var segment) && segment[method] != null)
                         {
                             segment[method] = curSegment + segment[method];
                             Run[curIndex].SegmentHistory[runIndex] = segment;
                             break;
                         }
+
                         curIndex++;
                     }
                 }
@@ -1190,8 +1311,11 @@ namespace LiveSplit.View
                 foreach (var history in Run[curIndex].SegmentHistory)
                 {
                     if (history.Value[method] < minBestSegment)
+                    {
                         minBestSegment = history.Value[method];
+                    }
                 }
+
                 var newTime = Run[curIndex].BestSegmentTime;
                 newTime[method] = minBestSegment;
                 Run[curIndex].BestSegmentTime = newTime;
@@ -1206,6 +1330,7 @@ namespace LiveSplit.View
                 Run.Metadata.RunID = null;
                 PreviousPersonalBestTime = Run.Last().PersonalBestSplitTime;
             }
+
             RaiseRunEdited();
         }
 
@@ -1269,6 +1394,7 @@ namespace LiveSplit.View
             {
                 Log.Error(ex);
             }
+
             MessageBox.Show("Could not download the icon of the game!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
@@ -1304,6 +1430,7 @@ namespace LiveSplit.View
             {
                 Log.Error(ex);
             }
+
             MessageBox.Show("Could not download the box art of the game!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
@@ -1349,17 +1476,22 @@ namespace LiveSplit.View
             {
                 runGrid.Columns.RemoveAt(CUSTOMCOMPARISONSINDEX);
             }
+
             foreach (var comparison in Run.CustomComparisons)
             {
                 if (comparison != Model.Run.PersonalBestComparisonName)
+                {
                     AddComparisonColumn(comparison);
+                }
             }
         }
 
         private void AddComparisonColumn(string name)
         {
-            var column = new DataGridViewTextBoxColumn();
-            column.Name = name;
+            var column = new DataGridViewTextBoxColumn
+            {
+                Name = name
+            };
             column.Width = Math.Max(100, column.GetPreferredWidth(DataGridViewAutoSizeColumnMode.ColumnHeader, true));
             column.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
             column.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
@@ -1396,32 +1528,43 @@ namespace LiveSplit.View
                         column.Name = newName;
                         column.Width = Math.Max(100, column.GetPreferredWidth(DataGridViewAutoSizeColumnMode.ColumnHeader, true));
                         if (CurrentState.CurrentComparison == name)
+                        {
                             CurrentState.CurrentComparison = newName;
+                        }
+
                         Run.CustomComparisons[Run.CustomComparisons.IndexOf(name)] = newName;
                         foreach (var segment in Run)
                         {
                             segment.Comparisons[newName] = segment.Comparisons[name];
                             segment.Comparisons.Remove(name);
                         }
-                        var args = new RenameEventArgs();
-                        args.OldName = name;
-                        args.NewName = newName;
+
+                        var args = new RenameEventArgs
+                        {
+                            OldName = name,
+                            NewName = newName
+                        };
                         ComparisonRenamed(this, args);
                     }
                     else
                     {
                         var result = MessageBox.Show(this, "A Comparison name cannot start with [Race].", "Invalid Comparison Name", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
                         if (result == DialogResult.Retry)
+                        {
                             RenameComparison(column);
+                        }
                     }
                 }
                 else if (newName != name)
                 {
                     var result = MessageBox.Show(this, "A Comparison with this name already exists.", "Comparison Already Exists", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
                     if (result == DialogResult.Retry)
+                    {
                         RenameComparison(column);
+                    }
                 }
             }
+
             RaiseRunEdited();
         }
 
@@ -1432,15 +1575,22 @@ namespace LiveSplit.View
             Run.CustomComparisons.Remove(name);
 
             if (CurrentState.CurrentComparison == name)
+            {
                 CurrentState.CurrentComparison = Model.Run.PersonalBestComparisonName;
+            }
 
-            var args = new RenameEventArgs();
-            args.OldName = name;
-            args.NewName = "Current Comparison";
+            var args = new RenameEventArgs
+            {
+                OldName = name,
+                NewName = "Current Comparison"
+            };
             ComparisonRenamed(this, args);
 
             foreach (var segment in Run)
+            {
                 segment.Comparisons.Remove(name);
+            }
+
             RaiseRunEdited();
         }
 
@@ -1461,14 +1611,18 @@ namespace LiveSplit.View
                     {
                         result = MessageBox.Show(this, "A Comparison name cannot start with [Race].", "Invalid Comparison Name", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
                         if (result == DialogResult.Retry)
+                        {
                             btnAddComparison_Click(sender, e);
+                        }
                     }
                 }
                 else
                 {
                     result = MessageBox.Show(this, "A Comparison with this name already exists.", "Comparison Already Exists", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
                     if (result == DialogResult.Retry)
+                    {
                         btnAddComparison_Click(sender, e);
+                    }
                 }
             }
         }
@@ -1534,6 +1688,7 @@ namespace LiveSplit.View
                 Run.AutoSplitter.Activate(CurrentState);
                 SetAutoSplitterSettings();
             }
+
             RefreshAutoSplittingUI();
         }
 
@@ -1542,7 +1697,9 @@ namespace LiveSplit.View
             if (Run.AutoSplitter.IsActivated
             && Run.AutoSplitterSettings != null
             && Run.AutoSplitterSettings.GetAttribute("gameName") == cbxGameName.Text)
+            {
                 Run.AutoSplitter.Component.SetSettings(Run.AutoSplitterSettings);
+            }
         }
 
         private void btnSettings_Click(object sender, EventArgs e)
@@ -1663,7 +1820,9 @@ namespace LiveSplit.View
         {
             var name = importer.ImportAsComparison(Run, this);
             if (name != null)
+            {
                 AddComparisonColumn(name);
+            }
         }
 
         private void btnOther_Click(object sender, EventArgs e)
@@ -1694,40 +1853,45 @@ namespace LiveSplit.View
             var alwaysCancel = false;
             var pastResponses = new Dictionary<string, bool>();
             var userWasPrompted = false;
-            SumOfBest.CleanUpCallback callback = parameters =>
+            bool callback(SumOfBest.CleanUpCallbackParameters parameters)
+            {
+                userWasPrompted = true;
+                if (!alwaysCancel)
                 {
-                    userWasPrompted = true;
-                    if (!alwaysCancel)
+                    var formatter = new ShortTimeFormatter();
+                    var messageText = formatter.Format(parameters.timeBetween) + " between "
+                        + (parameters.startingSegment != null ? parameters.startingSegment.Name : "the start of the run") + " and " + parameters.endingSegment.Name
+                        + (parameters.combinedSumOfBest != null ? ", which is faster than the Combined Best Segments of " + formatter.Format(parameters.combinedSumOfBest) : "");
+                    if (parameters.attempt.Ended.HasValue)
                     {
-                        var formatter = new ShortTimeFormatter();
-                        var messageText = formatter.Format(parameters.timeBetween) + " between "
-                            + (parameters.startingSegment != null ? parameters.startingSegment.Name : "the start of the run") + " and " + parameters.endingSegment.Name
-                            + (parameters.combinedSumOfBest != null ? ", which is faster than the Combined Best Segments of " + formatter.Format(parameters.combinedSumOfBest) : "");
-                        if (parameters.attempt.Ended.HasValue)
+                        messageText += " in a run on " + parameters.attempt.Ended.Value.Time.ToLocalTime().ToString("M/d/yyyy");
+                    }
+
+                    if (!pastResponses.ContainsKey(messageText))
+                    {
+                        var result = MessageBox.Show(this, "You had a " + (parameters.method == TimingMethod.RealTime ? "Real Time" : "Game Time") + " segment time of " + messageText + ". Do you think that this segment time is inaccurate and should be removed?", "Remove Time From Segment History?", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                        if (result == System.Windows.Forms.DialogResult.Yes)
                         {
-                            messageText += " in a run on " + parameters.attempt.Ended.Value.Time.ToLocalTime().ToString("M/d/yyyy");
+                            pastResponses.Add(messageText, true);
+                            return true;
+                        }
+                        else if (result == System.Windows.Forms.DialogResult.No)
+                        {
+                            pastResponses.Add(messageText, false);
+                            return false;
                         }
 
-                        if (!pastResponses.ContainsKey(messageText))
-                        {
-                            var result = MessageBox.Show(this, "You had a " + (parameters.method == TimingMethod.RealTime ? "Real Time" : "Game Time") + " segment time of " + messageText + ". Do you think that this segment time is inaccurate and should be removed?", "Remove Time From Segment History?", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-                            if (result == System.Windows.Forms.DialogResult.Yes)
-                            {
-                                pastResponses.Add(messageText, true);
-                                return true;
-                            }
-                            else if (result == System.Windows.Forms.DialogResult.No)
-                            {
-                                pastResponses.Add(messageText, false);
-                                return false;
-                            }
-                            alwaysCancel = true;
-                        }
-                        else
-                            return pastResponses[messageText];
+                        alwaysCancel = true;
                     }
-                    return false;
-                };
+                    else
+                    {
+                        return pastResponses[messageText];
+                    }
+                }
+
+                return false;
+            }
+
             SumOfBest.Clean(Run, callback);
             RaiseRunEdited();
             if (!userWasPrompted)
@@ -1752,8 +1916,11 @@ namespace LiveSplit.View
             foreach (Control childControl in control.Controls)
             {
                 if (childControl is Label || childControl is TableLayoutPanel || childControl is PictureBox || childControl is FlowLayoutPanel)
+                {
                     SetClickEvents(childControl);
+                }
             }
+
             control.Click += ClickControl;
         }
 
@@ -1794,20 +1961,15 @@ namespace LiveSplit.View
 
     public class CustomAutoCompleteComboBox : ComboBox
     {
-        private IList<string> _autoCompleteSource = null;
         private ToolStripDropDown _dropDown = null;
         private ListBox _box = null;
-        private Form form;
-        private SemaphoreSlim refreshDropDown;
+        private readonly Form form;
+        private readonly SemaphoreSlim refreshDropDown;
         private string currentText = "";
         private string previousText = "";
         private bool taskCanceled = false;
 
-        public IList<string> MyAutoCompleteSource
-        {
-            get { return _autoCompleteSource; }
-            set { _autoCompleteSource = value; }
-        }
+        public IList<string> MyAutoCompleteSource { get; set; } = null;
 
         public Func<string, string[]> GetAllItemsForText { get; set; }
 
@@ -1834,7 +1996,9 @@ namespace LiveSplit.View
                     {
                         refreshDropDown.Wait();
                         if (taskCanceled || IsDisposed)
+                        {
                             return;
+                        }
 
                         var text = currentText;
                         var legalStrings = GetAllItemsForText(text);
@@ -1879,13 +2043,17 @@ namespace LiveSplit.View
         {
             base.OnLostFocus(e);
             if (!_dropDown.Focused)
+            {
                 CloseDropDown();
+            }
         }
 
         private void TryReleaseRefreshDropDown()
         {
             if (refreshDropDown.CurrentCount == 0)
+            {
                 refreshDropDown.Release();
+            }
         }
 
         public void CloseDropDown()
@@ -1898,11 +2066,18 @@ namespace LiveSplit.View
             if (e.KeyCode == Keys.Down)
             {
                 if (_box.Items.Count > 0)
+                {
                     SelectedItem = _box.Items[0];
+                }
+
                 CloseDropDown();
             }
+
             if (e.KeyCode == Keys.Down || e.KeyCode == Keys.Up)
+            {
                 e.SuppressKeyPress = true;
+            }
+
             base.OnKeyDown(e);
         }
 
@@ -1910,14 +2085,21 @@ namespace LiveSplit.View
         {
             base.OnHandleCreated(e);
             _dropDown = new ToolStripDropDown();
-            _box = new ListBox();
-            _box.Width = Width;
+            _box = new ListBox
+            {
+                Width = Width
+            };
             _box.Click += (sender, arg) =>
-            { Text = _box.SelectedItem as string; _dropDown.Close(); };
-            ToolStripControlHost host = new ToolStripControlHost(_box);
-            host.AutoSize = false;
-            host.Margin = Padding.Empty;
-            host.Padding = Padding.Empty;
+            {
+                Text = _box.SelectedItem as string;
+                _dropDown.Close();
+            };
+            ToolStripControlHost host = new ToolStripControlHost(_box)
+            {
+                AutoSize = false,
+                Margin = Padding.Empty,
+                Padding = Padding.Empty
+            };
             _dropDown.Items.Add(host);
             _dropDown.Height = _box.Height;
             _dropDown.AutoSize = false;

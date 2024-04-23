@@ -4,7 +4,7 @@ namespace LiveSplit.Model
 {
     public interface IRaceInfo
     {
-        int Finishes { get;  }
+        int Finishes { get; }
         int Forfeits { get; }
         string GameId { get; }
         string GameName { get; }

@@ -1,8 +1,10 @@
-﻿using Codaxy.Xlio;
-using LiveSplit.Model.Comparisons;
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
+
+using Codaxy.Xlio;
+
+using LiveSplit.Model.Comparisons;
 
 namespace LiveSplit.Model.RunSavers
 {
@@ -92,7 +94,9 @@ namespace LiveSplit.Model.RunSavers
                 startedCell.Style.Format = "dd mmm yy hh:mm:ss";
                 startedCell.Style.Border.Left = new BorderEdge { Style = BorderStyle.Thin, Color = Color.White };
                 if (attempt.Started.HasValue)
+                {
                     startedCell.Value = attempt.Started.Value.Time;
+                }
 
                 var endedCell = row[endedColumn];
                 endedCell.Style.Fill = CellFill.Solid(
@@ -103,7 +107,9 @@ namespace LiveSplit.Model.RunSavers
                 endedCell.Style.Format = "dd mmm yy hh:mm:ss";
                 endedCell.Style.Border.Left = new BorderEdge { Style = BorderStyle.Thin, Color = Color.White };
                 if (attempt.Ended.HasValue)
+                {
                     endedCell.Value = attempt.Ended.Value.Time;
+                }
 
                 var timeCell = row[timeColumn];
 
@@ -129,7 +135,6 @@ namespace LiveSplit.Model.RunSavers
                 timeCell.Style.Alignment.Horizontal = HorizontalAlignment.Right;
                 timeCell.Style.Format = "[HH]:MM:SS.00";
                 timeCell.Style.Border.Left = new BorderEdge { Style = BorderStyle.Thin, Color = Color.White };
-
 
                 ++rowIndex;
             }
@@ -177,12 +182,13 @@ namespace LiveSplit.Model.RunSavers
                 foreach (var segment in run)
                 {
                     var cell = row[columnIndex];
-                    Time segmentHistoryElement;
-                    if (segment.SegmentHistory.TryGetValue(attempt.Index, out segmentHistoryElement))
+                    if (segment.SegmentHistory.TryGetValue(attempt.Index, out var segmentHistoryElement))
                     {
                         var time = segmentHistoryElement[method];
                         if (time.HasValue)
+                        {
                             cell.Value = time.Value.TotalDays;
+                        }
                     }
 
                     cell.Style.Alignment.Horizontal = HorizontalAlignment.Right;
@@ -247,7 +253,9 @@ namespace LiveSplit.Model.RunSavers
                     var cell = row[columnIndex];
                     var time = segment.Comparisons[comparisonName][method];
                     if (time.HasValue)
+                    {
                         cell.Value = time.Value.TotalDays;
+                    }
 
                     cell.Style.Alignment.Horizontal = HorizontalAlignment.Right;
                     cell.Style.Format = "[HH]:MM:SS.00";
@@ -268,7 +276,9 @@ namespace LiveSplit.Model.RunSavers
                     }
 
                     if (comparisonName == Run.PersonalBestComparisonName && time.HasValue)
+                    {
                         lastTime = time.Value;
+                    }
 
                     columnIndex++;
                 }

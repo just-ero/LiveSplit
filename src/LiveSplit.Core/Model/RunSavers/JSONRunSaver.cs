@@ -1,9 +1,10 @@
-﻿using LiveSplit.Web;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+
+using LiveSplit.Web;
 
 namespace LiveSplit.Model.RunSavers
 {
@@ -46,7 +47,7 @@ namespace LiveSplit.Model.RunSavers
 
             var segments = new List<DynamicJsonObject>();
             document.segments = segments;
-            foreach(var segment in run)
+            foreach (var segment in run)
             {
                 dynamic segmentElement = new DynamicJsonObject();
                 segmentElement.name = segment.Name;
@@ -54,7 +55,10 @@ namespace LiveSplit.Model.RunSavers
 
                 dynamic splitTimes = new DynamicJsonObject();
                 foreach (var comparison in run.CustomComparisons)
+                {
                     splitTimes.Properties.Add(comparison, segment.Comparisons[comparison].ToJson());
+                }
+
                 segmentElement.splitTimes = splitTimes;
 
                 segments.Add(segmentElement);

@@ -1,11 +1,13 @@
 ﻿using System;
-using System.IO;
-using System.Xml;
-using System.Linq;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
-using Xunit;
+using System.Xml;
+
 using LiveSplit.Model;
+
+using Xunit;
 
 namespace LiveSplit.Tests.AutoSplitterTests
 {

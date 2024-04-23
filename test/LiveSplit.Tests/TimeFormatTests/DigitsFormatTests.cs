@@ -1,6 +1,8 @@
 ﻿using System;
-using Xunit;
+
 using LiveSplit.TimeFormatters;
+
+using Xunit;
 
 namespace LiveSplit.Tests.TimeFormatTests
 {
@@ -55,7 +57,7 @@ namespace LiveSplit.Tests.TimeFormatTests
         [InlineData("15:24:23", DigitsFormat.DoubleDigitMinutes, "15:24:23")]
         [InlineData("21:15:45", DigitsFormat.SingleDigitHours, "21:15:45")]
         [InlineData("22:56:51", DigitsFormat.DoubleDigitHours, "22:56:51")]
-        
+
         [InlineData("1:22:51:12", DigitsFormat.SingleDigitSeconds, "46:51:12")]
         [InlineData("1:23:42:34", DigitsFormat.DoubleDigitSeconds, "47:42:34")]
         [InlineData("1:14:33:56", DigitsFormat.SingleDigitMinutes, "38:33:56")]

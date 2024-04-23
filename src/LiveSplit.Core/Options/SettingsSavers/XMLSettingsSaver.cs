@@ -1,6 +1,8 @@
-﻿using LiveSplit.Model;
-using System;
+﻿using System;
 using System.Xml;
+
+using LiveSplit.Model;
+
 using static LiveSplit.UI.SettingsHelper;
 
 namespace LiveSplit.Options.SettingsSavers
@@ -29,6 +31,7 @@ namespace LiveSplit.Options.SettingsSavers
                 hotkeyProfileElement.Attributes.Append(name);
                 hotkeyProfiles.AppendChild(hotkeyProfileElement);
             }
+
             parent.AppendChild(hotkeyProfiles);
 
             CreateSetting(document, parent, "WarnOnReset", settings.WarnOnReset);
@@ -45,12 +48,14 @@ namespace LiveSplit.Options.SettingsSavers
                 splitsFileElement.SetAttribute("lastHotkeyProfile", splitsFile.LastHotkeyProfile.ToString());
                 recentSplits.AppendChild(splitsFileElement);
             }
+
             parent.AppendChild(recentSplits);
             var recentLayouts = document.CreateElement("RecentLayouts");
             foreach (var layout in settings.RecentLayouts)
             {
-                CreateSetting(document, recentLayouts, "LayoutPath", layout); 
+                CreateSetting(document, recentLayouts, "LayoutPath", layout);
             }
+
             parent.AppendChild(recentLayouts);
 
             CreateSetting(document, parent, "LastComparison", settings.LastComparison);
@@ -68,14 +73,16 @@ namespace LiveSplit.Options.SettingsSavers
                 generatorElement.InnerText = generator.Value.ToString();
                 generatorStates.AppendChild(generatorElement);
             }
+
             parent.AppendChild(generatorStates);
 
             var raceProviderPlugins = document.CreateElement("RaceProviderPlugins");
             foreach (var raceProvider in settings.RaceProvider)
             {
-                var raceProviderElement = raceProvider.ToXml(document);               
+                var raceProviderElement = raceProvider.ToXml(document);
                 raceProviderPlugins.AppendChild(raceProviderElement);
             }
+
             parent.AppendChild(raceProviderPlugins);
 
             var autoSplittersActive = document.CreateElement("ActiveAutoSplitters");
@@ -83,6 +90,7 @@ namespace LiveSplit.Options.SettingsSavers
             {
                 CreateSetting(document, autoSplittersActive, "AutoSplitter", splitter);
             }
+
             parent.AppendChild(autoSplittersActive);
 
             AddDriftToSettings(document, parent);
@@ -99,6 +107,4 @@ namespace LiveSplit.Options.SettingsSavers
             parent.AppendChild(element);
         }
     }
-
-    
 }

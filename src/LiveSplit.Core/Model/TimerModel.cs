@@ -1,6 +1,7 @@
-﻿using LiveSplit.Model.Input;
-using System;
+﻿using System;
 using System.Linq;
+
+using LiveSplit.Model.Input;
 
 namespace LiveSplit.Model
 {
@@ -48,11 +49,14 @@ namespace LiveSplit.Model
                 CurrentState.Run.AttemptCount++;
                 CurrentState.Run.HasChanged = true;
 
-                OnStart?.Invoke(this,null);
+                OnStart?.Invoke(this, null);
             }
         }
 
-        public void InitializeGameTime() => CurrentState.IsGameTimeInitialized = true;
+        public void InitializeGameTime()
+        {
+            CurrentState.IsGameTimeInitialized = true;
+        }
 
         public void Split()
         {
@@ -65,6 +69,7 @@ namespace LiveSplit.Model
                     CurrentState.CurrentPhase = TimerPhase.Ended;
                     CurrentState.AttemptEnded = TimeStamp.CurrentDateTime;
                 }
+
                 CurrentState.Run.HasChanged = true;
 
                 OnSplit?.Invoke(this, null);
@@ -77,7 +82,7 @@ namespace LiveSplit.Model
                 || CurrentState.CurrentPhase == TimerPhase.Paused)
                 && CurrentState.CurrentSplitIndex < CurrentState.Run.Count - 1)
             {
-                CurrentState.CurrentSplit.SplitTime = default(Time);
+                CurrentState.CurrentSplit.SplitTime = default;
                 CurrentState.CurrentSplitIndex++;
                 CurrentState.Run.HasChanged = true;
 
@@ -91,9 +96,12 @@ namespace LiveSplit.Model
                 && CurrentState.CurrentSplitIndex > 0)
             {
                 if (CurrentState.CurrentPhase == TimerPhase.Ended)
+                {
                     CurrentState.CurrentPhase = TimerPhase.Running;
+                }
+
                 CurrentState.CurrentSplitIndex--;
-                CurrentState.CurrentSplit.SplitTime = default(Time);
+                CurrentState.CurrentSplit.SplitTime = default;
                 CurrentState.Run.HasChanged = true;
 
                 OnUndoSplit?.Invoke(this, null);
@@ -117,7 +125,10 @@ namespace LiveSplit.Model
         private void ResetState(bool updateTimes)
         {
             if (CurrentState.CurrentPhase != TimerPhase.Ended)
+            {
                 CurrentState.AttemptEnded = TimeStamp.CurrentDateTime;
+            }
+
             CurrentState.IsGameTimePaused = false;
             CurrentState.LoadingTimes = TimeSpan.Zero;
 
@@ -136,7 +147,7 @@ namespace LiveSplit.Model
             //Reset Splits
             foreach (var split in CurrentState.Run)
             {
-                split.SplitTime = default(Time);
+                split.SplitTime = default;
             }
 
             OnReset?.Invoke(this, oldPhase);
@@ -159,37 +170,43 @@ namespace LiveSplit.Model
                 OnResume?.Invoke(this, null);
             }
             else if (CurrentState.CurrentPhase == TimerPhase.NotRunning)
-                 Start(); //fuck abahbob                
+            {
+                Start(); //fuck abahbob                
+            }
         }
 
         public void UndoAllPauses()
         {
             if (CurrentState.CurrentPhase == TimerPhase.Paused)
+            {
                 Pause();
+            }
 
             var pauseTime = CurrentState.PauseTime ?? TimeSpan.Zero;
             if (CurrentState.CurrentPhase == TimerPhase.Ended)
+            {
                 CurrentState.Run.Last().SplitTime += new Time(pauseTime, pauseTime);
+            }
 
-            CurrentState.AdjustedStartTime = CurrentState.StartTimeWithOffset;    
+            CurrentState.AdjustedStartTime = CurrentState.StartTimeWithOffset;
             OnUndoAllPauses?.Invoke(this, null);
         }
 
         public void SwitchComparisonNext()
         {
             var comparisons = CurrentState.Run.Comparisons.ToList();
-            CurrentState.CurrentComparison = 
-                comparisons.ElementAt((comparisons.IndexOf(CurrentState.CurrentComparison) + 1) 
-                % (comparisons.Count));
+            CurrentState.CurrentComparison =
+                comparisons.ElementAt((comparisons.IndexOf(CurrentState.CurrentComparison) + 1)
+                % comparisons.Count);
             OnSwitchComparisonNext?.Invoke(this, null);
         }
 
         public void SwitchComparisonPrevious()
         {
             var comparisons = CurrentState.Run.Comparisons.ToList();
-            CurrentState.CurrentComparison = 
+            CurrentState.CurrentComparison =
                 comparisons.ElementAt((comparisons.IndexOf(CurrentState.CurrentComparison) - 1 + comparisons.Count())
-                % (comparisons.Count));
+                % comparisons.Count);
             OnSwitchComparisonPrevious?.Invoke(this, null);
         }
 
@@ -207,7 +224,10 @@ namespace LiveSplit.Model
         {
             Time time = new Time();
             if (CurrentState.CurrentPhase == TimerPhase.Ended)
+            {
                 time = CurrentState.CurrentTime;
+            }
+
             var maxIndex = CurrentState.Run.AttemptHistory.DefaultIfEmpty().Max(x => x.Index);
             var newIndex = Math.Max(0, maxIndex + 1);
             var newAttempt = new Attempt(newIndex, time, CurrentState.AttemptStarted, CurrentState.AttemptEnded, CurrentState.PauseTime);
@@ -228,15 +248,21 @@ namespace LiveSplit.Model
                     currentSegmentRTA = split.SplitTime.RealTime - previousSplitTimeRTA;
                     previousSplitTimeRTA = split.SplitTime.RealTime;
                     if (split.BestSegmentTime.RealTime == null || currentSegmentRTA < split.BestSegmentTime.RealTime)
+                    {
                         newBestSegment.RealTime = currentSegmentRTA;
+                    }
                 }
+
                 if (split.SplitTime.GameTime != null)
                 {
                     currentSegmentGameTime = split.SplitTime.GameTime - previousSplitTimeGameTime;
                     previousSplitTimeGameTime = split.SplitTime.GameTime;
                     if (split.BestSegmentTime.GameTime == null || currentSegmentGameTime < split.BestSegmentTime.GameTime)
+                    {
                         newBestSegment.GameTime = currentSegmentGameTime;
+                    }
                 }
+
                 split.BestSegmentTime = newBestSegment;
             }
         }
@@ -245,7 +271,9 @@ namespace LiveSplit.Model
         {
             var curMethod = CurrentState.CurrentTimingMethod;
             if ((CurrentState.Run.Last().SplitTime[curMethod] != null && CurrentState.Run.Last().PersonalBestSplitTime[curMethod] == null) || CurrentState.Run.Last().SplitTime[curMethod] < CurrentState.Run.Last().PersonalBestSplitTime[curMethod])
+            {
                 SetRunAsPB();
+            }
         }
 
         private void UpdateSegmentHistory()
@@ -254,14 +282,21 @@ namespace LiveSplit.Model
             TimeSpan? splitTimeGameTime = TimeSpan.Zero;
             foreach (var split in CurrentState.Run.Take(CurrentState.CurrentSplitIndex))
             {
-                var newTime = new Time();
-                newTime.RealTime = split.SplitTime.RealTime - splitTimeRTA;
-                newTime.GameTime = split.SplitTime.GameTime - splitTimeGameTime;
+                var newTime = new Time
+                {
+                    RealTime = split.SplitTime.RealTime - splitTimeRTA,
+                    GameTime = split.SplitTime.GameTime - splitTimeGameTime
+                };
                 split.SegmentHistory.Add(CurrentState.Run.AttemptHistory.Last().Index, newTime);
                 if (split.SplitTime.RealTime.HasValue)
+                {
                     splitTimeRTA = split.SplitTime.RealTime;
+                }
+
                 if (split.SplitTime.GameTime.HasValue)
+                {
                     splitTimeGameTime = split.SplitTime.GameTime;
+                }
             }
         }
 
@@ -288,7 +323,10 @@ namespace LiveSplit.Model
             CurrentState.Run.ImportSegmentHistory();
             CurrentState.Run.FixSplits();
             foreach (var current in CurrentState.Run)
+            {
                 current.PersonalBestSplitTime = current.SplitTime;
+            }
+
             CurrentState.Run.Metadata.RunID = null;
         }
     }

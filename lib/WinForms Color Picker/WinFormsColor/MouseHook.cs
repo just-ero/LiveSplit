@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
@@ -15,14 +12,13 @@ namespace WinFormsColor
         {
             _hookID = SetHook(_proc);
 
-
         }
         public static void stop()
         {
             UnhookWindowsHookEx(_hookID);
         }
 
-        private static LowLevelMouseProc _proc = HookCallback;
+        private static readonly LowLevelMouseProc _proc = HookCallback;
         private static IntPtr _hookID = IntPtr.Zero;
 
         private static IntPtr SetHook(LowLevelMouseProc proc)
@@ -45,6 +41,7 @@ namespace WinFormsColor
                 MSLLHOOKSTRUCT hookStruct = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT));
                 MouseAction(null, new EventArgs());
             }
+
             return CallNextHookEx(_hookID, nCode, wParam, lParam);
         }
 
@@ -91,7 +88,6 @@ namespace WinFormsColor
 
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         private static extern IntPtr GetModuleHandle(string lpModuleName);
-
 
     }
 }

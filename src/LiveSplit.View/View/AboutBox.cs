@@ -1,22 +1,25 @@
-﻿using LiveSplit.Updates;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Forms;
 
+using LiveSplit.Updates;
+
 namespace LiveSplit.View
 {
-    partial class AboutBox : Form
+    internal partial class AboutBox : Form
     {
         public AboutBox()
         {
             InitializeComponent();
             lblVersion.Text = Git.Version ?? "Unknown Version";
             if (Git.Branch != null && Git.Branch != "master" && Git.Branch != "HEAD")
+            {
                 labelProductName.Text = string.Format("{0} ({1})", labelProductName.Text, Git.Branch);
+            }
         }
 
-#region Assembly Attribute Accessors
+        #region Assembly Attribute Accessors
 
         public string AssemblyTitle
         {
@@ -31,6 +34,7 @@ namespace LiveSplit.View
                         return titleAttribute.Title;
                     }
                 }
+
                 return System.IO.Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().CodeBase);
             }
         }
@@ -52,6 +56,7 @@ namespace LiveSplit.View
                 {
                     return "";
                 }
+
                 return ((AssemblyDescriptionAttribute)attributes[0]).Description;
             }
         }
@@ -65,6 +70,7 @@ namespace LiveSplit.View
                 {
                     return "";
                 }
+
                 return ((AssemblyProductAttribute)attributes[0]).Product;
             }
         }
@@ -78,6 +84,7 @@ namespace LiveSplit.View
                 {
                     return "";
                 }
+
                 return ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
             }
         }
@@ -91,10 +98,11 @@ namespace LiveSplit.View
                 {
                     return "";
                 }
+
                 return ((AssemblyCompanyAttribute)attributes[0]).Company;
             }
         }
-#endregion
+        #endregion
 
         private void tableLayoutPanel_Paint(object sender, PaintEventArgs e)
         {

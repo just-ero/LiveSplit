@@ -18,8 +18,24 @@ namespace CustomFontDialog
         private int minSize { get; set; }
         private int maxSize { get; set; }
 
-        public int MinSize { get { return minSize; } set { minSize = value; UpdateSizeOptions(); } }
-        public int MaxSize { get { return maxSize; } set { maxSize = value; UpdateSizeOptions(); } }
+        public int MinSize
+        {
+            get { return minSize; }
+            set
+            {
+                minSize = value;
+                UpdateSizeOptions();
+            }
+        }
+        public int MaxSize
+        {
+            get { return maxSize; }
+            set
+            {
+                maxSize = value;
+                UpdateSizeOptions();
+            }
+        }
 
         private Font originalFont { get; set; }
         public Font OriginalFont { get { return originalFont; } set { originalFont = Font = value; } }
@@ -71,6 +87,7 @@ namespace CustomFontDialog
                 chbBold.Enabled = false;
                 chbBold.Checked = true;
             }
+
             if (!italics)
             {
                 chbItalic.Enabled = false;
@@ -82,25 +99,30 @@ namespace CustomFontDialog
 
         private void lstSize_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if(lstSize.SelectedItem != null)
+            if (lstSize.SelectedItem != null)
+            {
                 txtSize.Text = lstSize.SelectedItem.ToString();
+            }
         }
 
         private void txtSize_TextChanged(object sender, EventArgs e)
         {
             if (lstSize.Items.Contains(txtSize.Text))
+            {
                 lstSize.SelectedItem = txtSize.Text;
+            }
             else
+            {
                 lstSize.ClearSelected();
-            
+            }
+
             UpdateSampleText();
         }
 
-        
         private void txtSize_KeyDown(object sender, KeyEventArgs e)
         {
             switch (e.KeyData)
-            {                   
+            {
                 case Keys.D0:
                 case Keys.D1:
                 case Keys.D2:
@@ -113,7 +135,7 @@ namespace CustomFontDialog
                 case Keys.D9:
                 case Keys.End:
                 case Keys.Enter:
-                case Keys.Home:                
+                case Keys.Home:
                 case Keys.Back:
                 case Keys.Delete:
                 case Keys.Escape:
@@ -127,13 +149,13 @@ namespace CustomFontDialog
                         e.SuppressKeyPress = true;
                         e.Handled = true;
                     }
+
                     break;
                 default:
                     e.SuppressKeyPress = true;
                     e.Handled = true;
                     break;
             }
-            
         }
 
         private void UpdateSampleText()
@@ -148,13 +170,19 @@ namespace CustomFontDialog
                 {
                     style = FontStyle.Bold;
                 }
+
                 if (chbItalic.Checked && family.IsStyleAvailable(FontStyle.Italic))
                 {
                     if (style == null)
+                    {
                         style = FontStyle.Italic;
+                    }
                     else
+                    {
                         style |= FontStyle.Italic;
+                    }
                 }
+
                 if (style == null && family.IsStyleAvailable(FontStyle.Regular))
                 {
                     style = FontStyle.Regular;
@@ -163,9 +191,14 @@ namespace CustomFontDialog
                 if (style.HasValue)
                 {
                     if (size < 1)
+                    {
                         size = 1;
+                    }
                     else if (size > float.MaxValue)
+                    {
                         size = float.MaxValue;
+                    }
+
                     lblSampleText.Font = new Font(family, size, style.Value, GraphicsUnit.Pixel);
 
                     TriggerFontChanged();
@@ -203,12 +236,14 @@ namespace CustomFontDialog
             "48",
             "72"};
 
-            this.lstSize.Items.Clear();
+            lstSize.Items.Clear();
             foreach (var size in sizes)
             {
                 int sizeNum = int.Parse((string)size);
                 if (sizeNum >= MinSize && sizeNum <= MaxSize)
-                    this.lstSize.Items.Add(size);
+                {
+                    lstSize.Items.Add(size);
+                }
             }
         }
 
@@ -223,7 +258,9 @@ namespace CustomFontDialog
         private void TriggerFontChanged()
         {
             if (FontChanged != null)
+            {
                 FontChanged(this, new FontChangedEventArgs() { NewFont = Font });
+            }
         }
     }
 }

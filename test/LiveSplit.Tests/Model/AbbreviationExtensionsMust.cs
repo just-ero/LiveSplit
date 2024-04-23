@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
-using Xunit;
+
 using LiveSplit.Model;
+
+using Xunit;
 
 namespace LiveSplit.Tests.Model
 {
@@ -21,10 +23,10 @@ namespace LiveSplit.Tests.Model
 
             yield return new object[] { "Elephant", new[] { "Elephant" } };
 
-            yield return new object[] { "Elephant (animal)", new[] { "Elephant (animal)", "Elephant" }  };
-            yield return new object[] { "  Elephant (animal)  ", new[] { "Elephant (animal)", "Elephant" }  };
-            yield return new object[] { "  Elephant  (animal)  ", new[] { "Elephant  (animal)", "Elephant" }  };
-            yield return new object[] { "  Elephant  (  animal  )  ", new[] { "Elephant  (  animal  )", "Elephant" }  };
+            yield return new object[] { "Elephant (animal)", new[] { "Elephant (animal)", "Elephant" } };
+            yield return new object[] { "  Elephant (animal)  ", new[] { "Elephant (animal)", "Elephant" } };
+            yield return new object[] { "  Elephant  (animal)  ", new[] { "Elephant  (animal)", "Elephant" } };
+            yield return new object[] { "  Elephant  (  animal  )  ", new[] { "Elephant  (  animal  )", "Elephant" } };
 
             yield return new object[] { "Elephant: animal", new[] { "Elephant: animal", "animal" } };
             yield return new object[] { "  Elephant: animal  ", new[] { "Elephant: animal", "animal" } };

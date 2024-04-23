@@ -1,13 +1,12 @@
-﻿using LiveSplit.Model;
-using LiveSplit.UI.Components;
-using LiveSplit.Web.Share;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using System.Timers;
+
+using LiveSplit.Model;
+using LiveSplit.UI.Components;
+using LiveSplit.Web.Share;
 
 namespace LiveSplit.Web.SRL
 {
@@ -43,26 +42,40 @@ namespace LiveSplit.Web.SRL
         {
             if (gameNames == null)
             {
-                Func<dynamic, string> map = x => x.name;
+                string map(dynamic x)
+                {
+                    return x.name;
+                }
+
                 gameNames = GetGameList().Select(map).ToList();
             }
+
             return gameNames;
         }
 
         public IEnumerable<string> GetCategories(string gameID)
         {
             if (string.IsNullOrEmpty(gameID))
+            {
                 return new string[0];
+            }
 
             return ((IEnumerable<dynamic>)JSON.FromUri(GetUri("goals/" + gameID + "?season=0")).goals).Select(x => (string)x.name);
         }
 
-        public string GetGameIDFromName (string name)
+        public string GetGameIDFromName(string name)
         {
-            Func<dynamic, bool> map = x => x.name == name;
+            bool map(dynamic x)
+            {
+                return x.name == name;
+            }
+
             var gameID = GetGameList().Where(map).FirstOrDefault();
             if (gameID != null)
+            {
                 return gameID.abbrev;
+            }
+
             return null;
         }
 
@@ -81,12 +94,14 @@ namespace LiveSplit.Web.SRL
         public override IEnumerable<IRaceInfo> GetRaces()
         {
             if (racesList == null)
+            {
                 RefreshRacesList();
+            }
 
             return racesList;
         }
 
-        void SpeedRunsLiveAPI_Elapsed(object sender, ElapsedEventArgs e)
+        private void SpeedRunsLiveAPI_Elapsed(object sender, ElapsedEventArgs e)
         {
             try
             {

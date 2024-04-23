@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace LiveSplit.TimeFormatters
+﻿namespace LiveSplit.TimeFormatters
 {
     public class AutomaticPrecisionTimeFormatter : GeneralTimeFormatter
     {
@@ -12,6 +10,5 @@ namespace LiveSplit.TimeFormatters
             AutomaticPrecision = true;
             NullFormat = NullFormat.ZeroWithAccuracy;
         }
-
     }
 }

@@ -1,6 +1,7 @@
-﻿using LiveSplit.UI;
+﻿using System.Windows.Forms;
+
+using LiveSplit.UI;
 using LiveSplit.View;
-using System.Windows.Forms;
 
 namespace LiveSplit.Model.RunImporters
 {
@@ -11,7 +12,10 @@ namespace LiveSplit.Model.RunImporters
             var dialog = new BrowseSpeedrunComDialog(false);
             var result = dialog.ShowDialog(form);
             if (result == DialogResult.OK)
+            {
                 return dialog.Run;
+            }
+
             return null;
         }
 
@@ -24,10 +28,12 @@ namespace LiveSplit.Model.RunImporters
             {
                 result = InputBox.Show(form, "Enter Comparison Name", "Name:", ref name);
             }
+
             if (result == DialogResult.OK)
             {
                 return run.AddComparisonWithNameInput(dialog.Run, name, form);
             }
+
             return null;
         }
     }

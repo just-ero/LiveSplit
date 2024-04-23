@@ -1,11 +1,8 @@
-﻿using LiveSplit.Model;
+﻿using System;
+
+using LiveSplit.Model;
 using LiveSplit.Options;
 using LiveSplit.UI.Components;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LiveSplit.Web.SRL
 {

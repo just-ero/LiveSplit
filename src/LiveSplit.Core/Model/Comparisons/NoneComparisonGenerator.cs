@@ -18,7 +18,7 @@ namespace LiveSplit.Model.Comparisons
         {
             foreach (var segment in Run)
             {
-                segment.Comparisons[Name] = default(Time);
+                segment.Comparisons[Name] = default;
             }
         }
     }

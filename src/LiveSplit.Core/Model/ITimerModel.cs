@@ -1,5 +1,6 @@
-﻿using LiveSplit.Model.Input;
-using System;
+﻿using System;
+
+using LiveSplit.Model.Input;
 
 namespace LiveSplit.Model
 {
@@ -19,7 +20,7 @@ namespace LiveSplit.Model
         event EventHandler OnScrollDown;
         event EventHandler OnSwitchComparisonPrevious;
         event EventHandler OnSwitchComparisonNext;
-        
+
         void Start();
         void InitializeGameTime();
         void Split();

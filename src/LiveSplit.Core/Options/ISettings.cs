@@ -1,9 +1,9 @@
-﻿using LiveSplit.Model;
+﻿using System;
+using System.Collections.Generic;
+
+using LiveSplit.Model;
 using LiveSplit.Model.Input;
 using LiveSplit.Web.SRL;
-using System;
-using System.Collections.Generic;
-using System.Xml;
 
 namespace LiveSplit.Options
 {
@@ -20,7 +20,7 @@ namespace LiveSplit.Options
         int ServerPort { get; set; }
         IRaceViewer RaceViewer { get; set; }
         IList<RaceProviderSettings> RaceProvider { get; set; }
-        
+
         IList<string> ActiveAutoSplitters { get; set; }
         IDictionary<string, bool> ComparisonGeneratorStates { get; set; }
 

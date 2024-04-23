@@ -1,8 +1,10 @@
-﻿using LiveSplit.Options;
-using SharpDX.DirectInput;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
+using LiveSplit.Options;
+
+using SharpDX.DirectInput;
 
 namespace LiveSplit.Model.Input
 {
@@ -30,7 +32,9 @@ namespace LiveSplit.Model.Input
         public override bool Equals(object obj)
         {
             if (obj is GamepadButton)
+            {
                 return this == (GamepadButton)obj;
+            }
 
             return base.Equals(obj);
         }
@@ -88,27 +92,35 @@ namespace LiveSplit.Model.Input
                     || button == JoystickOffset.Y
                     || button == JoystickOffset.Buttons0
                     || button == JoystickOffset.Buttons1)
+                {
                     return false;
+                }
 
                 if (button == JoystickOffset.Z)
+                {
                     return true;
+                }
             }
 
-            if (button == JoystickOffset.Z 
-                || button == JoystickOffset.X 
+            if (button == JoystickOffset.Z
+                || button == JoystickOffset.X
                 || button == JoystickOffset.Y
                 || button == JoystickOffset.RotationX
                 || button == JoystickOffset.RotationY
                 || button == JoystickOffset.RotationZ
                 || button == JoystickOffset.Sliders0
                 || button == JoystickOffset.Sliders1)
+            {
                 return value >= shortMaskMax || value <= shortMaskMin;
+            }
 
             if (button == JoystickOffset.PointOfViewControllers0
                 || button == JoystickOffset.PointOfViewControllers1
                 || button == JoystickOffset.PointOfViewControllers2
                 || button == JoystickOffset.PointOfViewControllers3)
+            {
                 return value != -1;
+            }
 
             return value != 0;
         }
@@ -129,7 +141,9 @@ namespace LiveSplit.Model.Input
                 }
 
                 if (button == JoystickOffset.Buttons2)
+                {
                     return "Middle";
+                }
             }
 
             if (button == JoystickOffset.Z
@@ -140,7 +154,9 @@ namespace LiveSplit.Model.Input
                || button == JoystickOffset.RotationZ
                || button == JoystickOffset.Sliders0
                || button == JoystickOffset.Sliders1)
+            {
                 return originalName + (value >= shortMaskMax ? '+' : '-');
+            }
 
             if (button == JoystickOffset.PointOfViewControllers0
                 || button == JoystickOffset.PointOfViewControllers1
@@ -148,32 +164,58 @@ namespace LiveSplit.Model.Input
                 || button == JoystickOffset.PointOfViewControllers3)
             {
                 if (button == JoystickOffset.PointOfViewControllers0)
+                {
                     originalName = "POV_0_";
+                }
                 else if (button == JoystickOffset.PointOfViewControllers1)
+                {
                     originalName = "POV_1_";
+                }
                 else if (button == JoystickOffset.PointOfViewControllers2)
+                {
                     originalName = "POV_2_";
+                }
                 else
+                {
                     originalName = "POV_3_";
+                }
 
                 if (value < 2250)
+                {
                     return originalName + "Up";
+                }
                 else if (value < 6750)
+                {
                     return originalName + "UpRight";
+                }
                 else if (value < 11250)
+                {
                     return originalName + "Right";
+                }
                 else if (value < 15750)
+                {
                     return originalName + "DownRight";
+                }
                 else if (value < 20250)
+                {
                     return originalName + "Down";
+                }
                 else if (value < 24750)
+                {
                     return originalName + "DownLeft";
+                }
                 else if (value < 29250)
+                {
                     return originalName + "Left";
+                }
                 else if (value < 33750)
+                {
                     return originalName + "UpLeft";
+                }
                 else
+                {
                     return originalName + "Up";
+                }
             }
 
             return originalName;

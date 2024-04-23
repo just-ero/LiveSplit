@@ -1,10 +1,11 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Windows.Forms;
+
+using Microsoft.Win32;
 
 namespace LiveSplit.Options
 {
@@ -28,7 +29,7 @@ namespace LiveSplit.Options
         /// <i>dwItem2</i> is not used and should be <see langword="null"/>.</para>
         /// </remarks>
         [Flags]
-        enum HChangeNotifyEventID
+        private enum HChangeNotifyEventID
         {
             /// <summary>
             /// All events have occurred. 
@@ -266,7 +267,7 @@ namespace LiveSplit.Options
         #endregion // enum HChangeNotifyFlags
 
         [DllImport("shell32.dll")]
-        static extern void SHChangeNotify(HChangeNotifyEventID wEventId,
+        private static extern void SHChangeNotify(HChangeNotifyEventID wEventId,
                                            HChangeNotifyFlags uFlags,
                                            IntPtr dwItem1,
                                            IntPtr dwItem2);
@@ -284,6 +285,7 @@ namespace LiveSplit.Options
                 {
                     Log.Error(e);
                 }
+
                 try
                 {
                     root.DeleteSubKeyTree("LiveSplit.SplitsFile");
@@ -292,6 +294,7 @@ namespace LiveSplit.Options
                 {
                     Log.Error(e);
                 }
+
                 try
                 {
                     root.DeleteSubKeyTree(".lsl");
@@ -300,6 +303,7 @@ namespace LiveSplit.Options
                 {
                     Log.Error(e);
                 }
+
                 try
                 {
                     root.DeleteSubKeyTree("LiveSplit.LayoutFile");
@@ -309,25 +313,28 @@ namespace LiveSplit.Options
                     Log.Error(e);
                 }
             }
-            
+
             var lssExtensionKey = root.OpenSubKey(".lss");
             if (lssExtensionKey == null)
             {
                 AppDomain.CurrentDomain.SetPrincipalPolicy(PrincipalPolicy.WindowsPrincipal);
                 CreateLSSExtensionKey();
             }
+
             var lssApplicationKey = root.OpenSubKey("LiveSplit.SplitsFile");
             if (lssApplicationKey == null)
             {
                 AppDomain.CurrentDomain.SetPrincipalPolicy(PrincipalPolicy.WindowsPrincipal);
                 CreateLSSApplicationKey();
             }
+
             var lslExtensionKey = root.OpenSubKey(".lsl");
             if (lslExtensionKey == null)
             {
                 AppDomain.CurrentDomain.SetPrincipalPolicy(PrincipalPolicy.WindowsPrincipal);
                 CreateLSLExtensionKey();
             }
+
             var lslApplicationKey = root.OpenSubKey("LiveSplit.LayoutFile");
             if (lslApplicationKey == null)
             {
@@ -361,7 +368,7 @@ namespace LiveSplit.Options
             var iconKey = lssApplicationKey.CreateSubKey("DefaultIcon");
             iconKey.SetValue("", $"{Path.GetDirectoryName(Application.ExecutablePath)}\\Resources\\{"SplitsFile.ico"}");
             SHChangeNotify(HChangeNotifyEventID.SHCNE_ASSOCCHANGED, HChangeNotifyFlags.SHCNF_IDLIST, IntPtr.Zero, IntPtr.Zero);
-            
+
         }
 
         private static bool CheckLSSApplicationKey()
@@ -372,10 +379,16 @@ namespace LiveSplit.Options
             var open = shell.OpenSubKey("open");
             var command = open.OpenSubKey("command");
             if (command.GetValue("").ToString() != $"\"{Application.ExecutablePath.Replace("LiveSplit.Register.exe", "LiveSplit.exe")}\" -s \"{"%1"}\"")
+            {
                 return false;
+            }
+
             var iconKey = lssApplicationKey.OpenSubKey("DefaultIcon");
             if (iconKey.GetValue("").ToString() != $"{Path.GetDirectoryName(Application.ExecutablePath)}\\Resources\\{"SplitsFile.ico"}")
+            {
                 return false;
+            }
+
             return true;
         }
 
@@ -414,10 +427,16 @@ namespace LiveSplit.Options
             var open = shell.OpenSubKey("open");
             var command = open.OpenSubKey("command");
             if (command.GetValue("").ToString() != $"\"{Application.ExecutablePath.Replace("LiveSplit.Register.exe", "LiveSplit.exe")}\" -l \"{"%1"}\"")
+            {
                 return false;
+            }
+
             var iconKey = lslApplicationKey.OpenSubKey("DefaultIcon");
             if (iconKey.GetValue("").ToString() != $"{Path.GetDirectoryName(Application.ExecutablePath)}\\Resources\\{"LayoutFile.ico"}")
+            {
                 return false;
+            }
+
             return true;
         }
 
@@ -431,16 +450,19 @@ namespace LiveSplit.Options
                 {
                     return false;
                 }
+
                 var lssApplicationKey = root.OpenSubKey("LiveSplit.SplitsFile");
                 if (lssApplicationKey == null || !CheckLSSApplicationKey())
                 {
                     return false;
                 }
+
                 var lslExtensionKey = root.OpenSubKey(".lsl");
                 if (lslExtensionKey == null || !CheckLSLExtensionKey())
                 {
                     return false;
                 }
+
                 var lslApplicationKey = root.OpenSubKey("LiveSplit.LayoutFile");
                 if (lslApplicationKey == null || !CheckLSLApplicationKey())
                 {
@@ -451,6 +473,7 @@ namespace LiveSplit.Options
             {
                 Log.Error(ex);
             }
+
             return true;
         }
 
@@ -458,14 +481,18 @@ namespace LiveSplit.Options
         {
             if (!IsAlreadyRegistered())
             {
-                var psi = new ProcessStartInfo();
-                psi.FileName = "LiveSplit.Register.exe";
-                psi.Verb = "runas";
+                var psi = new ProcessStartInfo
+                {
+                    FileName = "LiveSplit.Register.exe",
+                    Verb = "runas"
+                };
 
                 try
                 {
-                    var process = new Process();
-                    process.StartInfo = psi;
+                    var process = new Process
+                    {
+                        StartInfo = psi
+                    };
                     process.Start();
                     process.WaitForExit();
                 }

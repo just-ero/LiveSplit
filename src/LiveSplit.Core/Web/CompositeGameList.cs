@@ -1,12 +1,11 @@
-﻿using LiveSplit.Options;
-using LiveSplit.Web.Share;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Web.Script.Serialization;
+
+using LiveSplit.Options;
+using LiveSplit.Web.Share;
 
 namespace LiveSplit.Web
 {
@@ -70,6 +69,7 @@ namespace LiveSplit.Web
                         gameIDs[name] = id;
                     }
                 }
+
                 gameNames.Sort();
 
                 this.gameNames = gameNames;

@@ -14,7 +14,9 @@ namespace LiveSplit.UI.Components
             => ComponentCategory.Other;
 
         public IComponent Create(Model.LiveSplitState state)
-            => new SeparatorComponent();
+        {
+            return new SeparatorComponent();
+        }
 
         public string UpdateName
         {

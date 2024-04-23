@@ -1,5 +1,6 @@
-﻿using LiveSplit.Web;
-using System.Xml;
+﻿using System.Xml;
+
+using LiveSplit.Web;
 
 namespace LiveSplit.Model
 {
@@ -21,14 +22,14 @@ namespace LiveSplit.Model
 
         public static IIndexedTime ParseXml(XmlElement node)
         {
-            var newTime = Time.FromXml(node);           
+            var newTime = Time.FromXml(node);
             var index = int.Parse(node.GetAttribute("id"));
             return new IndexedTime(newTime, index);
         }
 
         public static IIndexedTime ParseXmlOld(XmlElement node)
         {
-            var newTime = node == null ? default(Time) : Time.ParseText(node.InnerText);
+            var newTime = node == null ? default : Time.ParseText(node.InnerText);
             var index = int.Parse(node.GetAttribute("id"));
             return new IndexedTime(newTime, index);
         }

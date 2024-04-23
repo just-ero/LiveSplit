@@ -1,9 +1,10 @@
-﻿using LiveSplit.Model.Input;
+﻿using System;
+using System.Linq;
+
+using LiveSplit.Model.Input;
 using LiveSplit.Options;
 using LiveSplit.UI;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
+
 using Forms = System.Windows.Forms;
 
 namespace LiveSplit.Model
@@ -30,7 +31,8 @@ namespace LiveSplit.Model
         public string CurrentHotkeyProfile { get; set; }
 
         internal TimeSpan? loadingTimes;
-        public TimeSpan LoadingTimes {
+        public TimeSpan LoadingTimes
+        {
             get
             {
                 return loadingTimes ?? TimeSpan.Zero;
@@ -57,7 +59,9 @@ namespace LiveSplit.Model
                     loadingTimes = LoadingTimes;
                 }
                 else
+                {
                     loadingTimes = null;
+                }
             }
         }
         private bool isGameTimePaused;
@@ -67,9 +71,13 @@ namespace LiveSplit.Model
             set
             {
                 if (!value && isGameTimePaused)
+                {
                     LoadingTimes = CurrentTime.RealTime.Value - (CurrentTime.GameTime ?? CurrentTime.RealTime.Value);
+                }
                 else if (value && !isGameTimePaused)
-                    GameTimePauseTime = (CurrentTime.GameTime ?? CurrentTime.RealTime);
+                {
+                    GameTimePauseTime = CurrentTime.GameTime ?? CurrentTime.RealTime;
+                }
 
                 isGameTimePaused = value;
             }
@@ -92,26 +100,38 @@ namespace LiveSplit.Model
         public event EventHandler ComparisonRenamed;
 
         public Time CurrentTime
-        { 
-            get 
+        {
+            get
             {
                 var curTime = new Time();
 
                 if (CurrentPhase == TimerPhase.NotRunning)
+                {
                     curTime.RealTime = TimeSpan.Zero;
+                }
                 else if (CurrentPhase == TimerPhase.Running)
+                {
                     curTime.RealTime = TimeStamp.Now - AdjustedStartTime;
+                }
                 else if (CurrentPhase == TimerPhase.Paused)
+                {
                     curTime.RealTime = TimePausedAt;
+                }
                 else
+                {
                     curTime.RealTime = Run.Last().SplitTime.RealTime;
+                }
 
                 if (CurrentPhase == TimerPhase.Ended)
+                {
                     curTime.GameTime = Run.Last().SplitTime.GameTime;
+                }
                 else
-                    curTime.GameTime = IsGameTimePaused 
-                        ? GameTimePauseTime 
+                {
+                    curTime.GameTime = IsGameTimePaused
+                        ? GameTimePauseTime
                         : curTime.RealTime - (IsGameTimeInitialized ? (TimeSpan?)LoadingTimes : null);
+                }
 
                 return curTime;
             }
@@ -122,9 +142,15 @@ namespace LiveSplit.Model
             get
             {
                 if (CurrentPhase == TimerPhase.Paused)
+                {
                     return TimeStamp.Now - StartTimeWithOffset - TimePausedAt;
+                }
+
                 if (CurrentPhase != TimerPhase.NotRunning && StartTimeWithOffset != AdjustedStartTime)
+                {
                     return AdjustedStartTime - StartTimeWithOffset;
+                }
+
                 return null;
             }
         }
@@ -134,9 +160,15 @@ namespace LiveSplit.Model
             get
             {
                 if (CurrentPhase == TimerPhase.Paused || CurrentPhase == TimerPhase.Running)
+                {
                     return TimeStamp.Now - StartTime;
+                }
+
                 if (CurrentPhase == TimerPhase.Ended)
+                {
                     return AttemptEnded - AttemptStarted;
+                }
+
                 return TimeSpan.Zero;
             }
         }
@@ -186,18 +218,18 @@ namespace LiveSplit.Model
 
         public void RegisterTimerModel(ITimerModel model)
         {
-            model.OnSplit                    += (s, e) => OnSplit?.Invoke(this, e);
-            model.OnSkipSplit                += (s, e) => OnSkipSplit?.Invoke(this, e);
-            model.OnUndoSplit                += (s, e) => OnUndoSplit?.Invoke(this, e);
-            model.OnStart                    += (s, e) => OnStart?.Invoke(this, e);
-            model.OnReset                    += (s, e) => OnReset?.Invoke(this, e);
-            model.OnPause                    += (s, e) => OnPause?.Invoke(this, e);
-            model.OnUndoAllPauses            += (s, e) => OnUndoAllPauses?.Invoke(this, e);
-            model.OnResume                   += (s, e) => OnResume?.Invoke(this, e);
-            model.OnScrollUp                 += (s, e) => OnScrollUp?.Invoke(this, e);
-            model.OnScrollDown               += (s, e) => OnScrollDown?.Invoke(this, e);
+            model.OnSplit += (s, e) => OnSplit?.Invoke(this, e);
+            model.OnSkipSplit += (s, e) => OnSkipSplit?.Invoke(this, e);
+            model.OnUndoSplit += (s, e) => OnUndoSplit?.Invoke(this, e);
+            model.OnStart += (s, e) => OnStart?.Invoke(this, e);
+            model.OnReset += (s, e) => OnReset?.Invoke(this, e);
+            model.OnPause += (s, e) => OnPause?.Invoke(this, e);
+            model.OnUndoAllPauses += (s, e) => OnUndoAllPauses?.Invoke(this, e);
+            model.OnResume += (s, e) => OnResume?.Invoke(this, e);
+            model.OnScrollUp += (s, e) => OnScrollUp?.Invoke(this, e);
+            model.OnScrollDown += (s, e) => OnScrollDown?.Invoke(this, e);
             model.OnSwitchComparisonPrevious += (s, e) => OnSwitchComparisonPrevious?.Invoke(this, e);
-            model.OnSwitchComparisonNext     += (s, e) => OnSwitchComparisonNext?.Invoke(this, e);
+            model.OnSwitchComparisonNext += (s, e) => OnSwitchComparisonNext?.Invoke(this, e);
         }
 
         public void SetGameTime(TimeSpan? gameTime)
@@ -213,8 +245,14 @@ namespace LiveSplit.Model
             }
         }
 
-        public void CallRunManuallyModified() => RunManuallyModified?.Invoke(this, null);
+        public void CallRunManuallyModified()
+        {
+            RunManuallyModified?.Invoke(this, null);
+        }
 
-        public void CallComparisonRenamed(EventArgs e) => ComparisonRenamed?.Invoke(this, e);
+        public void CallComparisonRenamed(EventArgs e)
+        {
+            ComparisonRenamed?.Invoke(this, e);
+        }
     }
 }

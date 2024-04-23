@@ -1,6 +1,7 @@
-﻿using LiveSplit.Options;
-using System;
+﻿using System;
 using System.Linq;
+
+using LiveSplit.Options;
 
 namespace LiveSplit.Model.Comparisons
 {
@@ -24,8 +25,7 @@ namespace LiveSplit.Model.Comparisons
 
                 foreach (var segment in Run)
                 {
-                    Time segmentHistoryElement;
-                    if (segment.SegmentHistory.TryGetValue(y, out segmentHistoryElement))
+                    if (segment.SegmentHistory.TryGetValue(y, out var segmentHistoryElement))
                     {
                         var segmentTime = segmentHistoryElement[method];
                         if (segmentTime != null)
@@ -40,7 +40,10 @@ namespace LiveSplit.Model.Comparisons
                             }
                         }
                     }
-                    else break;
+                    else
+                    {
+                        break;
+                    }
                 }
             }
         }
@@ -50,10 +53,15 @@ namespace LiveSplit.Model.Comparisons
             foreach (var segment in Run)
             {
                 if (Run.IndexOf(segment) > 0)
+                {
                     segment.Comparisons[Name] = segment.Comparisons[Model.Run.PersonalBestComparisonName];
+                }
                 else
+                {
                     segment.Comparisons[Name] = segment.BestSegmentTime;
+                }
             }
+
             Generate(TimingMethod.RealTime);
             Generate(TimingMethod.GameTime);
         }

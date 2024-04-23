@@ -1,12 +1,13 @@
-﻿using LiveSplit.Model;
-using LiveSplit.Options;
-using LiveSplit.Utils;
-using LiveSplit.Web.SRL;
-using System;
+﻿using System;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+
+using LiveSplit.Model;
+using LiveSplit.Options;
+using LiveSplit.Utils;
+using LiveSplit.Web.SRL;
 
 namespace LiveSplit.UI
 {
@@ -58,7 +59,7 @@ namespace LiveSplit.UI
             cbxGameName.TextChanged += cbxGameName_TextChanged;
 
             cbxRunCategory.AutoCompleteSource = AutoCompleteSource.ListItems;
-            cbxRunCategory.Items.AddRange(new [] { "Any%", "Low%", "100%" });
+            cbxRunCategory.Items.AddRange(new[] { "Any%", "Low%", "100%" });
             cbxRunCategory.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
 
             Text = "New Race";
@@ -108,7 +109,7 @@ namespace LiveSplit.UI
             RefreshCategoryAutoCompleteList("");
         }
 
-        void NewRaceInputBox_FormClosing(object sender, FormClosingEventArgs e)
+        private void NewRaceInputBox_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (DialogResult == DialogResult.OK)
             {
@@ -117,16 +118,19 @@ namespace LiveSplit.UI
                 {
                     var result = MessageBox.Show(this, "The game you entered could not be found in the SpeedRunsLive Game List. Are you sure you would like to start a race with a New Game?", "Game Not Found", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                     if (result == DialogResult.No)
+                    {
                         e.Cancel = true;
+                    }
                 }
             }
         }
-        void cbxGameName_TextChanged(object sender, EventArgs e)
+
+        private void cbxGameName_TextChanged(object sender, EventArgs e)
         {
             RefreshCategoryAutoCompleteList(((ComboBox)sender).Text);
         }
 
-        void RefreshCategoryAutoCompleteList(string gameName)
+        private void RefreshCategoryAutoCompleteList(string gameName)
         {
             Task.Factory.StartNew(() =>
             {
@@ -141,7 +145,7 @@ namespace LiveSplit.UI
                     {
                         Log.Error(ex);
 
-                        categoryNames = new [] { "Any%", "Low%", "100%" };
+                        categoryNames = new[] { "Any%", "Low%", "100%" };
                     }
 
                     this.InvokeIfRequired(() =>

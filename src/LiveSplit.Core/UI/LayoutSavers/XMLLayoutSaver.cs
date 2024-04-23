@@ -1,9 +1,10 @@
-﻿using LiveSplit.Options;
-using LiveSplit.UI.Components;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
+
+using LiveSplit.Options;
+using LiveSplit.UI.Components;
 
 namespace LiveSplit.UI.LayoutSavers
 {
@@ -55,9 +56,9 @@ namespace LiveSplit.UI.LayoutSavers
                 ^ SettingsHelper.CreateSetting(document, parent, "X", layout.X)
                 ^ SettingsHelper.CreateSetting(document, parent, "Y", layout.Y)
                 ^ SettingsHelper.CreateSetting(document, parent, "VerticalWidth", layout.VerticalWidth)
-                ^ SettingsHelper.CreateSetting(document, parent, "VerticalHeight", layout.VerticalHeight) * 1000
+                ^ (SettingsHelper.CreateSetting(document, parent, "VerticalHeight", layout.VerticalHeight) * 1000)
                 ^ SettingsHelper.CreateSetting(document, parent, "HorizontalWidth", layout.HorizontalWidth)
-                ^ SettingsHelper.CreateSetting(document, parent, "HorizontalHeight", layout.HorizontalHeight) * 1000
+                ^ (SettingsHelper.CreateSetting(document, parent, "HorizontalHeight", layout.HorizontalHeight) * 1000)
                 ^ ToElement(document, element, layout.Settings);
 
             if (document != null)
@@ -88,15 +89,20 @@ namespace LiveSplit.UI.LayoutSavers
                     {
                         var type = component.Component.GetType();
                         if (type.GetMethod("GetSettingsHashCode") != null)
-                            hashCode ^= ((dynamic)component.Component).GetSettingsHashCode() ^ component.GetHashCode() * count;
+                        {
+                            hashCode ^= ((dynamic)component.Component).GetSettingsHashCode() ^ (component.GetHashCode() * count);
+                        }
                         else
-                            hashCode ^= component.Component.GetSettings(new XmlDocument()).InnerXml.GetHashCode() ^ component.GetHashCode() * count;
+                        {
+                            hashCode ^= component.Component.GetSettings(new XmlDocument()).InnerXml.GetHashCode() ^ (component.GetHashCode() * count);
+                        }
                     }
                 }
                 catch (Exception e)
                 {
                     Log.Error(e);
                 }
+
                 count++;
             }
 

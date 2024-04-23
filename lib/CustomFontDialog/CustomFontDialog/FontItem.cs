@@ -2,7 +2,7 @@
 
 namespace CustomFontDialog
 {
-    struct FontItem
+    internal struct FontItem
     {
         public Font Font { get; set; }
 

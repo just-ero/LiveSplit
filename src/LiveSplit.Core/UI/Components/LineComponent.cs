@@ -1,8 +1,9 @@
-﻿using LiveSplit.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+
+using LiveSplit.Model;
 
 namespace LiveSplit.UI.Components
 {
@@ -17,7 +18,7 @@ namespace LiveSplit.UI.Components
         public float HorizontalWidth { get; set; }
         public Color LineColor { get; set; }
 
-        public LineComponent (int size, Color lineColor)
+        public LineComponent(int size, Color lineColor)
         {
             VerticalHeight = size;
             HorizontalWidth = size;
@@ -74,7 +75,7 @@ namespace LiveSplit.UI.Components
             get { throw new NotSupportedException(); }
         }
 
-        public IDictionary<string, Action> ContextMenuControls  => null;
+        public IDictionary<string, Action> ContextMenuControls => null;
 
         public float MinimumHeight
         {

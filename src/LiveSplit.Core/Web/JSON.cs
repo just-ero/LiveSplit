@@ -1,5 +1,4 @@
-﻿using LiveSplit.Options;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,6 +11,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Script.Serialization;
+
+using LiveSplit.Options;
 
 namespace LiveSplit.Web
 {
@@ -37,6 +38,7 @@ namespace LiveSplit.Web
             {
                 Log.Error(ex);
             }
+
             return FromString(json);
         }
 
@@ -104,7 +106,9 @@ namespace LiveSplit.Web
         public override object Deserialize(IDictionary<string, object> dictionary, Type type, JavaScriptSerializer serializer)
         {
             if (dictionary == null)
+            {
                 throw new ArgumentNullException(nameof(dictionary));
+            }
 
             return type == typeof(object) ? new DynamicJsonObject(dictionary) : null;
         }
@@ -127,13 +131,16 @@ namespace LiveSplit.Web
         //public IDictionary<string, object> Properties { get { return _dictionary; } }
 
         public DynamicJsonObject()
-            : this(new Dictionary<string, object>()) 
+            : this(new Dictionary<string, object>())
         { }
 
         public DynamicJsonObject(IDictionary<string, object> dictionary)
         {
             if (dictionary == null)
+            {
                 throw new ArgumentNullException(nameof(dictionary));
+            }
+
             _dictionary = dictionary;
         }
 
@@ -150,7 +157,10 @@ namespace LiveSplit.Web
             foreach (var pair in _dictionary)
             {
                 if (!firstInDictionary)
+                {
                     sb.Append(",\r\n");
+                }
+
                 sb.Append('\t', depth);
                 firstInDictionary = false;
                 var value = pair.Value;
@@ -180,24 +190,35 @@ namespace LiveSplit.Web
                     foreach (var arrayValue in (IEnumerable<object>)value)
                     {
                         if (!firstInArray)
+                        {
                             sb.Append(",\r\n");
-                        sb.Append('\t', depth+1);
+                        }
+
+                        sb.Append('\t', depth + 1);
                         firstInArray = false;
                         if (arrayValue is IDictionary<string, object>)
+                        {
                             new DynamicJsonObject((IDictionary<string, object>)arrayValue).ToString(sb, depth + 2);
+                        }
                         else if (arrayValue is DynamicJsonObject)
                         {
                             sb.Append("{\r\n");
                             ((DynamicJsonObject)arrayValue).ToString(sb, depth + 2);
                         }
                         else if (arrayValue is string)
+                        {
                             sb.AppendFormat("\"{0}\"", HttpUtility.JavaScriptStringEncode((string)arrayValue));
+                        }
                         else if (arrayValue is decimal)
+                        {
                             sb.AppendFormat("{0}", HttpUtility.JavaScriptStringEncode(((decimal)arrayValue).ToString(CultureInfo.InvariantCulture)));
+                        }
                         else
+                        {
                             sb.AppendFormat("\"{0}\"", HttpUtility.JavaScriptStringEncode((arrayValue ?? "").ToString()));
-
+                        }
                     }
+
                     sb.Append("\r\n");
                     sb.Append('\t', depth);
                     sb.Append("]");
@@ -227,6 +248,7 @@ namespace LiveSplit.Web
                     sb.AppendFormat("\"{0}\": \"{1}\"", HttpUtility.JavaScriptStringEncode(name), HttpUtility.JavaScriptStringEncode((value ?? "").ToString()));
                 }
             }
+
             sb.Append("\r\n");
             sb.Append('\t', depth - 1);
             sb.Append("}");
@@ -281,7 +303,9 @@ namespace LiveSplit.Web
             result = WrapResultObject(result);
 
             if (result is string)
+            {
                 result = JavaScriptStringDecode(result as string);
+            }
 
             return true;
         }
@@ -324,12 +348,12 @@ namespace LiveSplit.Web
 
         private static object WrapResultObject(object result)
         {
-            var dictionary = result as IDictionary<string, object>;
-            if (dictionary != null)
+            if (result is IDictionary<string, object> dictionary)
+            {
                 return new DynamicJsonObject(dictionary);
+            }
 
-            var arrayList = result as ArrayList;
-            if (arrayList != null && arrayList.Count > 0)
+            if (result is ArrayList arrayList && arrayList.Count > 0)
             {
                 return arrayList[0] is IDictionary<string, object>
                     ? new List<object>(arrayList.Cast<IDictionary<string, object>>().Select(x => new DynamicJsonObject(x)))

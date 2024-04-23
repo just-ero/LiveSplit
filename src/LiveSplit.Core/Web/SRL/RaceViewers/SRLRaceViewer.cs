@@ -1,5 +1,6 @@
-﻿using LiveSplit.Model;
-using System.Diagnostics;
+﻿using System.Diagnostics;
+
+using LiveSplit.Model;
 
 namespace LiveSplit.Web.SRL.RaceViewers
 {

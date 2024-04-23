@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Note: Please be careful when modifying this because it could break existing components!
+// http://stackoverflow.com/questions/1456785/a-definitive-guide-to-api-breaking-changes-in-net
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -6,13 +9,10 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
-// Note: Please be careful when modifying this because it could break existing components!
-// http://stackoverflow.com/questions/1456785/a-definitive-guide-to-api-breaking-changes-in-net
+using SizeT = System.UIntPtr;
 
 namespace LiveSplit.ComponentUtil
 {
-    using SizeT = UIntPtr;
-
     public class ProcessModuleWow64Safe
     {
         public IntPtr BaseAddress { get; set; }
@@ -40,7 +40,7 @@ namespace LiveSplit.ComponentUtil
 
     public static class ExtensionMethods
     {
-        private static Dictionary<int, ProcessModuleWow64Safe[]> ModuleCache = new Dictionary<int, ProcessModuleWow64Safe[]>();
+        private static readonly Dictionary<int, ProcessModuleWow64Safe[]> ModuleCache = new Dictionary<int, ProcessModuleWow64Safe[]>();
 
         public static ProcessModuleWow64Safe MainModuleWow64Safe(this Process p)
         {
@@ -50,24 +50,31 @@ namespace LiveSplit.ComponentUtil
         public static ProcessModuleWow64Safe[] ModulesWow64Safe(this Process p)
         {
             if (ModuleCache.Count > 100)
+            {
                 ModuleCache.Clear();
+            }
 
             const int LIST_MODULES_ALL = 3;
             const int MAX_PATH = 260;
 
-            uint cbNeeded;
-            if (!WinAPI.EnumProcessModulesEx(p.Handle, null, 0, out cbNeeded, LIST_MODULES_ALL))
+            if (!WinAPI.EnumProcessModulesEx(p.Handle, null, 0, out uint cbNeeded, LIST_MODULES_ALL))
+            {
                 throw new Win32Exception();
+            }
 
             uint numMods = cbNeeded / (uint)IntPtr.Size;
 
             int hash = p.StartTime.GetHashCode() + p.Id + (int)numMods;
             if (ModuleCache.ContainsKey(hash))
+            {
                 return ModuleCache[hash];
+            }
 
             var hModules = new IntPtr[(int)numMods];
             if (!WinAPI.EnumProcessModulesEx(p.Handle, hModules, cbNeeded, out _, LIST_MODULES_ALL))
+            {
                 throw new Win32Exception();
+            }
 
             var ret = new List<ProcessModuleWow64Safe>();
 
@@ -77,17 +84,25 @@ namespace LiveSplit.ComponentUtil
             {
                 sb.Clear();
                 if (WinAPI.GetModuleFileNameExW(p.Handle, hModules[i], sb, (uint)sb.Capacity) == 0)
+                {
                     throw new Win32Exception();
+                }
+
                 string fileName = sb.ToString();
 
                 sb.Clear();
                 if (WinAPI.GetModuleBaseNameW(p.Handle, hModules[i], sb, (uint)sb.Capacity) == 0)
+                {
                     throw new Win32Exception();
+                }
+
                 string baseName = sb.ToString();
 
                 var moduleInfo = new WinAPI.MODULEINFO();
                 if (!WinAPI.GetModuleInformation(p.Handle, hModules[i], out moduleInfo, (uint)Marshal.SizeOf(moduleInfo)))
+                {
                     throw new Win32Exception();
+                }
 
                 ret.Add(new ProcessModuleWow64Safe()
                 {
@@ -115,22 +130,30 @@ namespace LiveSplit.ComponentUtil
             var addr = min;
             do
             {
-                MemoryBasicInformation mbi;
-                if (WinAPI.VirtualQueryEx(process.Handle, (IntPtr)addr, out mbi, mbiSize) == (SizeT)0)
+                if (WinAPI.VirtualQueryEx(process.Handle, (IntPtr)addr, out var mbi, mbiSize) == (SizeT)0)
+                {
                     break;
+                }
+
                 addr += (long)mbi.RegionSize;
 
                 // don't care about reserved/free pages
                 if (mbi.State != MemPageState.MEM_COMMIT)
+                {
                     continue;
+                }
 
                 // probably don't care about guarded pages
                 if (!all && (mbi.Protect & MemPageProtect.PAGE_GUARD) != 0)
+                {
                     continue;
+                }
 
                 // probably don't care about image/file maps
                 if (!all && mbi.Type != MemPageType.MEM_PRIVATE)
+                {
                     continue;
+                }
 
                 yield return mbi;
 
@@ -139,10 +162,12 @@ namespace LiveSplit.ComponentUtil
 
         public static bool Is64Bit(this Process process)
         {
-            bool procWow64;
-            WinAPI.IsWow64Process(process.Handle, out procWow64);
+            WinAPI.IsWow64Process(process.Handle, out bool procWow64);
             if (Environment.Is64BitOperatingSystem && !procWow64)
+            {
                 return true;
+            }
+
             return false;
         }
 
@@ -151,10 +176,11 @@ namespace LiveSplit.ComponentUtil
             var type = typeof(T);
             type = type.IsEnum ? Enum.GetUnderlyingType(type) : type;
 
-            val = default(T);
-            object val2;
-            if (!ReadValue(process, addr, type, out val2))
+            val = default;
+            if (!ReadValue(process, addr, type, out object val2))
+            {
                 return false;
+            }
 
             val = (T)val2;
 
@@ -163,12 +189,13 @@ namespace LiveSplit.ComponentUtil
 
         public static bool ReadValue(Process process, IntPtr addr, Type type, out object val)
         {
-            byte[] bytes;
 
             val = null;
             int size = type == typeof(bool) ? 1 : Marshal.SizeOf(type);
-            if (!ReadBytes(process, addr, size, out bytes))
+            if (!ReadBytes(process, addr, size, out var bytes))
+            {
                 return false;
+            }
 
             val = ResolveToType(bytes, type);
 
@@ -179,11 +206,12 @@ namespace LiveSplit.ComponentUtil
         {
             var bytes = new byte[count];
 
-            SizeT read;
             val = null;
-            if (!WinAPI.ReadProcessMemory(process.Handle, addr, bytes, (SizeT)bytes.Length, out read)
+            if (!WinAPI.ReadProcessMemory(process.Handle, addr, bytes, (SizeT)bytes.Length, out var read)
                 || read != (SizeT)bytes.Length)
+            {
                 return false;
+            }
 
             val = bytes;
 
@@ -199,11 +227,12 @@ namespace LiveSplit.ComponentUtil
         {
             var bytes = new byte[is64Bit ? 8 : 4];
 
-            SizeT read;
             val = IntPtr.Zero;
-            if (!WinAPI.ReadProcessMemory(process.Handle, addr, bytes, (SizeT)bytes.Length, out read)
+            if (!WinAPI.ReadProcessMemory(process.Handle, addr, bytes, (SizeT)bytes.Length, out var read)
                 || read != (SizeT)bytes.Length)
+            {
                 return false;
+            }
 
             val = is64Bit ? (IntPtr)BitConverter.ToInt64(bytes, 0) : (IntPtr)BitConverter.ToUInt32(bytes, 0);
 
@@ -237,24 +266,35 @@ namespace LiveSplit.ComponentUtil
         public static bool ReadString(this Process process, IntPtr addr, ReadStringType type, StringBuilder sb)
         {
             var bytes = new byte[sb.Capacity];
-            SizeT read;
-            if (!WinAPI.ReadProcessMemory(process.Handle, addr, bytes, (SizeT)bytes.Length, out read)
+            if (!WinAPI.ReadProcessMemory(process.Handle, addr, bytes, (SizeT)bytes.Length, out var read)
                 || read != (SizeT)bytes.Length)
+            {
                 return false;
+            }
 
             if (type == ReadStringType.AutoDetect)
             {
                 if (read.ToUInt64() >= 2 && bytes[1] == '\x0')
+                {
                     sb.Append(Encoding.Unicode.GetString(bytes));
+                }
                 else
+                {
                     sb.Append(Encoding.UTF8.GetString(bytes));
+                }
             }
             else if (type == ReadStringType.UTF8)
+            {
                 sb.Append(Encoding.UTF8.GetString(bytes));
+            }
             else if (type == ReadStringType.UTF16)
+            {
                 sb.Append(Encoding.Unicode.GetString(bytes));
+            }
             else
+            {
                 sb.Append(Encoding.ASCII.GetString(bytes));
+            }
 
             for (int i = 0; i < sb.Length; i++)
             {
@@ -268,43 +308,53 @@ namespace LiveSplit.ComponentUtil
             return true;
         }
 
-        public static T ReadValue<T>(this Process process, IntPtr addr, T default_ = default(T)) where T : struct
+        public static T ReadValue<T>(this Process process, IntPtr addr, T default_ = default) where T : struct
         {
-            T val;
-            if (!process.ReadValue(addr, out val))
+            if (!process.ReadValue(addr, out T val))
+            {
                 val = default_;
+            }
+
             return val;
         }
 
         public static byte[] ReadBytes(this Process process, IntPtr addr, int count)
         {
-            byte[] bytes;
-            if (!process.ReadBytes(addr, count, out bytes))
+            if (!process.ReadBytes(addr, count, out var bytes))
+            {
                 return null;
+            }
+
             return bytes;
         }
 
-        public static IntPtr ReadPointer(this Process process, IntPtr addr, IntPtr default_ = default(IntPtr))
+        public static IntPtr ReadPointer(this Process process, IntPtr addr, IntPtr default_ = default)
         {
-            IntPtr ptr;
-            if (!process.ReadPointer(addr, out ptr))
+            if (!process.ReadPointer(addr, out var ptr))
+            {
                 return default_;
+            }
+
             return ptr;
         }
 
         public static string ReadString(this Process process, IntPtr addr, int numBytes, string default_ = null)
         {
-            string str;
-            if (!process.ReadString(addr, numBytes, out str))
+            if (!process.ReadString(addr, numBytes, out string str))
+            {
                 return default_;
+            }
+
             return str;
         }
 
         public static string ReadString(this Process process, IntPtr addr, ReadStringType type, int numBytes, string default_ = null)
         {
-            string str;
-            if (!process.ReadString(addr, type, numBytes, out str))
+            if (!process.ReadString(addr, type, numBytes, out string str))
+            {
                 return default_;
+            }
+
             return str;
         }
 
@@ -323,10 +373,11 @@ namespace LiveSplit.ComponentUtil
 
         public static bool WriteBytes(this Process process, IntPtr addr, byte[] bytes)
         {
-            SizeT written;
-            if (!WinAPI.WriteProcessMemory(process.Handle, addr, bytes, (SizeT)bytes.Length, out written)
+            if (!WinAPI.WriteProcessMemory(process.Handle, addr, bytes, (SizeT)bytes.Length, out var written)
                 || written != (SizeT)bytes.Length)
+            {
                 return false;
+            }
 
             return true;
         }
@@ -351,8 +402,7 @@ namespace LiveSplit.ComponentUtil
                 instruction.AddRange(BitConverter.GetBytes(offset));
             }
 
-            MemPageProtect oldProtect;
-            process.VirtualProtect(addr, jmpLen, MemPageProtect.PAGE_EXECUTE_READWRITE, out oldProtect);
+            process.VirtualProtect(addr, jmpLen, MemPageProtect.PAGE_EXECUTE_READWRITE, out var oldProtect);
             bool success = process.WriteBytes(addr, instruction.ToArray());
             process.VirtualProtect(addr, jmpLen, oldProtect);
 
@@ -373,45 +423,62 @@ namespace LiveSplit.ComponentUtil
         {
             int jmpLen = process.Is64Bit() ? 12 : 5;
             if (overwrittenBytes < jmpLen)
+            {
                 throw new ArgumentOutOfRangeException(nameof(overwrittenBytes),
                     $"must be >= length of jmp instruction ({jmpLen})");
+            }
 
             // allocate memory to store the original src prologue bytes we overwrite with jump to dest
             // along with the jump back to src
             IntPtr gate;
             if ((gate = process.AllocateMemory(jmpLen + overwrittenBytes)) == IntPtr.Zero)
+            {
                 throw new Win32Exception();
+            }
 
             try
             {
                 // read the original bytes from the prologue of src
                 var origSrcBytes = process.ReadBytes(src, overwrittenBytes);
                 if (origSrcBytes == null)
+                {
                     throw new Win32Exception();
+                }
 
                 // write the original prologue of src into the start of gate
                 if (!process.WriteBytes(gate, origSrcBytes))
+                {
                     throw new Win32Exception();
+                }
 
                 // write the jump from the end of the gate back to src
                 if (!process.WriteJumpInstruction(gate + overwrittenBytes, src + overwrittenBytes))
+                {
                     throw new Win32Exception();
+                }
 
                 // finally write the jump from src to dest
                 if (!process.WriteJumpInstruction(src, dest))
+                {
                     throw new Win32Exception();
+                }
 
                 // nop the leftover bytes in the src prologue
                 int extraBytes = overwrittenBytes - jmpLen;
                 if (extraBytes > 0)
                 {
                     var nops = Enumerable.Repeat((byte)0x90, extraBytes).ToArray();
-                    MemPageProtect oldProtect;
                     if (!process.VirtualProtect(src + jmpLen, nops.Length, MemPageProtect.PAGE_EXECUTE_READWRITE,
-                        out oldProtect))
+                        out var oldProtect))
+                    {
                         throw new Win32Exception();
+                    }
+
                     if (!process.WriteBytes(src + jmpLen, nops))
+                    {
                         throw new Win32Exception();
+                    }
+
                     process.VirtualProtect(src + jmpLen, nops.Length, oldProtect);
                 }
             }
@@ -424,7 +491,7 @@ namespace LiveSplit.ComponentUtil
             return gate;
         }
 
-        static object ResolveToType(byte[] bytes, Type type)
+        private static object ResolveToType(byte[] bytes, Type type)
         {
             object val;
 
@@ -451,9 +518,13 @@ namespace LiveSplit.ComponentUtil
             else if (type == typeof(bool))
             {
                 if (bytes == null)
+                {
                     val = false;
+                }
                 else
-                    val = (bytes[0] != 0);
+                {
+                    val = bytes[0] != 0;
+                }
             }
             else if (type == typeof(short))
             {
@@ -495,15 +566,13 @@ namespace LiveSplit.ComponentUtil
 
         public static bool VirtualProtect(this Process process, IntPtr addr, int size, MemPageProtect protect)
         {
-            MemPageProtect oldProtect;
-            return WinAPI.VirtualProtectEx(process.Handle, addr, (SizeT)size, protect, out oldProtect);
+            return WinAPI.VirtualProtectEx(process.Handle, addr, (SizeT)size, protect, out var oldProtect);
         }
 
         public static IntPtr CreateThread(this Process process, IntPtr startAddress, IntPtr parameter)
         {
-            IntPtr threadId;
             return WinAPI.CreateRemoteThread(process.Handle, IntPtr.Zero, (SizeT)0, startAddress, parameter, 0,
-                out threadId);
+                out var threadId);
         }
 
         public static IntPtr CreateThread(this Process process, IntPtr startAddress)
